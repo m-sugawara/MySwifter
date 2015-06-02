@@ -8,50 +8,51 @@
 
 import Foundation
 
-
-
-
 class TWPMainViewModel: NSObject {
+    let twitterAPI: TWPTwitterAPI = TWPTwitterAPI()
+    
     dynamic var tapCount: NSInteger = 0;
     dynamic var tweets: NSArray = [];
     
-    // MARK: Initializer
+    // MARK: - Initializer
     override init() {
         super.init();
         
     }
     
-    // MARK: Public Methods
+    // MARK: - Public Methods
     
-    // MARK: Private Methods
+    // MARK: - Private Methods
 
     
-    // MARK: RACCommands
+    // MARK: - RACCommands
     var oauthButtonCommand: RACCommand {
         return RACCommand(signalBlock: { (input) -> RACSignal! in
+            
             return self.oauthButtonSignal
         })
     }
     var oauthButtonSignal: RACSignal {
+        
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            TWPTwitterAPI.twitterAuthorizeWithOAuth().subscribeNext({ (next) -> Void in
+            self.twitterAPI.twitterAuthorizeWithOAuth().subscribeNext({ (next) -> Void in
                 println("next:\(next)")
                 
                 self.tweets = next as! NSArray
                 
-            }, error: { (error) -> Void in
-                subscriber.sendError(error)
-                println("error:\(error)")
-            }, completed: { () -> Void in
-                subscriber.sendCompleted()
-                println("completed")
+                }, error: { (error) -> Void in
+                    subscriber.sendError(error)
+                    println("error:\(error)")
+                }, completed: { () -> Void in
+                    subscriber.sendCompleted()
+                    println("completed")
             })
             
             return RACDisposable(block: { () -> Void in
             })
         })
     }
-    
+
     var accountButtonCommand: RACCommand {
         return RACCommand(signalBlock: { (input) -> RACSignal! in
             return self.accountButtonSignal
@@ -59,9 +60,39 @@ class TWPMainViewModel: NSObject {
     }
     var accountButtonSignal: RACSignal {
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            TWPTwitterAPI.twitterAuthorizeWithAccount()
+            self.twitterAPI.twitterAuthorizeWithAccount().subscribeNext({ (next) -> Void in
+                println("next:\(next)")
+                
+                self.tweets = next as! NSArray
+                
+                subscriber.sendNext(next)
+            }, error: { (error) -> Void in
+                subscriber.sendError(error)
+            }, completed: { () -> Void in
+                subscriber.sendCompleted()
+            })
             
-            subscriber.sendCompleted()
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+    }
+    
+    var feedUpdateButtonCommand: RACCommand {
+        return RACCommand(signalBlock: { (input) -> RACSignal! in
+            return self.feedUpdateButtonSignal
+        })
+    }
+    var feedUpdateButtonSignal: RACSignal {
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.twitterAPI.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
+                self.tweets = next as! NSArray
+                }, error: { (error) -> Void in
+                    subscriber.sendError(error)
+                    println("error:\(error)")
+                }, completed: { () -> Void in
+                    subscriber.sendCompleted()
+                    println("completed")
+            })
             
             return RACDisposable(block: { () -> Void in
             })

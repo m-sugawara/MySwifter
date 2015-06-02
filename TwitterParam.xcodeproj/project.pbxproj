@@ -18,6 +18,7 @@
 		595FC1221B1BE8400088A2EB /* TwitterParamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */; };
 		59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */; };
 		59F3D2821B1D53F900B5235C /* TWPTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D2811B1D53F900B5235C /* TWPTweet.swift */; };
+		59F3D2871B1D7F4E00B5235C /* TWPUserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */; };
 		DB680F265933AD2C1D2A44CB /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E4386D4B50C45F2A58FD39 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,7 @@
 		595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterParamTests.swift; sourceTree = "<group>"; };
 		59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTwitterAPI.swift; sourceTree = "<group>"; };
 		59F3D2811B1D53F900B5235C /* TWPTweet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTweet.swift; sourceTree = "<group>"; };
+		59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,8 +122,9 @@
 		595FC1081B1BE8400088A2EB /* TwitterParam */ = {
 			isa = PBXGroup;
 			children = (
-				59F3D2801B1D53D900B5235C /* Tweet */,
 				59F3D27D1B1D3F4B00B5235C /* API */,
+				59F3D2831B1D77A400B5235C /* Common */,
+				59F3D2801B1D53D900B5235C /* Tweet */,
 				595FC12B1B1BE89C0088A2EB /* ViewModel */,
 				595FC12C1B1BE8A60088A2EB /* ViewController */,
 				595FC10B1B1BE8400088A2EB /* TWPAppDelegate.swift */,
@@ -206,6 +209,14 @@
 				59F3D2811B1D53F900B5235C /* TWPTweet.swift */,
 			);
 			name = Tweet;
+			sourceTree = "<group>";
+		};
+		59F3D2831B1D77A400B5235C /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */,
+			);
+			name = Common;
 			sourceTree = "<group>";
 		};
 		DA0D03B9E1E7D48A2FB6592A /* Pods */ = {
@@ -367,6 +378,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59F3D2871B1D7F4E00B5235C /* TWPUserHelper.swift in Sources */,
 				595FC10E1B1BE8400088A2EB /* TWPMainViewController.swift in Sources */,
 				595FC10C1B1BE8400088A2EB /* TWPAppDelegate.swift in Sources */,
 				591702131B1C3EB0008ADA01 /* TWPMainViewControllerTableCell.swift in Sources */,

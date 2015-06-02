@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7531" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -17,11 +16,14 @@
                         <rect key="frame" x="8" y="8" width="44" height="44"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="44" id="78N-e7-DHY"/>
-                            <constraint firstAttribute="width" secondItem="Ugp-DF-qVj" secondAttribute="height" multiplier="1:1" id="HUr-6T-aen"/>
+                            <constraint firstAttribute="height" constant="44" id="acT-GS-mYG"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wen-6o-dhy">
-                        <rect key="frame" x="68" y="0.0" width="285" height="60"/>
+                        <rect key="frame" x="73" y="0.0" width="280" height="60"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="280" id="K3R-Xd-TWY"/>
+                        </constraints>
                         <string key="text">LabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabel</string>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -29,13 +31,11 @@
                     </label>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="bottom" secondItem="Ugp-DF-qVj" secondAttribute="bottom" constant="8" id="44j-Yi-JVn"/>
                     <constraint firstAttribute="trailing" secondItem="wen-6o-dhy" secondAttribute="trailing" constant="8" id="Ejd-lB-LTx"/>
                     <constraint firstAttribute="bottom" secondItem="wen-6o-dhy" secondAttribute="bottom" id="Uyi-jR-nuv"/>
+                    <constraint firstAttribute="centerY" secondItem="Ugp-DF-qVj" secondAttribute="centerY" id="a4k-rj-DQh"/>
                     <constraint firstItem="Ugp-DF-qVj" firstAttribute="leading" secondItem="5zz-mb-yFY" secondAttribute="leading" constant="8" id="fSk-p8-T5A"/>
-                    <constraint firstItem="wen-6o-dhy" firstAttribute="leading" secondItem="Ugp-DF-qVj" secondAttribute="trailing" constant="16" id="q5E-di-74c"/>
                     <constraint firstItem="wen-6o-dhy" firstAttribute="top" secondItem="5zz-mb-yFY" secondAttribute="top" id="tid-df-13u"/>
-                    <constraint firstItem="Ugp-DF-qVj" firstAttribute="top" secondItem="5zz-mb-yFY" secondAttribute="top" constant="8" id="yz3-UE-DGu"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

@@ -30,7 +30,6 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        
         self.bindCommands();
         
         // bind tableView Delegate
@@ -44,35 +43,47 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: - Error Handler
+    // MARK: - Common Handler
     let errorHandler: ((NSError!) -> Void) = {
         error in
         
         if error != nil {
-            println("viewController's error:\(error.localizedDescription)")
+            println("ViewController's error:\(error.localizedDescription)")
         }
         else {
-            println("viewController's error is nil")
+            println("ViewController's error is nil")
         }
+    }
+    let completeHandler: (() -> Void) = {
+        println("ViewController's completed!")
     }
     
     // MARK: - Binding
     func bindCommands() {
+        // subscribe ViewModel's RACSignal
+        // TODO:subscribeしたら実行されるのはなぜ？
+        // executeしたときだけ呼ばれるものではない？？
+//                self.model.accountButtonCommand.executionSignals.subscribeError(errorHandler)
+//                self.model.oauthButtonCommand.errors.subscribeNext({ (next) -> Void in
+//                   println("completed!!!!fajfklsadjf")
+//                }, error: errorHandler, completed: { () -> Void in
+//                    println("completed!!!!")
+//                })
+//        self.model.feedUpdateButtonCommand.executionSignals.subscribeNext({ (signal) -> Void in
+//            
+//            signal.subscribeNext({ (next) -> Void in
+//                println("Signal of Signal Next")
+//            }, error: { (error) -> Void in
+//                println("Signal of Signal Error")
+//            }, completed: { () -> Void in
+//                println("Signal of Signal Completed")
+//            })
+//            }, error: errorHandler, completed: completeHandler)
+        
         // bind Button to the RACCommand
         self.accountButton.rac_command = self.model.accountButtonCommand
         self.oauthButton.rac_command = self.model.oauthButtonCommand
         self.feedUpdateButton.rac_command = self.model.feedUpdateButtonCommand
-        
-        // subscribe ViewModel's RACSignal
-        self.model.accountButtonCommand.executionSignals.subscribeError(errorHandler)
-        self.model.oauthButtonCommand.executionSignals.subscribeError(errorHandler)
-        self.model.feedUpdateButtonCommand.executionSignals.subscribeNext({ (next) -> Void in
-            println("nexteetejke")
-        }, error: { (error) -> Void in
-            println("errorjdkflajflas")
-            }, completed: { () -> Void in
-                println("compfjdaklfjasdl;")
-         })
     
         // bind ViewModel's parameter
         self.model.rac_valuesForKeyPath("tapCount", observer: self).subscribeNext { (tapCount) -> Void in

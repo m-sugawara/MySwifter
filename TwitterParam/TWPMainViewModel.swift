@@ -11,8 +11,10 @@ import Foundation
 class TWPMainViewModel: NSObject {
     let twitterAPI: TWPTwitterAPI = TWPTwitterAPI()
     
-    dynamic var tapCount: NSInteger = 0;
-    dynamic var tweets: NSArray = [];
+    dynamic var tapCount: NSInteger = 0
+    dynamic var tweets: NSArray = []
+    
+    private var _feedUpdateButtonSignal: RACSignal?
     
     // MARK: - Initializer
     override init() {
@@ -79,11 +81,14 @@ class TWPMainViewModel: NSObject {
     
     var feedUpdateButtonCommand: RACCommand {
         return RACCommand(signalBlock: { (input) -> RACSignal! in
-            return self.feedUpdateButtonSignal
+            return self.feedUpdateButtonSignal()
         })
     }
-    var feedUpdateButtonSignal: RACSignal {
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+    func feedUpdateButtonSignal() -> RACSignal {
+        if (_feedUpdateButtonSignal != nil) {
+            return _feedUpdateButtonSignal!
+        }
+        _feedUpdateButtonSignal =  RACSignal.createSignal({ (subscriber) -> RACDisposable! in
             self.twitterAPI.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
                 self.tweets = next as! NSArray
                 }, error: { (error) -> Void in
@@ -94,8 +99,9 @@ class TWPMainViewModel: NSObject {
                     println("completed")
             })
             
-            return RACDisposable(block: { () -> Void in
-            })
+            return nil
         })
+        
+        return _feedUpdateButtonSignal!
     }
 }

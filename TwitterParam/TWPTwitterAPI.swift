@@ -44,10 +44,11 @@ class TWPTwitterAPI: NSObject {
                             self.swifter = Swifter(account: twitterAccount)
                             
                             // when authorize successed, get Timeline
-                            self.getStatusesHomeTimelineWithCount(20)?.subscribeError({ (error) -> Void in
-                                subscriber.sendError(error)
-                                },
-                                completed: { () -> Void in
+                            self.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
+                                subscriber.sendNext(next)
+                                }, error: { (error) -> Void in
+                                    subscriber.sendError(error)
+                                }, completed: { () -> Void in
                                     subscriber.sendCompleted()
                             })
                         }
@@ -81,6 +82,15 @@ class TWPTwitterAPI: NSObject {
                 self.swifter.client.credential = TWPUserHelper.fetchUserToken()
                 let user = TWPUserHelper.fetchUserQData()
                 println("user\(user)")
+                
+                // when authorize successed, get Timeline
+                self.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
+                    subscriber.sendNext(next)
+                    }, error: { (error) -> Void in
+                        subscriber.sendError(error)
+                    }, completed: { () -> Void in
+                        subscriber.sendCompleted()
+                })
             }
             else {
                 // Nothing AccessToken
@@ -91,11 +101,12 @@ class TWPTwitterAPI: NSObject {
                         TWPUserHelper.saveUserToken(accessToken!)
                         
                         // when authorize successed, get Timeline
-                        self.getStatusesHomeTimelineWithCount(20)?.subscribeError({ (error) -> Void in
-                                subscriber.sendError(error)
-                        },
-                            completed: { () -> Void in
-                                subscriber.sendCompleted()
+                        self.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
+                            subscriber.sendNext(next)
+                        }, error: { (error) -> Void in
+                            subscriber.sendError(error)
+                        }, completed: { () -> Void in
+                            subscriber.sendCompleted()
                         })
                     },
                     failure: { (error) -> Void in

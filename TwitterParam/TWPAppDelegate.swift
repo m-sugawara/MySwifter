@@ -17,6 +17,7 @@ class TWPAppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        // TODO: Not use. Only sample code.
         let storyboard = UIStoryboard(name: "Main", bundle:nil)
         let mainViewController = storyboard.instantiateViewControllerWithIdentifier("mainViewController") as! UIViewController
         

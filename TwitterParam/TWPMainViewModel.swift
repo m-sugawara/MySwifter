@@ -38,16 +38,14 @@ class TWPMainViewModel: NSObject {
         
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
             self.twitterAPI.twitterAuthorizeWithOAuth().subscribeNext({ (next) -> Void in
-                println("next:\(next)")
                 
                 self.tweets = next as! NSArray
                 
                 }, error: { (error) -> Void in
                     subscriber.sendError(error)
-                    println("error:\(error)")
                 }, completed: { () -> Void in
+                    subscriber.sendNext(nil)
                     subscriber.sendCompleted()
-                    println("completed")
             })
             
             return RACDisposable(block: { () -> Void in
@@ -63,7 +61,6 @@ class TWPMainViewModel: NSObject {
     var accountButtonSignal: RACSignal {
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
             self.twitterAPI.twitterAuthorizeWithAccount().subscribeNext({ (next) -> Void in
-                println("next:\(next)")
                 
                 self.tweets = next as! NSArray
                 
@@ -71,6 +68,7 @@ class TWPMainViewModel: NSObject {
             }, error: { (error) -> Void in
                 subscriber.sendError(error)
             }, completed: { () -> Void in
+                subscriber.sendNext(nil)
                 subscriber.sendCompleted()
             })
             
@@ -93,10 +91,9 @@ class TWPMainViewModel: NSObject {
                 self.tweets = next as! NSArray
                 }, error: { (error) -> Void in
                     subscriber.sendError(error)
-                    println("error:\(error)")
                 }, completed: { () -> Void in
+                    subscriber.sendNext(nil)
                     subscriber.sendCompleted()
-                    println("completed")
             })
             
             return nil

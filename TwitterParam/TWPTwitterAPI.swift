@@ -20,6 +20,11 @@ class TWPTwitterAPI: NSObject {
     override init() {
         super.init()
     }
+    
+    // MARK: - ErrorHelper
+    func errorWithCode(code :Int, message: String) -> NSError {
+        return NSError(domain: NSURLErrorDomain, code: code, userInfo: [NSLocalizedDescriptionKey: message])
+    }
 
     // MARK: - ACAccount
     func twitterAuthorizeWithAccount() -> RACSignal {
@@ -35,8 +40,8 @@ class TWPTwitterAPI: NSObject {
                     
                     if (twitterAccounts != nil) {
                         if twitterAccounts.count == 0 {
-                            println("There are no Twitter accounts configured.")
-                            subscriber.sendError(nil)
+                            let error = self.errorWithCode(kTWPErrorCodeNoTwitterAccount, message: "There are no Twitter accounts configured")
+                            subscriber.sendError(error)
                         }
                         else {
                             let twitterAccount = twitterAccounts[0] as! ACAccount
@@ -55,7 +60,9 @@ class TWPTwitterAPI: NSObject {
                     }
                     else {
                         println("There are no Twitter accounts configured.")
-                        subscriber.sendError(nil)
+                        
+                        let error = self.errorWithCode(kTWPErrorCodeNoTwitterAccount, message: "There are no Twitter accounts configured")
+                        subscriber.sendError(error)
                     }
                 }
                 else {

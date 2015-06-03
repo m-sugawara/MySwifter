@@ -43,6 +43,25 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: - Alert
+    func showAlertWithTitle(title: String?, message: String?) {
+        if objc_getClass("UIAlertController") != nil {
+            // use UIAlertController
+            var alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+            let cancelAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
+                println("Cancel Button tapped")
+            })
+            alertController.addAction(cancelAction)
+            
+            presentViewController(alertController, animated: true, completion: nil)
+        }
+        else {
+            // use UIAlertView
+            var alertView = UIAlertView(title: title, message: message, delegate: self, cancelButtonTitle: "OK")
+            alertView.show()
+        }
+    }
+    
     // MARK: - Common Handler
     let errorHandler: ((NSError!) -> Void) = {
         error in
@@ -54,36 +73,49 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             println("ViewController's error is nil")
         }
     }
-    let completeHandler: (() -> Void) = {
+    let completedHandler: (() -> Void) = {
         println("ViewController's completed!")
     }
     
     // MARK: - Binding
     func bindCommands() {
-        // subscribe ViewModel's RACSignal
-        // TODO:subscribeしたら実行されるのはなぜ？
-        // executeしたときだけ呼ばれるものではない？？
-//                self.model.accountButtonCommand.executionSignals.subscribeError(errorHandler)
-//                self.model.oauthButtonCommand.errors.subscribeNext({ (next) -> Void in
-//                   println("completed!!!!fajfklsadjf")
-//                }, error: errorHandler, completed: { () -> Void in
-//                    println("completed!!!!")
-//                })
-//        self.model.feedUpdateButtonCommand.executionSignals.subscribeNext({ (signal) -> Void in
-//            
-//            signal.subscribeNext({ (next) -> Void in
-//                println("Signal of Signal Next")
-//            }, error: { (error) -> Void in
-//                println("Signal of Signal Error")
-//            }, completed: { () -> Void in
-//                println("Signal of Signal Completed")
-//            })
-//            }, error: errorHandler, completed: completeHandler)
         
         // bind Button to the RACCommand
         self.accountButton.rac_command = self.model.accountButtonCommand
         self.oauthButton.rac_command = self.model.oauthButtonCommand
         self.feedUpdateButton.rac_command = self.model.feedUpdateButtonCommand
+        
+        // subscribe ViewModel's RACSignal
+        // Completed Signals
+        self.accountButton.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
+            self.showAlertWithTitle("SUCCESS!", message: "authorize success!")
+        }
+        self.oauthButton.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
+            self.showAlertWithTitle("SUCCESS!", message: "authorize success!")
+        }
+        self.feedUpdateButton.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
+            self.showAlertWithTitle("SUCCESS!", message: "feed update success!")
+        }
+        
+        // Error Signals
+        self.accountButton.rac_command.errors.subscribeNext { (error) -> Void in
+            println("Account authorize error!:\(error)")
+            if error != nil {
+                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+            }
+        }
+        self.oauthButton.rac_command.errors.subscribeNext { (error) -> Void in
+            println("OAuth authorize error!:\(error)")
+            if error != nil {
+                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+            }
+        }
+        self.feedUpdateButton.rac_command.errors.subscribeNext { (error) -> Void in
+            println("feed update error:\(error)")
+            if error != nil {
+                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+            }
+        }
     
         // bind ViewModel's parameter
         self.model.rac_valuesForKeyPath("tapCount", observer: self).subscribeNext { (tapCount) -> Void in
@@ -127,6 +159,15 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
 
+    // MARK: - UIAlertViewDelegate
+    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+        if buttonIndex == alertView.cancelButtonIndex {
+            println("AlertView cancel button tapped.")
+        }
+        else {
+            
+        }
+    }
 
 }
 

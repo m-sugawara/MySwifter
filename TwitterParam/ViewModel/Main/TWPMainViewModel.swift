@@ -9,7 +9,7 @@
 import Foundation
 
 class TWPMainViewModel: NSObject {
-    let twitterAPI: TWPTwitterAPI = TWPTwitterAPI()
+    let twitterAPI = TWPTwitterAPI.sharedInstance
     
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: NSArray = []

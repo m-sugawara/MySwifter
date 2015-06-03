@@ -21,6 +21,7 @@ class TWPUserHelper {
     class func saveUserToken(data: SwifterCredential.OAuthAccessToken) -> Bool {
         
         var userDefaults = NSUserDefaults.standardUserDefaults()
+        println(data)
         userDefaults.setObject(data.key, forKey: kKeyForUserTokenKey)
         userDefaults.setObject(data.secret, forKey: kKeyForUserTokenSecret)
         userDefaults.setObject(data.screenName, forKey: kKeyForUserTokenScreenName)

@@ -10,15 +10,13 @@ import UIKit
 
 
 class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate {
-    let model: TWPMainViewModel = TWPMainViewModel()
+    let model = TWPMainViewModel()
+    var userID:String!
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var oauthButton: UIButton!
     @IBOutlet weak var accountButton: UIButton!
     @IBOutlet weak var feedUpdateButton: UIButton!
-    
-    // test
-    var items = ["Item 1", "Item 2", "Item 3", "Item 4"]
     
     // MARK: - Disignated Initializer
     required init(coder aDecoder: NSCoder) {
@@ -29,12 +27,34 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
+
         self.bindCommands();
         
         // bind tableView Delegate
         self.tableView.dataSource = self
         self.tableView.delegate = self
+    }
+
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "fromMainToUserInfo" {
+            var userInfoViewController:TWPUserInfoViewController = segue.destinationViewController as! TWPUserInfoViewController
+            
+            // TODO: bad solution
+            let user = TWPUserHelper.fetchUserQData()
+            userInfoViewController.tempUserID = user["userID"] as? String
+            
+            // bind Next ViewController's Commands
+            userInfoViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
+                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                    subscriber.sendCompleted()
+                    
+                    return RACDisposable(block: { () -> Void in
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    })
+                })
+            })
+            
+        }
     }
 
     // MARK: - Memory Management
@@ -151,7 +171,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 70.0
+        return 60.0
     }
     
     // MARK: - UITableViewDelegate

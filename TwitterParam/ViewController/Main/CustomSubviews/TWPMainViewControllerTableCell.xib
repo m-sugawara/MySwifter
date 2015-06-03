@@ -26,7 +26,7 @@
                         </constraints>
                         <string key="text">LabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabelLabel</string>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
@@ -38,6 +38,7 @@
                     <constraint firstItem="wen-6o-dhy" firstAttribute="top" secondItem="5zz-mb-yFY" secondAttribute="top" id="tid-df-13u"/>
                 </constraints>
             </tableViewCellContentView>
+            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
             <connections>
                 <outlet property="iconImageView" destination="Ugp-DF-qVj" id="PST-U9-YPZ"/>
                 <outlet property="imageView" destination="Ugp-DF-qVj" id="ckc-xF-r90"/>

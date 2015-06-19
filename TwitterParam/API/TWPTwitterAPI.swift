@@ -179,7 +179,7 @@ final class TWPTwitterAPI: NSObject {
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
-                        var tweet: TWPTweet? = TWPTweet(text: statuses![i]["text"].string, profileImageUrl: statuses![i]["user"]["profile_image_url"].string)
+                        var tweet: TWPTweet? = TWPTweet(tweetID: statuses![i]["id_str"].string!, text: statuses![i]["text"].string, profileImageUrl: statuses![i]["user"]["profile_image_url"].string)
                         tweets.addObject(tweet!)
                     }
                     
@@ -211,7 +211,7 @@ final class TWPTwitterAPI: NSObject {
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
-                        var tweet:TWPTweet? = TWPTweet(text: statuses![i]["text"].string, profileImageUrl: statuses![i]["user"]["profile_image_url"].string)
+                        var tweet:TWPTweet? = TWPTweet(tweetID: statuses![i]["id_str"].string!, text: statuses![i]["text"].string, profileImageUrl: statuses![i]["user"]["profile_image_url"].string)
                         tweets.addObject(tweet!)
                     }
                     
@@ -220,6 +220,37 @@ final class TWPTwitterAPI: NSObject {
                 },
                 failure: { (error) -> Void in
                     subscriber.sendError(error)
+            })
+            
+            return RACDisposable(block: { () -> Void in
+                
+            })
+        })
+        
+    }
+    
+    func getStatuesShowWithID(id: String, count: Int? = nil, trimUser: Bool? = nil, includeMyRetweet: Bool? = nil, includeEntities: Bool? = nil) -> RACSignal? {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.getStatusesShowWithID(id,
+                count: count,
+                trimUser: trimUser,
+                includeMyRetweet: includeMyRetweet,
+                includeEntities: includeEntities,
+                success: { (status: Dictionary<String, JSONValue>?) -> Void in
+                    println(status);
+                    var user:Dictionary<String, JSONValue> = status!["user"]?.object as Dictionary<String, JSONValue>!
+                    
+                    var tweet:TWPTweet = TWPTweet(tweetID: id,
+                        text: status!["text"]!.string,
+                        profileImageUrl: user["profile_image_url"]!.string)
+//                    var tweet:TWPTweet = TWPTweet(text: status!["text"]!.string, profileImageUrl:status!["user"]["profile_image_url"]!.string)
+                    
+                    subscriber.sendNext(tweet)
+                    subscriber.sendCompleted()
+                    
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
             })
             
             return RACDisposable(block: { () -> Void in

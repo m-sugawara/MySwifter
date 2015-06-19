@@ -9,10 +9,12 @@
 import Foundation
 
 class TWPTweet {
+    var tweetID: String
     var text: String?
     var profileImageUrl: NSURL?
     
-    init(text: String?, profileImageUrl: String?) {
+    init(tweetID: String, text: String?, profileImageUrl: String?) {
+        self.tweetID = tweetID
         self.text = text
         self.profileImageUrl = NSURL(string: profileImageUrl!)
     }

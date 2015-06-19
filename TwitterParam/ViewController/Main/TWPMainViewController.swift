@@ -13,6 +13,7 @@ let kTWPMainTableViewCellIdentifier = "MainTableViewCell";
 class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate {
     let model = TWPMainViewModel()
     var userID:String!
+    var selectedTweetID:String!
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var oauthButton: UIButton!
@@ -37,6 +38,9 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        super.prepareForSegue(segue, sender: sender)
+        
+        // UserInfoViewController
         if segue.identifier == "fromMainToUserInfo" {
             var userInfoViewController:TWPUserInfoViewController = segue.destinationViewController as! TWPUserInfoViewController
             
@@ -55,6 +59,24 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
                 })
             })
             
+        }
+        // TweetDetailViewController
+        else if segue.identifier == "fromMainToTweetDetail" {
+            var tweetDetailViewController:TWPTweetDetailViewController = segue.destinationViewController as! TWPTweetDetailViewController
+            
+            // TODO: bad solution
+            tweetDetailViewController.tempTweetID = self.selectedTweetID
+            
+            // bind Next ViewController's Commands
+            tweetDetailViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
+                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                    subscriber.sendCompleted()
+                    
+                    return RACDisposable(block: { () -> Void in
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    })
+                })
+            })
         }
     }
 
@@ -176,7 +198,13 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     // MARK: - UITableViewDelegate
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        var selectedTweet: TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet;
+        self.selectedTweetID = selectedTweet.tweetID
+        
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        
+        performSegueWithIdentifier("fromMainToTweetDetail", sender: nil)
+        
     }
 
     // MARK: - UIAlertViewDelegate

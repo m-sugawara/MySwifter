@@ -15,9 +15,7 @@ class TWPUserInfoViewModel: NSObject {
     var user:TWPUser = TWPUser()
     
     dynamic var tweets: NSArray = []
-    
-    private var _feedUpdateButtonSignal: RACSignal?
-   
+
     // MARK: - Initializer
     override init() {
         super.init()
@@ -27,9 +25,7 @@ class TWPUserInfoViewModel: NSObject {
     func getUserInfoSignal() -> RACSignal! {
         
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.twitterAPI.getMyUser()?.subscribeNext({ (next) -> Void in
-                subscriber.sendNext(next)
-            }, error: { (error) -> Void in
+            self.twitterAPI.getMyUser()?.subscribeError({ (error) -> Void in
                 subscriber.sendError(error)
             }, completed: { () -> Void in
                 // find User

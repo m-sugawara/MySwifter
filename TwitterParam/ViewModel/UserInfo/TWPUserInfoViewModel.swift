@@ -13,11 +13,17 @@ class TWPUserInfoViewModel: NSObject {
     
     var userID:String = ""
     var user:TWPUser = TWPUser()
+    
+    dynamic var tweets: NSArray = []
+    
+    private var _feedUpdateButtonSignal: RACSignal?
    
+    // MARK: - Initializer
     override init() {
         super.init()
     }
     
+    // MARK: - Signals
     func getUserInfoSignal() -> RACSignal! {
         
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
@@ -35,5 +41,23 @@ class TWPUserInfoViewModel: NSObject {
             return RACDisposable(block: { () -> Void in
             })
         })
+    }
+    
+    func getUserTimelineSignal() -> RACSignal! {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.twitterAPI.getStatusesUserTimelineWithUserID(self.userID, count: 20)?.subscribeNext({ (next) -> Void in
+                self.tweets = next as! NSArray
+                }, error: { (error) -> Void in
+                    subscriber.sendError(error)
+                }, completed: { () -> Void in
+                    subscriber.sendNext(nil)
+                    subscriber.sendCompleted()
+            })
+            
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+        
     }
 }

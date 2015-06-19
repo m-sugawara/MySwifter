@@ -8,7 +8,9 @@
 
 import UIKit
 
-class TWPUserInfoViewController: UIViewController {
+let kTWPUserInfoTableViewCellIdentifier = "UserInfoTableViewCell";
+
+class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     let model = TWPUserInfoViewModel()
     
     var tempUserID:String!
@@ -19,6 +21,7 @@ class TWPUserInfoViewController: UIViewController {
     @IBOutlet weak var userIconImageView: UIImageView!
     @IBOutlet weak var userTweetsTableView: UITableView!
     @IBOutlet weak var backButton: UIButton!
+    @IBOutlet weak var tableView: UITableView!
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -37,7 +40,15 @@ class TWPUserInfoViewController: UIViewController {
             println("viewController.error:\(error)")
         }) { () -> Void in
             self.setUserProfile()
+            
             println("viewController's get userinfo completed")
+            
+            self.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
+                println("getUserTimeline.error:\(error)")
+            }, completed: { () -> Void in
+                self.tableView.reloadData()
+                println("getUserTimeline completed!")
+            })
         }
     }
     
@@ -56,5 +67,38 @@ class TWPUserInfoViewController: UIViewController {
         else {
             self.userIDLabel.text = "no data"
         }
+        
+        self.userIconImageView.sd_setImageWithURL(NSURL(string: self.model.user.profileImageUrl!),
+            placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
+            options: SDWebImageOptions.CacheMemoryOnly)
+    }
+    
+    // MARK: - UITableViewDataSource
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return self.model.tweets.count;
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var cell:TWPUserInfoViewControllerTableViewCell! = tableView.dequeueReusableCellWithIdentifier(kTWPUserInfoTableViewCellIdentifier) as? TWPUserInfoViewControllerTableViewCell
+        
+        // create Tweet Object
+        var tweet:TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet
+        
+        cell.iconImageView.sd_setImageWithURL(tweet.profileImageUrl,
+            placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
+            options: SDWebImageOptions.CacheMemoryOnly)
+        cell.tweetTextLabel.text = tweet.text
+        
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return 60.0
+    }
+    
+    // MARK: - UITableViewDelegate
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
 }

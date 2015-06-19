@@ -134,27 +134,33 @@ final class TWPTwitterAPI: NSObject {
     
     // MARK: - Wrapper Method
     func getMyUser() -> RACSignal? {
+        let user = TWPUserHelper.fetchUserQData()
+        let userID = user["userID"] as? String
         
+        return self.getUsersShowWithUserID(userID!)
+    }
+    
+    func getUsersShowWithUserID(userID: String, includeEntities: Bool? = nil) -> RACSignal? {
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            let user = TWPUserHelper.fetchUserQData()
-            let userID = user["userID"] as? String
-            
-            self.swifter.getUsersShowWithUserID(userID!, includeEntities: false,
+            self.swifter.getUsersShowWithUserID(userID,
+                includeEntities: includeEntities,
                 success: { (user: Dictionary<String, JSONValue>?) -> Void in
                     println("TwitterAPI's user\(user)")
                     
                     // create TWPUser Instance
-                    var userInfo = TWPUser(userID: userID!, name: user!["name"]!.string, screen_name: user!["screen_name"]!.string)
+                    var userInfo = TWPUser(userID: userID, name: user!["name"]!.string, screen_name: user!["screen_name"]!.string, profileImageUrl: user!["profile_image_url"]!.string)
                     // store shared instance
                     TWPUserList.sharedInstance.appendUser(userInfo)
                     
                     subscriber.sendCompleted()
-            }, failure: { (error) -> Void in
-                subscriber.sendError(error)
+                }, failure: { (error) -> Void in
+                    println("error:\(error)")
+                    subscriber.sendError(error)
             })
             
             return RACDisposable(block: { () -> Void in
             })
+            
         })
     }
     
@@ -188,6 +194,39 @@ final class TWPTwitterAPI: NSObject {
                 
             })
         })
+    }
+    
+    func getStatusesUserTimelineWithUserID(userID: String, count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil) -> RACSignal? {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.getStatusesUserTimelineWithUserID(userID,
+                count: count,
+                sinceID: sinceID,
+                maxID: maxID,
+                trimUser: trimUser,
+                contributorDetails: contributorDetails,
+                includeEntities: includeEntities,
+                success: { (statuses: [JSONValue]?) -> Void in
+                    println(statuses);
+                    
+                    var tweets: NSMutableArray! = []
+                    for i in 0..<statuses!.count {
+                        var tweet:TWPTweet? = TWPTweet(text: statuses![i]["text"].string, profileImageUrl: statuses![i]["user"]["profile_image_url"].string)
+                        tweets.addObject(tweet!)
+                    }
+                    
+                    subscriber.sendNext(tweets)
+                    subscriber.sendCompleted()
+                },
+                failure: { (error) -> Void in
+                    subscriber.sendError(error)
+            })
+            
+            return RACDisposable(block: { () -> Void in
+                
+            })
+        })
+        
     }
 }
 

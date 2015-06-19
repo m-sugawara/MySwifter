@@ -8,6 +8,7 @@
 
 import UIKit
 
+let kTWPMainTableViewCellIdentifier = "MainTableViewCell";
 
 class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate {
     let model = TWPMainViewModel()
@@ -153,15 +154,14 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let identifier = "Cell"
-        var cell:TWPMainViewControllerTableCell! = tableView.dequeueReusableCellWithIdentifier("Cell") as? TWPMainViewControllerTableCell
+        var cell:TWPMainViewControllerTableViewCell! = tableView.dequeueReusableCellWithIdentifier(kTWPMainTableViewCellIdentifier) as? TWPMainViewControllerTableViewCell
         if cell == nil {
-            self.tableView.registerNib(UINib(nibName: "TWPMainViewControllerTableCell", bundle: nil), forCellReuseIdentifier: identifier)
-            cell = self.tableView.dequeueReusableCellWithIdentifier(identifier) as? TWPMainViewControllerTableCell
+            cell = self.tableView.dequeueReusableCellWithIdentifier(kTWPMainTableViewCellIdentifier) as? TWPMainViewControllerTableViewCell
         }
         
         // create Tweet Object
         var tweet:TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet
+        
         cell.iconImageView.sd_setImageWithURL(tweet.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)

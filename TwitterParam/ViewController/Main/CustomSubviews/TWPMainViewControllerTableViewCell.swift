@@ -1,5 +1,5 @@
 //
-//  TWPMainViewControllerTableCell.swift
+//  TWPMainViewControllerTableViewCell.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/01.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TWPMainViewControllerTableCell: UITableViewCell {
+class TWPMainViewControllerTableViewCell: UITableViewCell {
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var tweetTextLabel: UILabel!
     

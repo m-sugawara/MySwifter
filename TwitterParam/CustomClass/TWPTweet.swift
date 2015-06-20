@@ -7,20 +7,17 @@
 //
 
 import UIKit
+import SwifteriOS
 
 class TWPTweet:NSObject {
     var tweetID: String
     var text: String?
-    var profileImageUrl: NSURL?
+    var user: TWPUser?
     
-    init(tweetID: String, text: String?, profileImageUrl: String?) {
+    init(tweetID: String, text: String?, user: TWPUser?) {
         self.tweetID = tweetID
         self.text = text
-        self.profileImageUrl = NSURL(string: profileImageUrl!)
-    }
-    
-    var profileImageUrlString : String? {
-        return profileImageUrl?.absoluteString
+        self.user = user
     }
     
 }

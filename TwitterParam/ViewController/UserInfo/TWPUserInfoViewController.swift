@@ -13,11 +13,13 @@ let kTWPUserInfoTableViewCellIdentifier = "UserInfoTableViewCell";
 class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     let model = TWPUserInfoViewModel()
     
-    var tempUserID:String!
-    var backButtonCommand:RACCommand!
+    var tempUserID: String!
+    var backButtonCommand: RACCommand!
+    
+    var selectedTweetID: String!
     
     @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet weak var userIDLabel: UILabel!
+    @IBOutlet weak var screenNameLabel: UILabel!
     @IBOutlet weak var userIconImageView: UIImageView!
     @IBOutlet weak var userTweetsTableView: UITableView!
     @IBOutlet weak var backButton: UIButton!
@@ -52,6 +54,28 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
         }
     }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        super.prepareForSegue(segue, sender: sender)
+        
+        if segue.identifier == "fromUserInfoToTweetDetail" {
+            var tweetDetailViewController: TWPTweetDetailViewController = segue.destinationViewController as! TWPTweetDetailViewController
+            
+            tweetDetailViewController.tempTweetID = self.selectedTweetID
+            
+            tweetDetailViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
+                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                    // send completed for button status to acitive
+                    subscriber.sendCompleted()
+                    
+                    return RACDisposable(block: { () -> Void in
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    })
+                })
+            })
+        
+        }
+    }
+    
     // MARK: - Binding
     func bindCommands() {
         self.backButton.rac_command = self.backButtonCommand
@@ -61,11 +85,11 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     func setUserProfile() {
         self.userNameLabel.text = self.model.user.name
         
-        if self.model.user.screen_name != nil {
-            self.userIDLabel.text = "@" + self.model.user.screen_name!
+        if self.model.user.screenName != nil {
+            self.screenNameLabel.text = self.model.user.screenNameWithAt!
         }
         else {
-            self.userIDLabel.text = "no data"
+            self.screenNameLabel.text = "no data"
         }
         
         self.userIconImageView.sd_setImageWithURL(self.model.user.profileImageUrl,
@@ -85,7 +109,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
         // create Tweet Object
         var tweet:TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet
         
-        cell.iconImageView.sd_setImageWithURL(tweet.profileImageUrl,
+        cell.iconImageView.sd_setImageWithURL(tweet.user?.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
         cell.tweetTextLabel.text = tweet.text
@@ -99,6 +123,11 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     
     // MARK: - UITableViewDelegate
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        var selectedTweet: TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet;
+        self.selectedTweetID = selectedTweet.tweetID
+        
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        
+        performSegueWithIdentifier("fromUserInfoToTweetDetail", sender: nil)
     }
 }

@@ -134,6 +134,7 @@ final class TWPTwitterAPI: NSObject {
     
     // MARK: - Wrapper Method
     func getMyUser() -> RACSignal? {
+        // get my userID
         let user = TWPUserHelper.fetchUserQData()
         let userID = user["userID"] as? String
         
@@ -148,7 +149,7 @@ final class TWPTwitterAPI: NSObject {
                     println("TwitterAPI's user\(user)")
                     
                     // create TWPUser Instance
-                    var userInfo = TWPUser(userID: userID, name: user!["name"]!.string, screen_name: user!["screen_name"]!.string, profileImageUrl: user!["profile_image_url"]!.string)
+                    var userInfo = TWPUser(userID: userID, name: user!["name"]!.string, screenName: user!["screen_name"]!.string, profileImageUrl: user!["profile_image_url"]!.string)
                     // store shared instance
                     TWPUserList.sharedInstance.appendUser(userInfo)
                     
@@ -179,7 +180,15 @@ final class TWPTwitterAPI: NSObject {
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
-                        var tweet: TWPTweet? = TWPTweet(tweetID: statuses![i]["id_str"].string!, text: statuses![i]["text"].string, profileImageUrl: statuses![i]["user"]["profile_image_url"].string)
+                        var userDictionary:Dictionary<String, JSONValue> = statuses![i]["user"].object as Dictionary<String, JSONValue>!
+                        
+                        var user:TWPUser = TWPUser(dictionary: userDictionary)
+                        
+                        var tweet:TWPTweet? = TWPTweet(tweetID: statuses![i]["id_str"].string!,
+                            text: statuses![i]["text"].string,
+                            user: user
+                        )
+                        
                         tweets.addObject(tweet!)
                     }
                     
@@ -211,7 +220,14 @@ final class TWPTwitterAPI: NSObject {
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
-                        var tweet:TWPTweet? = TWPTweet(tweetID: statuses![i]["id_str"].string!, text: statuses![i]["text"].string, profileImageUrl: statuses![i]["user"]["profile_image_url"].string)
+                        var userDictionary:Dictionary<String, JSONValue> = statuses![i]["user"].object as Dictionary<String, JSONValue>!
+                        
+                        var user:TWPUser = TWPUser(dictionary: userDictionary)
+                        
+                        var tweet:TWPTweet? = TWPTweet(tweetID: statuses![i]["id_str"].string!,
+                            text: statuses![i]["text"].string,
+                            user: user
+                        )
                         tweets.addObject(tweet!)
                     }
                     
@@ -239,11 +255,14 @@ final class TWPTwitterAPI: NSObject {
                 includeEntities: includeEntities,
                 success: { (status: Dictionary<String, JSONValue>?) -> Void in
                     println(status);
-                    var user:Dictionary<String, JSONValue> = status!["user"]?.object as Dictionary<String, JSONValue>!
+                    var userDictionary:Dictionary<String, JSONValue> = status!["user"]!.object as Dictionary<String, JSONValue>!
                     
-                    var tweet:TWPTweet = TWPTweet(tweetID: id,
+                    var user:TWPUser = TWPUser(dictionary: userDictionary)
+                    
+                    var tweet:TWPTweet? = TWPTweet(tweetID: status!["id_str"]!.string!,
                         text: status!["text"]!.string,
-                        profileImageUrl: user["profile_image_url"]!.string)
+                        user: user
+                    )
 //                    var tweet:TWPTweet = TWPTweet(text: status!["text"]!.string, profileImageUrl:status!["user"]["profile_image_url"]!.string)
                     
                     subscriber.sendNext(tweet)

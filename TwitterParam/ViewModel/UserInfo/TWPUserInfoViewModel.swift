@@ -25,7 +25,7 @@ class TWPUserInfoViewModel: NSObject {
     func getUserInfoSignal() -> RACSignal! {
         
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.twitterAPI.getMyUser()?.subscribeError({ (error) -> Void in
+            self.twitterAPI.getUsersShowWithUserID(self.userID)?.subscribeError({ (error) -> Void in
                 subscriber.sendError(error)
             }, completed: { () -> Void in
                 // find User

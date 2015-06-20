@@ -177,23 +177,22 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell:TWPMainViewControllerTableViewCell! = tableView.dequeueReusableCellWithIdentifier(kTWPMainTableViewCellIdentifier) as? TWPMainViewControllerTableViewCell
-        if cell == nil {
-            cell = self.tableView.dequeueReusableCellWithIdentifier(kTWPMainTableViewCellIdentifier) as? TWPMainViewControllerTableViewCell
-        }
         
         // create Tweet Object
         var tweet:TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet
         
-        cell.iconImageView.sd_setImageWithURL(tweet.profileImageUrl,
+        cell.iconImageView.sd_setImageWithURL(tweet.user?.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
         cell.tweetTextLabel.text = tweet.text
+        cell.userNameLabel.text = tweet.user?.name
+        cell.screenNameLabel.text = tweet.user?.screenNameWithAt
         
         return cell
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 60.0
+        return 100.0
     }
     
     // MARK: - UITableViewDelegate

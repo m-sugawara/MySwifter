@@ -18,7 +18,7 @@ class TWPTweetDetailViewController: UIViewController {
     @IBOutlet weak var tweetLabel: UILabel!
     @IBOutlet weak var userIconImageView: UIImageView!
     @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet weak var userIDLabel: UILabel!
+    @IBOutlet weak var screenNameLabel: UILabel!
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -33,11 +33,34 @@ class TWPTweetDetailViewController: UIViewController {
             println("error:\(error)")
         }, completed: { () -> Void in
             self.tweetLabel.text = self.model.tweet?.text
-            self.userIconImageView.sd_setImageWithURL(self.model.tweet?.profileImageUrl,
+            self.userIconImageView.sd_setImageWithURL(self.model.tweet?.user?.profileImageUrl,
                 placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
                 options: SDWebImageOptions.CacheMemoryOnly)
-            
+            self.screenNameLabel.text = self.model.tweet?.user?.screenNameWithAt
+            self.userNameLabel.text = self.model.tweet?.user?.name
         })
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        super.prepareForSegue(segue, sender: sender)
+        
+        if segue.identifier == "fromTweetDetailToUserInfo" {
+            var userInfoViewController: TWPUserInfoViewController = segue.destinationViewController as! TWPUserInfoViewController
+            userInfoViewController.tempUserID = self.model.tweet?.user?.userID
+            
+            // regist backbutton command
+            userInfoViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
+                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                    subscriber.sendCompleted()
+                    
+                    return RACDisposable(block: { () -> Void in
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    })
+                })
+            })
+            
+            
+        }
     }
 
     // MARK: - Memory Management

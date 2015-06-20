@@ -182,12 +182,12 @@ final class TWPTwitterAPI: NSObject {
                     for i in 0..<statuses!.count {
                         var userDictionary:Dictionary<String, JSONValue> = statuses![i]["user"].object as Dictionary<String, JSONValue>!
                         
+                        // create user
                         var user:TWPUser = TWPUser(dictionary: userDictionary)
-                        
-                        var tweet:TWPTweet? = TWPTweet(tweetID: statuses![i]["id_str"].string!,
-                            text: statuses![i]["text"].string,
-                            user: user
-                        )
+                        // create tweet
+                        var status:JSONValue = statuses![i]
+                        status["id_str"].string
+                        var tweet:TWPTweet? = TWPTweet(status: statuses![i], user: user)
                         
                         tweets.addObject(tweet!)
                     }
@@ -222,12 +222,11 @@ final class TWPTwitterAPI: NSObject {
                     for i in 0..<statuses!.count {
                         var userDictionary:Dictionary<String, JSONValue> = statuses![i]["user"].object as Dictionary<String, JSONValue>!
                         
+                        // create user
                         var user:TWPUser = TWPUser(dictionary: userDictionary)
                         
-                        var tweet:TWPTweet? = TWPTweet(tweetID: statuses![i]["id_str"].string!,
-                            text: statuses![i]["text"].string,
-                            user: user
-                        )
+                        // create tweet
+                        var tweet:TWPTweet? = TWPTweet(status: statuses![i], user: user)
                         tweets.addObject(tweet!)
                     }
                     
@@ -245,6 +244,29 @@ final class TWPTwitterAPI: NSObject {
         
     }
     
+    func getCurrentUserRetweetIDWithID(id: String) -> RACSignal? {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.getStatusesShowWithID(id,
+                includeMyRetweet: true,
+                success: { (status) -> Void in
+                    println(status)
+                    var currentUserRetweet: Dictionary<String, JSONValue> = status!["current_user_retweet"]!.object as Dictionary<String, JSONValue>!
+                    
+                    var currentUserRetweetID: String! = currentUserRetweet["id_str"]?.string!
+                    
+                    subscriber.sendNext(currentUserRetweetID)
+                    subscriber.sendCompleted()
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            
+            return RACDisposable(block: { () -> Void in
+                
+            })
+        })
+    }
+    
     func getStatuesShowWithID(id: String, count: Int? = nil, trimUser: Bool? = nil, includeMyRetweet: Bool? = nil, includeEntities: Bool? = nil) -> RACSignal? {
         
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
@@ -257,12 +279,11 @@ final class TWPTwitterAPI: NSObject {
                     println(status);
                     var userDictionary:Dictionary<String, JSONValue> = status!["user"]!.object as Dictionary<String, JSONValue>!
                     
+                    // create user
                     var user:TWPUser = TWPUser(dictionary: userDictionary)
                     
-                    var tweet:TWPTweet? = TWPTweet(tweetID: status!["id_str"]!.string!,
-                        text: status!["text"]!.string,
-                        user: user
-                    )
+                    // create tweet
+                    var tweet:TWPTweet? = TWPTweet(dictionary: status!, user: user)
 //                    var tweet:TWPTweet = TWPTweet(text: status!["text"]!.string, profileImageUrl:status!["user"]["profile_image_url"]!.string)
                     
                     subscriber.sendNext(tweet)
@@ -277,6 +298,52 @@ final class TWPTwitterAPI: NSObject {
             })
         })
         
+    }
+    
+    func postStatusRetweetWithID(id: String, trimUser: Bool? = nil) -> RACSignal? {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.postStatusRetweetWithID(id,
+                trimUser: trimUser,
+                success: { (status) -> Void in
+                    subscriber.sendNext(nil)
+                    subscriber.sendCompleted()
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            
+            return RACDisposable(block: { () -> Void in
+                
+            })
+        })
+    }
+    
+    func postStatusesDestroyWithID(id: String, trimUser: Bool? = nil) -> RACSignal? {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.postStatusesDestroyWithID(id,
+                trimUser: trimUser,
+                success: { (status) -> Void in
+                    subscriber.sendNext(nil)
+                    subscriber.sendCompleted()
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            
+            return RACDisposable(block: { () -> Void in
+                
+            })
+        })
+    }
+
+    
+    // MARK: - Wrapper Methods(Not Use RACSignal)
+    func postStatusRetweetWithID(id: String, trimUser: Bool? = nil, success: ((status: Dictionary<String, JSONValue>?) -> Void)? = nil, failure: FailureHandler? = nil) {
+        self.swifter.postStatusRetweetWithID(id, trimUser: trimUser, success: success, failure: failure)
+    }
+    
+    func postStatusesDestroyWithID(id: String, trimUser: Bool? = nil, success: ((status: Dictionary<String, JSONValue>?) -> Void)? = nil, failure: FailureHandler? = nil) {
+        self.swifter.postStatusesDestroyWithID(id, trimUser: trimUser, success: success, failure: failure)
     }
 }
 

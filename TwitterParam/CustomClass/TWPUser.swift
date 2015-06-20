@@ -30,10 +30,10 @@ class TWPUser:NSObject {
     
     convenience init(dictionary: Dictionary<String, JSONValue>) {
         self.init(
-            userID:dictionary["id_str"]?.string,
-            name:dictionary["name"]?.string,
-            screenName:dictionary["screen_name"]?.string,
-            profileImageUrl:dictionary["profile_image_url"]?.string
+            userID: dictionary["id_str"]?.string,
+            name: dictionary["name"]?.string,
+            screenName: dictionary["screen_name"]?.string,
+            profileImageUrl: dictionary["profile_image_url"]?.string
         )
     }
     

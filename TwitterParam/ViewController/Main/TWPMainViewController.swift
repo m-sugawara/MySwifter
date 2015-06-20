@@ -10,6 +10,12 @@ import UIKit
 
 let kTWPMainTableViewCellIdentifier = "MainTableViewCell";
 
+enum TWPMainTableViewButtonType: Int {
+    case reply = 1
+    case retweet
+    case favorite
+}
+
 class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate {
     let model = TWPMainViewModel()
     var userID:String!
@@ -169,6 +175,33 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
+    // MARK: - Actions
+    func tableViewButtonsTouch(sender: UIButton, event: UIEvent) {
+        var touch: UITouch = event.allTouches()?.first as! UITouch
+        var point = touch.locationInView(self.tableView)
+        var indexPath = self.tableView.indexPathForRowAtPoint(point)
+        
+        var type: TWPMainTableViewButtonType = TWPMainTableViewButtonType(rawValue: sender.tag)!
+        switch type {
+        case .reply:
+            println("reply button tapped index:\(indexPath!.row)")
+            break
+        case .retweet:
+            self.model.postStatusRetweetWithIndex(indexPath!.row,
+                success: { () -> Void in
+                    println("retweet success!")
+                    self.tableView.reloadData()
+            }, failure: { (error) -> Void in
+                println("retweet error:\(error)")
+            })
+
+            break
+        case .favorite:
+            println("favorite button tapped index:\(indexPath!.row)")
+            break
+        }
+    }
+    
     // MARK: - UITableViewDataSource
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -181,18 +214,30 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         // create Tweet Object
         var tweet:TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet
         
+        // set Cell Items
         cell.iconImageView.sd_setImageWithURL(tweet.user?.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
         cell.tweetTextLabel.text = tweet.text
         cell.userNameLabel.text = tweet.user?.name
         cell.screenNameLabel.text = tweet.user?.screenNameWithAt
+        cell.retweetButton.selected = tweet.retweeted!
+        
+        // set Cell Actions
+        cell.replyButton.tag = TWPMainTableViewButtonType.reply.rawValue
+        cell.replyButton.addTarget(self, action: "tableViewButtonsTouch:event:", forControlEvents: .TouchUpInside)
+        
+        cell.retweetButton.tag = TWPMainTableViewButtonType.retweet.rawValue
+        cell.retweetButton.addTarget(self, action: "tableViewButtonsTouch:event:", forControlEvents: .TouchUpInside)
+        
+        cell.favoriteButton.tag = TWPMainTableViewButtonType.favorite.rawValue
+        cell.favoriteButton.addTarget(self, action: "tableViewButtonsTouch:event:", forControlEvents: .TouchUpInside)
         
         return cell
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 100.0
+        return 120.0
     }
     
     // MARK: - UITableViewDelegate

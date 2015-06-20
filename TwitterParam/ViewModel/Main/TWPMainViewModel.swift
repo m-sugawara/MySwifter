@@ -23,7 +23,47 @@ class TWPMainViewModel: NSObject {
     }
     
     // MARK: - Public Methods
-    
+    func postStatusRetweetWithIndex(index: Int, success: ()->Void, failure: (error:NSError)->Void) {
+        var tweet: TWPTweet = self.tweets[index] as! TWPTweet
+        
+        // if haven't retweeted yet, try to retweet
+        if (tweet.retweeted != true) {
+            self.twitterAPI.postStatusRetweetWithID(tweet.tweetID!,
+                trimUser: false,
+                success: { (status) -> Void in
+                    (self.tweets[index] as! TWPTweet).retweeted = true
+                    success()
+                }) { (error) -> Void in
+                    failure(error: error)
+            }
+        }
+        // if already have retweeted, destroy retweet
+        else {
+            var retweetID:String?
+            
+            // 1. get current user's retweetID
+            self.twitterAPI.getCurrentUserRetweetIDWithID(tweet.tweetID!)?.subscribeNext({ (next) -> Void in
+                    // if successed, current user's retweetID
+                    retweetID = next as? String
+                }, error: { (error) -> Void in
+                    failure(error: error)
+                }, completed: { () -> Void in
+                    // 2. destroy current user's retweet
+                    self.twitterAPI.postStatusesDestroyWithID(retweetID!,
+                        trimUser: false,
+                        success: { (status) -> Void in
+                            // 3. this tweet become be NOT retweeted
+                            (self.tweets[index] as! TWPTweet).retweeted = false
+                            success()
+                        }, failure: { (error) -> Void in
+                            failure(error: error)
+                    })
+                })
+        }
+        
+        
+    }
+
     // MARK: - Private Methods
 
     

@@ -6,9 +6,9 @@
 //  Copyright (c) 2015年 sugawar. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
-class TWPTweet {
+class TWPTweet:NSObject {
     var tweetID: String
     var text: String?
     var profileImageUrl: NSURL?

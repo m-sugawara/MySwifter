@@ -22,7 +22,7 @@ final class TWPUserList:NSObject {
     
     // MARK: - Public Methods
     func appendUser(_user:TWPUser) {
-        if self.findUserByUserID(_user.userID) != nil {
+        if self.findUserByUserID(_user.userID!) != nil {
             self.updateUser(_user)
         }
         else {

@@ -68,7 +68,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
             self.userIDLabel.text = "no data"
         }
         
-        self.userIconImageView.sd_setImageWithURL(NSURL(string: self.model.user.profileImageUrl!),
+        self.userIconImageView.sd_setImageWithURL(self.model.user.profileImageUrl,
             placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
     }

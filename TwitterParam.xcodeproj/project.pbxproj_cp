@@ -20,7 +20,7 @@
 		59898DB91B33FFB200273760 /* TWPTweetDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */; };
 		59898DBC1B34014600273760 /* TWPTweetDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DBB1B34014600273760 /* TWPTweetDetailViewModel.swift */; };
 		59AE82741B3537250083F5FF /* TWPUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AE82731B3537250083F5FF /* TWPUser.swift */; };
-		59AE827E1B353E180083F5FF /* SwifteriOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AE827D1B353E180083F5FF /* SwifteriOS.framework */; };
+		59AE827C1B353C350083F5FF /* SwifteriOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AE827B1B353C350083F5FF /* SwifteriOS.framework */; };
 		59B578A81B1ED17700E3D801 /* TWPUserInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578A71B1ED17700E3D801 /* TWPUserInfoViewController.swift */; };
 		59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */; };
 		59B578AD1B1EFA6E00E3D801 /* TWPTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */; };
@@ -59,6 +59,10 @@
 		5917020E1B1BEA5D008ADA01 /* TWPMainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPMainViewModel.swift; sourceTree = "<group>"; };
 		591702101B1C0741008ADA01 /* TwitterParam-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TwitterParam-Bridging-Header.h"; sourceTree = "<group>"; };
 		591702121B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPMainViewControllerTableViewCell.swift; sourceTree = "<group>"; };
+		591702161B1C5082008ADA01 /* SwifteriOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwifteriOS.framework; path = "Swifter/build/Debug-iphoneos/SwifteriOS.framework"; sourceTree = "<group>"; };
+		5917021A1B1C5279008ADA01 /* SwifteriOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwifteriOS.framework; path = "Swifter/build/Debug-iphoneos/SwifteriOS.framework"; sourceTree = "<group>"; };
+		5917021C1B1C537C008ADA01 /* SwifteriOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwifteriOS.framework; path = "Swifter/build/Debug-iphoneos/SwifteriOS.framework"; sourceTree = "<group>"; };
+		591702341B1C5705008ADA01 /* SwifteriOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwifteriOS.framework; path = "Swifter/build/Debug-iphoneos/SwifteriOS.framework"; sourceTree = "<group>"; };
 		593318961B33E34600110701 /* TWPUserInfoViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserInfoViewControllerTableViewCell.swift; path = CustomSubviews/TWPUserInfoViewControllerTableViewCell.swift; sourceTree = "<group>"; };
 		595FC1061B1BE8400088A2EB /* TwitterParam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwitterParam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		595FC10A1B1BE8400088A2EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -74,7 +78,8 @@
 		59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewController.swift; path = TweetDetail/TWPTweetDetailViewController.swift; sourceTree = "<group>"; };
 		59898DBB1B34014600273760 /* TWPTweetDetailViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewModel.swift; path = TweetDetail/TWPTweetDetailViewModel.swift; sourceTree = "<group>"; };
 		59AE82731B3537250083F5FF /* TWPUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUser.swift; sourceTree = "<group>"; };
-		59AE827D1B353E180083F5FF /* SwifteriOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwifteriOS.framework; path = "Swifter/build/Debug-iphoneos/SwifteriOS.framework"; sourceTree = "<group>"; };
+		59AE82781B353B160083F5FF /* SwifteriOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwifteriOS.framework; path = "Swifter/build/Debug-iphoneos/SwifteriOS.framework"; sourceTree = "<group>"; };
+		59AE827B1B353C350083F5FF /* SwifteriOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwifteriOS.framework; path = "Swifter/build/Debug-iphoneos/SwifteriOS.framework"; sourceTree = "<group>"; };
 		59B578A71B1ED17700E3D801 /* TWPUserInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewController.swift; sourceTree = "<group>"; };
 		59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewModel.swift; sourceTree = "<group>"; };
 		59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTweet.swift; sourceTree = "<group>"; };
@@ -88,7 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59AE827E1B353E180083F5FF /* SwifteriOS.framework in Frameworks */,
+				59AE827C1B353C350083F5FF /* SwifteriOS.framework in Frameworks */,
 				DB680F265933AD2C1D2A44CB /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,7 +304,12 @@
 		E271F7FE9339B364CFDA305A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				59AE827D1B353E180083F5FF /* SwifteriOS.framework */,
+				59AE827B1B353C350083F5FF /* SwifteriOS.framework */,
+				59AE82781B353B160083F5FF /* SwifteriOS.framework */,
+				591702341B1C5705008ADA01 /* SwifteriOS.framework */,
+				5917021C1B1C537C008ADA01 /* SwifteriOS.framework */,
+				5917021A1B1C5279008ADA01 /* SwifteriOS.framework */,
+				591702161B1C5082008ADA01 /* SwifteriOS.framework */,
 				41E4386D4B50C45F2A58FD39 /* libPods.a */,
 			);
 			name = Frameworks;

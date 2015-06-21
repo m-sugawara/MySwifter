@@ -291,43 +291,82 @@
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="7xr-BB-odo"/>
                                 </connections>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GQe-3u-uOW" userLabel="AccountButton">
-                                <rect key="frame" x="320" y="550" width="100" height="30"/>
-                                <state key="normal" title="Account Login">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pWu-GW-7pQ" userLabel="OAuthButton">
-                                <rect key="frame" x="187" y="550" width="86" height="30"/>
-                                <state key="normal" title="OAuth Login">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
+                            <view hidden="YES" opaque="NO" alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="heq-XH-cxR" userLabel="LoadingView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="0nf-68-YHp">
+                                        <rect key="frame" x="281" y="281" width="37" height="37"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerX" secondItem="0nf-68-YHp" secondAttribute="centerX" id="cgZ-LD-zmv"/>
+                                    <constraint firstAttribute="centerY" secondItem="0nf-68-YHp" secondAttribute="centerY" id="v4e-fw-8JY"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gnz-yn-ivd" userLabel="FooterView">
+                                <rect key="frame" x="0.0" y="530" width="600" height="70"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GQe-3u-uOW" userLabel="AccountButton">
+                                        <rect key="frame" x="170" y="20" width="100" height="30"/>
+                                        <state key="normal" title="Account Login">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pWu-GW-7pQ" userLabel="OAuthButton">
+                                        <rect key="frame" x="337" y="20" width="86" height="30"/>
+                                        <state key="normal" title="OAuth Login">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="pWu-GW-7pQ" secondAttribute="centerY" id="FHJ-qd-QJX"/>
+                                    <constraint firstAttribute="centerX" secondItem="GQe-3u-uOW" secondAttribute="centerX" constant="80" id="K3S-8Y-Mzq"/>
+                                    <constraint firstAttribute="centerY" secondItem="GQe-3u-uOW" secondAttribute="centerY" id="Qsi-V8-DZw"/>
+                                    <constraint firstAttribute="height" constant="70" id="l9r-B8-iay"/>
+                                    <constraint firstAttribute="centerX" secondItem="pWu-GW-7pQ" secondAttribute="centerX" constant="-80" id="mAz-yx-hs1"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.12156862745098039" green="0.12941176470588237" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="gnz-yn-ivd" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-16" id="19a-Fi-OUH"/>
                             <constraint firstAttribute="trailing" secondItem="5Tb-Tr-2JF" secondAttribute="trailing" id="4O0-3L-Qq1"/>
-                            <constraint firstItem="GQe-3u-uOW" firstAttribute="bottom" secondItem="pWu-GW-7pQ" secondAttribute="bottom" id="4R1-UP-Mbx"/>
                             <constraint firstItem="5Tb-Tr-2JF" firstAttribute="top" secondItem="XAe-Gr-6GN" secondAttribute="bottom" id="7cc-WO-wlL"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="pWu-GW-7pQ" secondAttribute="bottom" constant="20" id="AeH-Ph-v1c"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="heq-XH-cxR" secondAttribute="trailing" constant="-16" id="AAT-R3-S5W"/>
                             <constraint firstItem="1PD-f5-7P0" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="B2A-3z-2k6"/>
-                            <constraint firstItem="GQe-3u-uOW" firstAttribute="top" secondItem="pWu-GW-7pQ" secondAttribute="top" id="I9E-sp-802"/>
-                            <constraint firstAttribute="centerX" secondItem="pWu-GW-7pQ" secondAttribute="centerX" constant="70" id="IML-ek-8fj"/>
+                            <constraint firstItem="gnz-yn-ivd" firstAttribute="top" secondItem="5Tb-Tr-2JF" secondAttribute="bottom" id="JPc-mU-1aK"/>
                             <constraint firstItem="XAe-Gr-6GN" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="OXq-eV-f4U"/>
-                            <constraint firstAttribute="centerX" secondItem="GQe-3u-uOW" secondAttribute="centerX" constant="-70" id="R7D-1s-ONC"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="gnz-yn-ivd" secondAttribute="bottom" id="Rft-0Z-wFi"/>
                             <constraint firstItem="1PD-f5-7P0" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="WUU-nj-2PU"/>
                             <constraint firstAttribute="trailing" secondItem="1PD-f5-7P0" secondAttribute="trailing" id="ZKp-8l-Mik"/>
+                            <constraint firstItem="heq-XH-cxR" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="topMargin" id="dA0-XW-SAI"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="gnz-yn-ivd" secondAttribute="bottom" id="dcC-vk-gvM"/>
                             <constraint firstItem="XAe-Gr-6GN" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="eNi-Oe-D5e"/>
+                            <constraint firstAttribute="bottom" secondItem="gnz-yn-ivd" secondAttribute="bottom" id="eOF-kc-jQ3"/>
                             <constraint firstItem="5Tb-Tr-2JF" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="iHu-9B-8iZ"/>
-                            <constraint firstItem="pWu-GW-7pQ" firstAttribute="top" secondItem="5Tb-Tr-2JF" secondAttribute="bottom" constant="20" id="ikK-1l-vM5"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="heq-XH-cxR" secondAttribute="bottom" id="j0y-V1-6gQ"/>
                             <constraint firstAttribute="trailing" secondItem="XAe-Gr-6GN" secondAttribute="trailing" id="qDr-KH-Tlc"/>
+                            <constraint firstItem="heq-XH-cxR" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-16" id="vsw-Q4-AV7"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="gnz-yn-ivd" secondAttribute="trailing" constant="-16" id="xxZ-FM-fQg"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="Rft-0Z-wFi"/>
+                                <exclude reference="dcC-vk-gvM"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="accountButton" destination="GQe-3u-uOW" id="mbN-bK-G66"/>
+                        <outlet property="activityIndicatorView" destination="0nf-68-YHp" id="eU1-5g-vv1"/>
                         <outlet property="feedUpdateButton" destination="ByM-wE-Dio" id="f28-OT-bMM"/>
+                        <outlet property="footerView" destination="gnz-yn-ivd" id="NDu-2w-Niq"/>
+                        <outlet property="loadingView" destination="heq-XH-cxR" id="Axf-P9-R76"/>
                         <outlet property="logoutButton" destination="93L-gs-Ut7" id="NWO-4Q-hQc"/>
                         <outlet property="oauthButton" destination="pWu-GW-7pQ" id="mc2-m5-zr5"/>
                         <outlet property="tableView" destination="5Tb-Tr-2JF" id="Hex-So-DsZ"/>
@@ -663,7 +702,7 @@
         <image name="RetweetButton_Selected" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="9bH-vG-VwH"/>
         <segue reference="2T1-9Z-04B"/>
+        <segue reference="9bH-vG-VwH"/>
     </inferredMetricsTieBreakers>
 </document>

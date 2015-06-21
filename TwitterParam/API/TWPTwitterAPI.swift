@@ -132,7 +132,7 @@ final class TWPTwitterAPI: NSObject {
     func tryToLogin() -> RACSignal? {
         // try to Login
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.twitterAuthorizeWithOAuth().subscribeError({ (error) -> Void in
+            self.twitterAuthorizeWithAccount().subscribeError({ (error) -> Void in
                 
                 if (error.code == kTWPErrorCodeNoTwitterAccount || error.code == kTWPErrorCodeNotGrantedACAccount) {
                     // if try to login for using ACAccount failed, try to login with OAuth.

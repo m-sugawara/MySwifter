@@ -16,10 +16,12 @@ enum TWPMainTableViewButtonType: Int {
     case favorite
 }
 
-class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate {
+class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate {
     let model = TWPMainViewModel()
     var userID: String!
     var selectedTweetID: String!
+    
+    var footerViewHidden: Bool!
     
     var logoutButtonCommand: RACCommand!
     
@@ -28,6 +30,9 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var accountButton: UIButton!
     @IBOutlet weak var feedUpdateButton: UIButton!
     @IBOutlet weak var logoutButton: UIButton!
+    @IBOutlet weak var footerView: UIView!
+    @IBOutlet weak var loadingView: UIView!
+    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
     // MARK: - Disignated Initializer
     required init(coder aDecoder: NSCoder) {
@@ -46,9 +51,12 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.tableView.delegate = self
         
         // first, load current user's home timeline
+        self.startLoading()
         self.model.feedUpdateButtonSignal().subscribeError({ (error) -> Void in
+            self.stopLoading()
             self.showAlertWithTitle("ERROR", message: error.localizedDescription)
         }, completed: { () -> Void in
+            self.stopLoading()
             println("first feed update completed!")
         })
     }
@@ -105,6 +113,17 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    // MARK: - Private Methods
+    func startLoading() {
+        self.loadingView.hidden = false
+        self.activityIndicatorView.startAnimating()
+    }
+    
+    func stopLoading() {
+        self.loadingView.hidden = true
+        self.activityIndicatorView.stopAnimating()
     }
 
     
@@ -254,6 +273,51 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
         performSegueWithIdentifier("fromMainToTweetDetail", sender: nil)
+        
+    }
+    
+    // MARK: - UIScrollViewDelegate
+    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
+        
+        if footerViewHidden != true {
+            self.footerViewHidden = true
+            UIView.animateWithDuration(0.5,
+                animations: { () -> Void in
+                    let tableViewFrame = self.tableView.frame
+                    let footerViewFrame = self.footerView.frame
+                    // tableView
+                    var newTableViewFrame = CGRect(origin: tableViewFrame.origin,
+                        size: CGSize(width: tableViewFrame.size.width, height: tableViewFrame.size.height + footerViewFrame.size.height)
+                    )
+                    self.tableView.frame = newTableViewFrame
+                    // footerView
+                    var newFooterViewFrame = CGRect(origin: CGPoint(x: footerViewFrame.origin.x, y: footerViewFrame.origin.y + footerViewFrame.size.height), size: footerViewFrame.size)
+                    self.footerView.frame = newFooterViewFrame
+            })
+        }
+    }
+
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        
+        if scrollView.contentOffset.y == 0.0 && self.footerViewHidden == true {
+            self.footerViewHidden = false
+            UIView.animateWithDuration(0.5,
+                animations: { () -> Void in
+                    UIView.animateWithDuration(1.0,
+                        animations: { () -> Void in
+                            let tableViewFrame = self.tableView.frame
+                            let footerViewFrame = self.footerView.frame
+                            // tableView
+                            var newTableViewFrame = CGRect(origin: tableViewFrame.origin,
+                                size: CGSize(width: tableViewFrame.size.width, height: tableViewFrame.size.height - footerViewFrame.size.height)
+                            )
+                            self.tableView.frame = newTableViewFrame
+                            // footerView
+                            var newFooterViewFrame = CGRect(origin: CGPoint(x: footerViewFrame.origin.x, y: footerViewFrame.origin.y - footerViewFrame.size.height), size: footerViewFrame.size)
+                            self.footerView.frame = newFooterViewFrame
+                    })
+            })
+        }
         
     }
 

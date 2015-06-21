@@ -10,7 +10,7 @@ import Foundation
 
 extension UIViewController {
     // MARK: - Alert
-    func showAlertWithTitle(title: String?, message: String?, cancelButtonTitle: String? = "OK", cancelTappedAction: (()->Void)? = nil) {
+    func showAlertWithTitle(title: String?, message: String?, cancelButtonTitle: String? = "OK", cancelTappedAction: (()->Void)? = nil,  otherButtonTitles: [String]? = nil, otherButtonTappedActions: ((UIAlertAction!)->Void)!...) {
         if objc_getClass("UIAlertController") != nil {
             // use UIAlertController
             var alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
@@ -19,6 +19,16 @@ extension UIViewController {
                 println("cancel")
             })
             alertController.addAction(cancelAction)
+            
+            // set other actions, if exists
+            if let buttonTitles = otherButtonTitles {
+                var i:Int = 0
+                for otherButtonTitle: String in buttonTitles {
+                    let otherButtonAction = UIAlertAction(title: otherButtonTitle, style: UIAlertActionStyle.Default, handler: otherButtonTappedActions[i])
+                    alertController.addAction(otherButtonAction)
+                    i++
+                }
+            }
             
             self.presentViewController(alertController, animated: true, completion: nil)
         }

@@ -86,6 +86,12 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XAe-Gr-6GN" userLabel="HeaderView">
                                 <rect key="frame" x="0.0" y="20" width="600" height="50"/>
                                 <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="93L-gs-Ut7" userLabel="LogoutButton">
+                                        <rect key="frame" x="15" y="9" width="32" height="32"/>
+                                        <state key="normal" image="Main_LogoutButton">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BOg-cV-hJQ" userLabel="UserInfoButton">
                                         <rect key="frame" x="563" y="14" width="22" height="22"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -112,6 +118,8 @@
                                     <constraint firstAttribute="trailing" secondItem="BOg-cV-hJQ" secondAttribute="trailing" constant="15" id="Mdm-GV-9KW"/>
                                     <constraint firstAttribute="centerY" secondItem="ByM-wE-Dio" secondAttribute="centerY" id="cej-WM-eMg"/>
                                     <constraint firstAttribute="centerY" secondItem="BOg-cV-hJQ" secondAttribute="centerY" id="dYx-Zz-fVz"/>
+                                    <constraint firstItem="93L-gs-Ut7" firstAttribute="leading" secondItem="XAe-Gr-6GN" secondAttribute="leading" constant="15" id="eOk-wQ-E6Z"/>
+                                    <constraint firstAttribute="centerY" secondItem="93L-gs-Ut7" secondAttribute="centerY" id="myd-7j-fYx"/>
                                     <constraint firstItem="ByM-wE-Dio" firstAttribute="trailing" secondItem="BOg-cV-hJQ" secondAttribute="leading" constant="-15" id="zyw-kh-ZQb"/>
                                 </constraints>
                             </view>
@@ -320,6 +328,7 @@
                     <connections>
                         <outlet property="accountButton" destination="GQe-3u-uOW" id="mbN-bK-G66"/>
                         <outlet property="feedUpdateButton" destination="ByM-wE-Dio" id="f28-OT-bMM"/>
+                        <outlet property="logoutButton" destination="93L-gs-Ut7" id="NWO-4Q-hQc"/>
                         <outlet property="oauthButton" destination="pWu-GW-7pQ" id="mc2-m5-zr5"/>
                         <outlet property="tableView" destination="5Tb-Tr-2JF" id="Hex-So-DsZ"/>
                         <segue destination="E1v-bM-Fjn" kind="show" identifier="fromMainToTweetDetail" id="9bH-vG-VwH"/>
@@ -647,6 +656,7 @@
         <image name="FavoriteButton_NonSelected" width="64" height="64"/>
         <image name="FavoriteButton_Selected" width="64" height="64"/>
         <image name="Login_LoginButton" width="64" height="64"/>
+        <image name="Main_LogoutButton" width="32" height="32"/>
         <image name="Main_TableViewCellIcon" width="61" height="60"/>
         <image name="Main_TableViewUpdateButton" width="90" height="90"/>
         <image name="RetweetButton_NonSelected" width="32" height="32"/>

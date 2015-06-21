@@ -14,6 +14,7 @@ class TWPMainViewModel: NSObject {
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: NSArray = []
     
+    // because to feed update singal called many times, signal set a variable.
     private var _feedUpdateButtonSignal: RACSignal?
     
     // MARK: - Initializer
@@ -68,6 +69,7 @@ class TWPMainViewModel: NSObject {
 
     
     // MARK: - RACCommands
+    // oauth
     var oauthButtonCommand: RACCommand {
         return RACCommand(signalBlock: { (input) -> RACSignal! in
             
@@ -93,6 +95,7 @@ class TWPMainViewModel: NSObject {
         })
     }
 
+    // account
     var accountButtonCommand: RACCommand {
         return RACCommand(signalBlock: { (input) -> RACSignal! in
             return self.accountButtonSignal
@@ -117,6 +120,7 @@ class TWPMainViewModel: NSObject {
         })
     }
     
+    // feed update
     var feedUpdateButtonCommand: RACCommand {
         return RACCommand(signalBlock: { (input) -> RACSignal! in
             return self.feedUpdateButtonSignal()
@@ -140,5 +144,20 @@ class TWPMainViewModel: NSObject {
         })
         
         return _feedUpdateButtonSignal!
+    }
+    
+    // logout
+    var logoutButtonCommand: RACCommand {
+        return RACCommand(signalBlock: { (input) -> RACSignal! in
+            return self.logoutButtonSignal()
+        })
+    }
+    func logoutButtonSignal() -> RACSignal {
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+
+            
+            return RACDisposable(block: { () -> Void in
+            })
+        })
     }
 }

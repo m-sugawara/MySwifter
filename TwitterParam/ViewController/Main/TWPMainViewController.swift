@@ -18,13 +18,16 @@ enum TWPMainTableViewButtonType: Int {
 
 class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate {
     let model = TWPMainViewModel()
-    var userID:String!
-    var selectedTweetID:String!
+    var userID: String!
+    var selectedTweetID: String!
+    
+    var logoutButtonCommand: RACCommand!
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var oauthButton: UIButton!
     @IBOutlet weak var accountButton: UIButton!
     @IBOutlet weak var feedUpdateButton: UIButton!
+    @IBOutlet weak var logoutButton: UIButton!
     
     // MARK: - Disignated Initializer
     required init(coder aDecoder: NSCoder) {
@@ -120,6 +123,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.accountButton.rac_command = self.model.accountButtonCommand
         self.oauthButton.rac_command = self.model.oauthButtonCommand
         self.feedUpdateButton.rac_command = self.model.feedUpdateButtonCommand
+        self.logoutButton.rac_command = self.logoutButtonCommand
         
         // subscribe ViewModel's RACSignal
         // Completed Signals
@@ -156,7 +160,8 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         // bind ViewModel's parameter
         self.model.rac_valuesForKeyPath("tapCount", observer: self).subscribeNext { (tapCount) -> Void in
             println(tapCount)
-        }        // TODO: 後で消す
+        }
+        // TODO: 後で消す
         self.model.rac_valuesForKeyPath("tweets", observer: self).subscribeNext { (tweets) -> Void in
             self.tableView.reloadData()
         }
@@ -164,6 +169,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     // MARK: - Actions
     func tableViewButtonsTouch(sender: UIButton, event: UIEvent) {
+        // get indexpath from touch point
         var touch: UITouch = event.allTouches()?.first as! UITouch
         var point = touch.locationInView(self.tableView)
         var indexPath = self.tableView.indexPathForRowAtPoint(point)
@@ -181,7 +187,6 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             }, failure: { (error) -> Void in
                 println("retweet error:\(error)")
             })
-
             break
         case .favorite:
             println("favorite button tapped index:\(indexPath!.row)")

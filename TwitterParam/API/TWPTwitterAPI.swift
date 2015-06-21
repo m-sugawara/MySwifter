@@ -54,14 +54,7 @@ final class TWPTwitterAPI: NSObject {
                             // Save User's AccessToken
                             TWPUserHelper.saveUserAccount(twitterAccount)
                             
-                            // when authorize successed, get Timeline
-                            self.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
-                                subscriber.sendNext(next)
-                                }, error: { (error) -> Void in
-                                    subscriber.sendError(error)
-                                }, completed: { () -> Void in
-                                    subscriber.sendCompleted()
-                            })
+                            subscriber.sendCompleted()
                         }
                     }
                     else {
@@ -72,7 +65,10 @@ final class TWPTwitterAPI: NSObject {
                     }
                 }
                 else {
-                    subscriber.sendError(nil)
+                    println("ACAccount access failed.")
+                    
+                    let error = self.errorWithCode(kTWPErrorCodeNotGrantedACAccount, message: "ACAccount access failed")
+                    subscriber.sendError(error)
                 }
             }
             
@@ -96,14 +92,7 @@ final class TWPTwitterAPI: NSObject {
                 let user = TWPUserHelper.fetchUserQData()
                 println("user\(user)")
                 
-                // when authorize successed, get Timeline
-                self.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
-                    subscriber.sendNext(next)
-                    }, error: { (error) -> Void in
-                        subscriber.sendError(error)
-                    }, completed: { () -> Void in
-                        subscriber.sendCompleted()
-                })
+                subscriber.sendCompleted()
             }
             else {
                 // Nothing AccessToken
@@ -113,14 +102,7 @@ final class TWPTwitterAPI: NSObject {
                         var accessToken = self.swifter.client.credential?.accessToken
                         TWPUserHelper.saveUserToken(accessToken!)
                         
-                        // when authorize successed, get Timeline
-                        self.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
-                            subscriber.sendNext(next)
-                        }, error: { (error) -> Void in
-                            subscriber.sendError(error)
-                        }, completed: { () -> Void in
-                            subscriber.sendCompleted()
-                        })
+                        subscriber.sendCompleted()
                     },
                     failure: { (error) -> Void in
                         subscriber.sendError(error)
@@ -135,7 +117,46 @@ final class TWPTwitterAPI: NSObject {
 
     }
     
+    // MARK: - Logout
+    func tryToLogout() -> RACSignal {
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            TWPUserHelper.removeUserToken()
+            subscriber.sendCompleted()
+            
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+    }
+    
     // MARK: - Wrapper Method
+    func tryToLogin() -> RACSignal? {
+        // try to Login
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.twitterAuthorizeWithOAuth().subscribeError({ (error) -> Void in
+                
+                if (error.code == kTWPErrorCodeNoTwitterAccount || error.code == kTWPErrorCodeNotGrantedACAccount) {
+                    // if try to login for using ACAccount failed, try to login with OAuth.
+                    self.twitterAuthorizeWithOAuth().subscribeError( { (error) -> Void in
+                        subscriber.sendError(error)
+                    }, completed: { () -> Void in
+                        // OAuth access success!
+                        subscriber.sendCompleted()
+                    })
+                }
+                else {
+                    subscriber.sendError(error)
+                }
+                
+            }, completed: { () -> Void in
+                // ACAccount access success!
+                subscriber.sendCompleted()
+            })
+            
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+    }
+    
     func getMyUser() -> RACSignal? {
         // get my userID
         let user = TWPUserHelper.fetchUserQData()

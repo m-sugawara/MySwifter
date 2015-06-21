@@ -9,3 +9,4 @@
 import Foundation
 
 let kTWPErrorCodeNoTwitterAccount = 100
+let kTWPErrorCodeNotGrantedACAccount = 101

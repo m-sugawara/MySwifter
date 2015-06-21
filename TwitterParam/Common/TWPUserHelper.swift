@@ -58,6 +58,19 @@ class TWPUserHelper {
         return true
     }
     
+    class func removeUserToken() -> Bool {
+        var userDefaults = NSUserDefaults.standardUserDefaults()
+        
+        userDefaults.removeObjectForKey(kKeyForUserTokenKey)
+        userDefaults.removeObjectForKey(kKeyForUserTokenSecret)
+        userDefaults.removeObjectForKey(kKeyForUserTokenUserID)
+        userDefaults.removeObjectForKey(kKeyForUserTokenScreenName)
+        userDefaults.removeObjectForKey(kKeyForUserTokenVerifier)
+        userDefaults.synchronize()
+        
+        return true
+    }
+    
     class func fetchUserToken() -> SwifterCredential? {
         
         var userDefaults = NSUserDefaults.standardUserDefaults()

@@ -51,6 +51,9 @@ final class TWPTwitterAPI: NSObject {
                             
                             self.swifter = Swifter(account: twitterAccount)
                             
+                            // Save User's AccessToken
+                            TWPUserHelper.saveUserAccount(twitterAccount)
+                            
                             // when authorize successed, get Timeline
                             self.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
                                 subscriber.sendNext(next)
@@ -136,7 +139,7 @@ final class TWPTwitterAPI: NSObject {
     func getMyUser() -> RACSignal? {
         // get my userID
         let user = TWPUserHelper.fetchUserQData()
-        let userID = user["userID"] as? String
+        let userID = user!["userID"] as? String
         
         return self.getUsersShowWithUserID(userID!)
     }

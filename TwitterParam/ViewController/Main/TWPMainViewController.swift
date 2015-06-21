@@ -52,7 +52,12 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             // TODO: bad solution
             let user = TWPUserHelper.fetchUserQData()
-            userInfoViewController.tempUserID = user["userID"] as? String
+            if user != nil {
+                userInfoViewController.tempUserID = user!["userID"] as! String?
+            }
+            else {
+                userInfoViewController.tempUserID = nil
+            }
             
             // bind Next ViewController's Commands
             userInfoViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
@@ -91,25 +96,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    // MARK: - Alert
-    func showAlertWithTitle(title: String?, message: String?) {
-        if objc_getClass("UIAlertController") != nil {
-            // use UIAlertController
-            var alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-            let cancelAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
-                println("Cancel Button tapped")
-            })
-            alertController.addAction(cancelAction)
-            
-            presentViewController(alertController, animated: true, completion: nil)
-        }
-        else {
-            // use UIAlertView
-            var alertView = UIAlertView(title: title, message: message, delegate: self, cancelButtonTitle: "OK")
-            alertView.show()
-        }
-    }
+
     
     // MARK: - Common Handler
     let errorHandler: ((NSError!) -> Void) = {

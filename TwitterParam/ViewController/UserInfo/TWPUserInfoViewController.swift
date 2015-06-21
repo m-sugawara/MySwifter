@@ -28,30 +28,48 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     // MARK: - LifeCycle
     override func viewDidLoad() {
         
-        // TODO: bad solution
-        self.model.userID = self.tempUserID
-        
         super.viewDidLoad()
         
         self.bindCommands()
         
-        // get user info
-        self.model.getUserInfoSignal().subscribeNext({ (user) -> Void in
-            println("viewController.user:\(user)")
-        }, error: { (error) -> Void in
-            println("viewController.error:\(error)")
-        }) { () -> Void in
-            self.setUserProfile()
+        if self.tempUserID != nil {
+            // TODO: bad solution
+            self.model.userID = self.tempUserID
             
-            println("viewController's get userinfo completed")
-            
-            self.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
-                println("getUserTimeline.error:\(error)")
-            }, completed: { () -> Void in
-                self.tableView.reloadData()
-                println("getUserTimeline completed!")
+            // get user info
+            self.model.getUserInfoSignal().subscribeNext({ (user) -> Void in
+                println("viewController.user:\(user)")
+                }, error: { (error) -> Void in
+                    println("viewController.error:\(error)")
+                }) { () -> Void in
+                    self.setUserProfile()
+                    
+                    println("viewController's get userinfo completed")
+                    
+                    self.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
+                        println("getUserTimeline.error:\(error)")
+                        }, completed: { () -> Void in
+                            self.tableView.reloadData()
+                            println("getUserTimeline completed!")
+                    })
+            }
+        }
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
+        if self.tempUserID == nil {
+            self.showAlertWithTitle("ERROR!", message: "user not found!", cancelButtonTitle: "Back", cancelTappedAction: { () -> Void in
+                self.dismissViewControllerAnimated(true, completion: nil)
             })
         }
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

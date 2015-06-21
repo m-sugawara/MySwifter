@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5917020F1B1BEA5D008ADA01 /* TWPMainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917020E1B1BEA5D008ADA01 /* TWPMainViewModel.swift */; };
 		591702131B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591702121B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift */; };
+		591ED1261B3645A300BAB592 /* UIViewController+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591ED1251B3645A300BAB592 /* UIViewController+TWPHelper.swift */; };
 		593318971B33E34600110701 /* TWPUserInfoViewControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593318961B33E34600110701 /* TWPUserInfoViewControllerTableViewCell.swift */; };
 		595FC10C1B1BE8400088A2EB /* TWPAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC10B1B1BE8400088A2EB /* TWPAppDelegate.swift */; };
 		595FC10E1B1BE8400088A2EB /* TWPMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC10D1B1BE8400088A2EB /* TWPMainViewController.swift */; };
@@ -17,6 +18,7 @@
 		595FC1161B1BE8400088A2EB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 595FC1141B1BE8400088A2EB /* LaunchScreen.xib */; };
 		595FC1221B1BE8400088A2EB /* TwitterParamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */; };
 		597526431B1EA7FD00419C19 /* TWPErrorCodeConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */; };
+		597839F91B363EB10032549A /* SwifteriOS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59AE827D1B353E180083F5FF /* SwifteriOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59898DB91B33FFB200273760 /* TWPTweetDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */; };
 		59898DBC1B34014600273760 /* TWPTweetDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DBB1B34014600273760 /* TWPTweetDetailViewModel.swift */; };
 		59AE82741B3537250083F5FF /* TWPUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AE82731B3537250083F5FF /* TWPUser.swift */; };
@@ -25,6 +27,7 @@
 		59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */; };
 		59B578AD1B1EFA6E00E3D801 /* TWPTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */; };
 		59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578B01B1F07BF00E3D801 /* TWPUserList.swift */; };
+		59DDB8DE1B3666B400C89F46 /* TWPLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */; };
 		59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */; };
 		59F3D2871B1D7F4E00B5235C /* TWPUserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */; };
 		DB680F265933AD2C1D2A44CB /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E4386D4B50C45F2A58FD39 /* libPods.a */; };
@@ -43,10 +46,11 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		59AE827A1B353BAC0083F5FF /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				597839F91B363EB10032549A /* SwifteriOS.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +63,7 @@
 		5917020E1B1BEA5D008ADA01 /* TWPMainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPMainViewModel.swift; sourceTree = "<group>"; };
 		591702101B1C0741008ADA01 /* TwitterParam-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TwitterParam-Bridging-Header.h"; sourceTree = "<group>"; };
 		591702121B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPMainViewControllerTableViewCell.swift; sourceTree = "<group>"; };
+		591ED1251B3645A300BAB592 /* UIViewController+TWPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIViewController+TWPHelper.swift"; path = "Extension/UIViewController/UIViewController+TWPHelper.swift"; sourceTree = "<group>"; };
 		593318961B33E34600110701 /* TWPUserInfoViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserInfoViewControllerTableViewCell.swift; path = CustomSubviews/TWPUserInfoViewControllerTableViewCell.swift; sourceTree = "<group>"; };
 		595FC1061B1BE8400088A2EB /* TwitterParam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwitterParam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		595FC10A1B1BE8400088A2EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -79,6 +84,7 @@
 		59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewModel.swift; sourceTree = "<group>"; };
 		59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTweet.swift; sourceTree = "<group>"; };
 		59B578B01B1F07BF00E3D801 /* TWPUserList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserList.swift; sourceTree = "<group>"; };
+		59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPLoginViewController.swift; path = Login/TWPLoginViewController.swift; sourceTree = "<group>"; };
 		59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTwitterAPI.swift; sourceTree = "<group>"; };
 		59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,6 +115,22 @@
 				591702121B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift */,
 			);
 			path = CustomSubviews;
+			sourceTree = "<group>";
+		};
+		591ED1231B3640A200BAB592 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				591ED1241B3640C700BAB592 /* UIViewController */,
+			);
+			name = Extension;
+			sourceTree = "<group>";
+		};
+		591ED1241B3640C700BAB592 /* UIViewController */ = {
+			isa = PBXGroup;
+			children = (
+				591ED1251B3645A300BAB592 /* UIViewController+TWPHelper.swift */,
+			);
+			name = UIViewController;
 			sourceTree = "<group>";
 		};
 		593318951B33E30700110701 /* CustomSubviews */ = {
@@ -145,6 +167,7 @@
 				59F3D27D1B1D3F4B00B5235C /* API */,
 				59F3D2831B1D77A400B5235C /* Common */,
 				59F3D2801B1D53D900B5235C /* CustomClass */,
+				591ED1231B3640A200BAB592 /* Extension */,
 				59B578B21B1F11DC00E3D801 /* SharedObject */,
 				595FC12B1B1BE89C0088A2EB /* ViewModel */,
 				595FC12C1B1BE8A60088A2EB /* ViewController */,
@@ -186,6 +209,7 @@
 		595FC12B1B1BE89C0088A2EB /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				59DDB8DC1B36669500C89F46 /* Login */,
 				595FC12E1B1BE8B80088A2EB /* Main */,
 				59B578A91B1ED1C100E3D801 /* UserInfo */,
 				59898DBA1B33FFC200273760 /* TweetDetail */,
@@ -196,6 +220,7 @@
 		595FC12C1B1BE8A60088A2EB /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				59DDB8DB1B36668E00C89F46 /* Login */,
 				595FC12D1B1BE8B10088A2EB /* Main */,
 				59B578A61B1ED14900E3D801 /* UserInfo */,
 				59898DB71B33FF8800273760 /* TweetDetail */,
@@ -259,6 +284,21 @@
 				59B578B01B1F07BF00E3D801 /* TWPUserList.swift */,
 			);
 			path = SharedObject;
+			sourceTree = "<group>";
+		};
+		59DDB8DB1B36668E00C89F46 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */,
+			);
+			name = Login;
+			sourceTree = "<group>";
+		};
+		59DDB8DC1B36669500C89F46 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Login;
 			sourceTree = "<group>";
 		};
 		59F3D27D1B1D3F4B00B5235C /* API */ = {
@@ -454,9 +494,11 @@
 				59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */,
 				59B578A81B1ED17700E3D801 /* TWPUserInfoViewController.swift in Sources */,
 				59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */,
+				591ED1261B3645A300BAB592 /* UIViewController+TWPHelper.swift in Sources */,
 				59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */,
 				5917020F1B1BEA5D008ADA01 /* TWPMainViewModel.swift in Sources */,
 				593318971B33E34600110701 /* TWPUserInfoViewControllerTableViewCell.swift in Sources */,
+				59DDB8DE1B3666B400C89F46 /* TWPLoginViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,7 +578,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -574,7 +616,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -588,7 +630,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "TwitterParam/Supporting Files/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/../Frameworks/";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "./TwitterParam/TwitterParam-Bridging-Header.h";
 			};
@@ -601,7 +644,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "TwitterParam/Supporting Files/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/../Frameworks/";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "./TwitterParam/TwitterParam-Bridging-Header.h";
 			};

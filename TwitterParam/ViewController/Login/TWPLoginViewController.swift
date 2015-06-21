@@ -9,11 +9,22 @@
 import UIKit
 
 class TWPLoginViewController: UIViewController {
+    let model = TWPLoginViewModel()
 
+    
+    @IBOutlet weak var contentView: UIView!
+    @IBOutlet weak var loginButon: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        
+        // Set background color
+        let backgroundColor = UIColor(patternImage: UIImage(named: "Background_Pattern")!)
+        self.contentView.backgroundColor = backgroundColor
+        
+        self.bindCommands()
     }
 
     override func didReceiveMemoryWarning() {
@@ -21,15 +32,20 @@ class TWPLoginViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    // MARK: - Binding
+    func bindCommands() {
+        
+        self.loginButon.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
+            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                subscriber.sendCompleted()
+                
+                return RACDisposable(block: { () -> Void in
+                    self.performSegueWithIdentifier("fromLoginToMain", sender: nil)
+                })
+            })
+        })
     }
-    */
+    
+
 
 }

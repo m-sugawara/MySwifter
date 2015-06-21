@@ -28,6 +28,7 @@
 		59B578AD1B1EFA6E00E3D801 /* TWPTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */; };
 		59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578B01B1F07BF00E3D801 /* TWPUserList.swift */; };
 		59DDB8DE1B3666B400C89F46 /* TWPLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */; };
+		59DDB8E01B367A0E00C89F46 /* TWPLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DF1B367A0E00C89F46 /* TWPLoginViewModel.swift */; };
 		59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */; };
 		59F3D2871B1D7F4E00B5235C /* TWPUserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */; };
 		DB680F265933AD2C1D2A44CB /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41E4386D4B50C45F2A58FD39 /* libPods.a */; };
@@ -85,6 +86,7 @@
 		59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTweet.swift; sourceTree = "<group>"; };
 		59B578B01B1F07BF00E3D801 /* TWPUserList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserList.swift; sourceTree = "<group>"; };
 		59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPLoginViewController.swift; path = Login/TWPLoginViewController.swift; sourceTree = "<group>"; };
+		59DDB8DF1B367A0E00C89F46 /* TWPLoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPLoginViewModel.swift; path = Login/TWPLoginViewModel.swift; sourceTree = "<group>"; };
 		59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTwitterAPI.swift; sourceTree = "<group>"; };
 		59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -297,6 +299,7 @@
 		59DDB8DC1B36669500C89F46 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				59DDB8DF1B367A0E00C89F46 /* TWPLoginViewModel.swift */,
 			);
 			name = Login;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 				59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */,
 				59B578A81B1ED17700E3D801 /* TWPUserInfoViewController.swift in Sources */,
 				59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */,
+				59DDB8E01B367A0E00C89F46 /* TWPLoginViewModel.swift in Sources */,
 				591ED1261B3645A300BAB592 /* UIViewController+TWPHelper.swift in Sources */,
 				59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */,
 				5917020F1B1BEA5D008ADA01 /* TWPMainViewModel.swift in Sources */,

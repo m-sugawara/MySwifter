@@ -128,7 +128,7 @@ final class TWPTwitterAPI: NSObject {
         })
     }
     
-    // MARK: - Wrapper Method
+    // MARK: - Wrapper Method(Login)
     func tryToLogin() -> RACSignal? {
         // try to Login
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
@@ -157,6 +157,7 @@ final class TWPTwitterAPI: NSObject {
         })
     }
     
+    // MARK: - Wrapper Method(User)
     func getMyUser() -> RACSignal? {
         // get my userID
         let user = TWPUserHelper.fetchUserQData()
@@ -189,6 +190,7 @@ final class TWPTwitterAPI: NSObject {
         })
     }
     
+    // MARK: - Wrapper Method(Timeline)
     func getStatusesHomeTimelineWithCount(_ count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil) -> RACSignal? {
         
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
@@ -268,29 +270,7 @@ final class TWPTwitterAPI: NSObject {
         
     }
     
-    func getCurrentUserRetweetIDWithID(id: String) -> RACSignal? {
-        
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.getStatusesShowWithID(id,
-                includeMyRetweet: true,
-                success: { (status) -> Void in
-                    println(status)
-                    var currentUserRetweet: Dictionary<String, JSONValue> = status!["current_user_retweet"]!.object as Dictionary<String, JSONValue>!
-                    
-                    var currentUserRetweetID: String! = currentUserRetweet["id_str"]?.string!
-                    
-                    subscriber.sendNext(currentUserRetweetID)
-                    subscriber.sendCompleted()
-            }, failure: { (error) -> Void in
-                subscriber.sendError(error)
-            })
-            
-            return RACDisposable(block: { () -> Void in
-                
-            })
-        })
-    }
-    
+    // MARK: - Wrapper Method(Tweet)
     func getStatuesShowWithID(id: String, count: Int? = nil, trimUser: Bool? = nil, includeMyRetweet: Bool? = nil, includeEntities: Bool? = nil) -> RACSignal? {
         
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
@@ -322,6 +302,30 @@ final class TWPTwitterAPI: NSObject {
             })
         })
         
+    }
+    
+    // MARK: - Wrapper Method(Retweet)
+    func getCurrentUserRetweetIDWithID(id: String) -> RACSignal? {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.getStatusesShowWithID(id,
+                includeMyRetweet: true,
+                success: { (status) -> Void in
+                    println(status)
+                    var currentUserRetweet: Dictionary<String, JSONValue> = status!["current_user_retweet"]!.object as Dictionary<String, JSONValue>!
+                    
+                    var currentUserRetweetID: String! = currentUserRetweet["id_str"]?.string!
+                    
+                    subscriber.sendNext(currentUserRetweetID)
+                    subscriber.sendCompleted()
+                }, failure: { (error) -> Void in
+                    subscriber.sendError(error)
+            })
+            
+            return RACDisposable(block: { () -> Void in
+                
+            })
+        })
     }
     
     func postStatusRetweetWithID(id: String, trimUser: Bool? = nil) -> RACSignal? {
@@ -359,15 +363,41 @@ final class TWPTwitterAPI: NSObject {
             })
         })
     }
+    
+    // MARK: - Wrapper Methods(favorite)
+    func postCreateFavoriteWithID(id: String, includeEntities: Bool? = nil) -> RACSignal? {
+    
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.postCreateFavoriteWithID(id,
+                includeEntities: includeEntities,
+                success: { (status) -> Void in
+                    subscriber.sendNext(nil)
+                    subscriber.sendCompleted()
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+    }
+    
+    func postDestroyFavoriteWithID(id: String, includeEntities: Bool? = nil) -> RACSignal? {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.postDestroyFavoriteWithID(id,
+                includeEntities: includeEntities,
+                success: { (status) -> Void in
+                    subscriber.sendNext(nil)
+                    subscriber.sendCompleted()
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+    }
 
-    
-    // MARK: - Wrapper Methods(Not Use RACSignal)
-    func postStatusRetweetWithID(id: String, trimUser: Bool? = nil, success: ((status: Dictionary<String, JSONValue>?) -> Void)? = nil, failure: FailureHandler? = nil) {
-        self.swifter.postStatusRetweetWithID(id, trimUser: trimUser, success: success, failure: failure)
-    }
-    
-    func postStatusesDestroyWithID(id: String, trimUser: Bool? = nil, success: ((status: Dictionary<String, JSONValue>?) -> Void)? = nil, failure: FailureHandler? = nil) {
-        self.swifter.postStatusesDestroyWithID(id, trimUser: trimUser, success: success, failure: failure)
-    }
 }
 

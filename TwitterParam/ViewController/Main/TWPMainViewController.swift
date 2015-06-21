@@ -44,6 +44,13 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         // bind tableView Delegate
         self.tableView.dataSource = self
         self.tableView.delegate = self
+        
+        // first, load current user's home timeline
+        self.model.feedUpdateButtonSignal().subscribeError({ (error) -> Void in
+            self.showAlertWithTitle("ERROR", message: error.localizedDescription)
+        }, completed: { () -> Void in
+            println("first feed update completed!")
+        })
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -180,16 +187,22 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             println("reply button tapped index:\(indexPath!.row)")
             break
         case .retweet:
-            self.model.postStatusRetweetWithIndex(indexPath!.row,
-                success: { () -> Void in
-                    println("retweet success!")
-                    self.tableView.reloadData()
-            }, failure: { (error) -> Void in
+            self.model.postStatusRetweetSignalWithIndex(indexPath!.row).subscribeError({ (error) -> Void in
                 println("retweet error:\(error)")
+                self.showAlertWithTitle("ERROR", message: error.localizedDescription)
+            }, completed: { () -> Void in
+                println("retweet success!")
+                self.tableView.reloadData()
             })
             break
         case .favorite:
-            println("favorite button tapped index:\(indexPath!.row)")
+            self.model.postFavoriteSignalWithIndex(indexPath!.row).subscribeError({ (error) -> Void in
+                println("favorite error:\(error)")
+                self.showAlertWithTitle("ERROR", message: error.localizedDescription)
+            }, completed: { () -> Void in
+                println("favorite success!")
+                self.tableView.reloadData()
+            })
             break
         }
     }
@@ -214,6 +227,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.userNameLabel.text = tweet.user?.name
         cell.screenNameLabel.text = tweet.user?.screenNameWithAt
         cell.retweetButton.selected = tweet.retweeted!
+        cell.favoriteButton.selected = tweet.favorited!
         
         // set Cell Actions
         cell.replyButton.tag = TWPMainTableViewButtonType.reply.rawValue

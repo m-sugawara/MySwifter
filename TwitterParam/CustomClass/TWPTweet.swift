@@ -14,19 +14,22 @@ class TWPTweet:NSObject {
     var text: String?
     var user: TWPUser?
     var retweeted: Bool?
+    var favorited: Bool?
     
-    init(tweetID: String?, text: String?, user: TWPUser?, retweeted: Bool?) {
+    init(tweetID: String?, text: String?, user: TWPUser?, retweeted: Bool?, favorited: Bool?) {
         self.tweetID = tweetID
         self.text = text
         self.user = user
         self.retweeted = retweeted
+        self.favorited = favorited
     }
     
     convenience init(status: JSONValue, user: TWPUser?) {
         self.init(tweetID: status["id_str"].string,
             text: status["text"].string,
             user: user,
-            retweeted: status["retweeted"].bool
+            retweeted: status["retweeted"].bool,
+            favorited: status["favorited"].bool
         )
     }
     
@@ -34,7 +37,8 @@ class TWPTweet:NSObject {
         self.init(tweetID: dictionary["id_str"]!.string,
             text: dictionary["text"]!.string,
             user: user,
-            retweeted: dictionary["retweeted"]!.bool
+            retweeted: dictionary["retweeted"]!.bool,
+            favorited: dictionary["favorited"]!.bool
         )
     }
     

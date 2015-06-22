@@ -9,6 +9,9 @@
 import UIKit
 
 let kTWPMainTableViewCellIdentifier = "MainTableViewCell";
+let kTextFieldMaxLength = 140;
+let kTextFieldMarginWidth: CGFloat = 20.0;
+let kTextFieldMarginHeight: CGFloat = 20.0;
 
 enum TWPMainTableViewButtonType: Int {
     case reply = 1
@@ -16,8 +19,9 @@ enum TWPMainTableViewButtonType: Int {
     case favorite
 }
 
-class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate {
+class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate, UITextFieldWithLimitDelegate {
     let model = TWPMainViewModel()
+    var textFieldView: TWPTextFieldView?
     var userID: String!
     var selectedTweetID: String!
     
@@ -33,6 +37,8 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var footerView: UIView!
     @IBOutlet weak var loadingView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    
+    
     
     // MARK: - Disignated Initializer
     required init(coder aDecoder: NSCoder) {
@@ -59,6 +65,22 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.stopLoading()
             println("first feed update completed!")
         })
+        
+        
+        self.textFieldView = TWPTextFieldView.viewWithMaxLength(kTextFieldMaxLength, delegate: self)
+        
+        let textFieldViewOriginX = kTextFieldMarginWidth
+        let textFieldViewOriginY = self.view.frame.size.height - self.textFieldView!.frame.size.height - kTextFieldMarginHeight
+        let textFieldViewSizeWidth = self.view.frame.size.width - (kTextFieldMarginWidth * 2)
+        let textFieldViewSizeHeight = self.textFieldView!.frame.size.height
+        
+        self.textFieldView?.frame = CGRect(
+            x: textFieldViewOriginX,
+            y: textFieldViewOriginY,
+            width: textFieldViewSizeWidth,
+            height: textFieldViewSizeHeight
+        )
+        self.view.addSubview(self.textFieldView!)
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

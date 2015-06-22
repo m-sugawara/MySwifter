@@ -9,13 +9,16 @@ PODS:
   - SDWebImage (3.7.2):
     - SDWebImage/Core (= 3.7.2)
   - SDWebImage/Core (3.7.2)
+  - UITextFieldWithLimit (0.1.1)
 
 DEPENDENCIES:
   - ReactiveCocoa (~> 2.5.0)
   - SDWebImage (~> 3.7.2)
+  - UITextFieldWithLimit (~> 0.1.1)
 
 SPEC CHECKSUMS:
   ReactiveCocoa: e2db045570aa97c695e7aa97c2bcab222ae51f4a
   SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
+  UITextFieldWithLimit: 7b292ab1fe30fb03fa2f9b595be2c414f93cdb6d
 
 COCOAPODS: 0.37.1

@@ -13,11 +13,13 @@ let kTWPUserInfoTableViewCellIdentifier = "UserInfoTableViewCell";
 class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     let model = TWPUserInfoViewModel()
     
-    var tempUserID:String!
-    var backButtonCommand:RACCommand!
+    var tempUserID: String!
+    var backButtonCommand: RACCommand!
+    
+    var selectedTweetID: String!
     
     @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet weak var userIDLabel: UILabel!
+    @IBOutlet weak var screenNameLabel: UILabel!
     @IBOutlet weak var userIconImageView: UIImageView!
     @IBOutlet weak var userTweetsTableView: UITableView!
     @IBOutlet weak var backButton: UIButton!
@@ -26,29 +28,69 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     // MARK: - LifeCycle
     override func viewDidLoad() {
         
-        // TODO: bad solution
-        self.model.userID = self.tempUserID
-        
         super.viewDidLoad()
         
         self.bindCommands()
         
-        // get user info
-        self.model.getUserInfoSignal().subscribeNext({ (user) -> Void in
-            println("viewController.user:\(user)")
-        }, error: { (error) -> Void in
-            println("viewController.error:\(error)")
-        }) { () -> Void in
-            self.setUserProfile()
+        if self.tempUserID != nil {
+            // TODO: bad solution
+            self.model.userID = self.tempUserID
             
-            println("viewController's get userinfo completed")
-            
-            self.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
-                println("getUserTimeline.error:\(error)")
-            }, completed: { () -> Void in
-                self.tableView.reloadData()
-                println("getUserTimeline completed!")
+            // get user info
+            self.model.getUserInfoSignal().subscribeNext({ (user) -> Void in
+                println("viewController.user:\(user)")
+                }, error: { (error) -> Void in
+                    println("viewController.error:\(error)")
+                }) { () -> Void in
+                    self.setUserProfile()
+                    
+                    println("viewController's get userinfo completed")
+                    
+                    self.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
+                        println("getUserTimeline.error:\(error)")
+                        }, completed: { () -> Void in
+                            self.tableView.reloadData()
+                            println("getUserTimeline completed!")
+                    })
+            }
+        }
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
+        if self.tempUserID == nil {
+            self.showAlertWithTitle("ERROR!", message: "user not found!", cancelButtonTitle: "Back", cancelTappedAction: { () -> Void in
+                self.dismissViewControllerAnimated(true, completion: nil)
             })
+        }
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        super.prepareForSegue(segue, sender: sender)
+        
+        if segue.identifier == "fromUserInfoToTweetDetail" {
+            var tweetDetailViewController: TWPTweetDetailViewController = segue.destinationViewController as! TWPTweetDetailViewController
+            
+            tweetDetailViewController.tempTweetID = self.selectedTweetID
+            
+            tweetDetailViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
+                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                    // send completed for button status to acitive
+                    subscriber.sendCompleted()
+                    
+                    return RACDisposable(block: { () -> Void in
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    })
+                })
+            })
+        
         }
     }
     
@@ -61,14 +103,14 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     func setUserProfile() {
         self.userNameLabel.text = self.model.user.name
         
-        if self.model.user.screen_name != nil {
-            self.userIDLabel.text = "@" + self.model.user.screen_name!
+        if self.model.user.screenName != nil {
+            self.screenNameLabel.text = self.model.user.screenNameWithAt!
         }
         else {
-            self.userIDLabel.text = "no data"
+            self.screenNameLabel.text = "no data"
         }
         
-        self.userIconImageView.sd_setImageWithURL(NSURL(string: self.model.user.profileImageUrl!),
+        self.userIconImageView.sd_setImageWithURL(self.model.user.profileImageUrl,
             placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
     }
@@ -85,7 +127,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
         // create Tweet Object
         var tweet:TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet
         
-        cell.iconImageView.sd_setImageWithURL(tweet.profileImageUrl,
+        cell.iconImageView.sd_setImageWithURL(tweet.user?.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
         cell.tweetTextLabel.text = tweet.text
@@ -99,6 +141,11 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     
     // MARK: - UITableViewDelegate
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        var selectedTweet: TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet;
+        self.selectedTweetID = selectedTweet.tweetID
+        
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        
+        performSegueWithIdentifier("fromUserInfoToTweetDetail", sender: nil)
     }
 }

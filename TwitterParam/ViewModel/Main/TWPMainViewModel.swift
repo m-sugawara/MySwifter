@@ -14,6 +14,7 @@ class TWPMainViewModel: NSObject {
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: NSArray = []
     
+    // because to feed update singal called many times, signal set a variable.
     private var _feedUpdateButtonSignal: RACSignal?
     
     // MARK: - Initializer
@@ -23,11 +24,12 @@ class TWPMainViewModel: NSObject {
     }
     
     // MARK: - Public Methods
-    
+
     // MARK: - Private Methods
 
     
     // MARK: - RACCommands
+    // oauth
     var oauthButtonCommand: RACCommand {
         return RACCommand(signalBlock: { (input) -> RACSignal! in
             
@@ -53,6 +55,7 @@ class TWPMainViewModel: NSObject {
         })
     }
 
+    // account
     var accountButtonCommand: RACCommand {
         return RACCommand(signalBlock: { (input) -> RACSignal! in
             return self.accountButtonSignal
@@ -77,6 +80,7 @@ class TWPMainViewModel: NSObject {
         })
     }
     
+    // feed update
     var feedUpdateButtonCommand: RACCommand {
         return RACCommand(signalBlock: { (input) -> RACSignal! in
             return self.feedUpdateButtonSignal()
@@ -100,5 +104,106 @@ class TWPMainViewModel: NSObject {
         })
         
         return _feedUpdateButtonSignal!
+    }
+    
+    // logout
+    var logoutButtonCommand: RACCommand {
+        return RACCommand(signalBlock: { (input) -> RACSignal! in
+            return self.logoutButtonSignal()
+        })
+    }
+    func logoutButtonSignal() -> RACSignal {
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+
+            
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+    }
+    
+    // retweet
+    func postStatusRetweetSignalWithIndex(index: Int) -> RACSignal {
+        var tweet: TWPTweet = self.tweets[index] as! TWPTweet
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            
+            // if haven't retweeted yet, try to retweet
+            if (tweet.retweeted != true) {
+                self.twitterAPI.postStatusRetweetWithID(tweet.tweetID!,
+                    trimUser: false)?.subscribeError({ (error) -> Void in
+                        subscriber.sendError(error)
+                    }, completed: { () -> Void in
+                        (self.tweets[index] as! TWPTweet).retweeted = true
+                        
+                        subscriber.sendNext(nil)
+                        subscriber.sendCompleted()
+                    })
+            }
+            // if already have retweeted, destroy retweet
+            else {
+                var retweetID:String?
+                
+                // 1. get current user's retweetID
+                self.twitterAPI.getCurrentUserRetweetIDWithID(tweet.tweetID!)?.subscribeNext({ (next) -> Void in
+                    // if successed, current user's retweetID
+                    retweetID = next as? String
+                    }, error: { (error) -> Void in
+                        subscriber.sendError(error)
+                    }, completed: { () -> Void in
+                        // 2. destroy current user's retweet
+                        self.twitterAPI.postStatusesDestroyWithID(retweetID!,
+                            trimUser: false)!.subscribeNext({ (next) -> Void in
+                                }, error: { (error) -> Void in
+                                    subscriber.sendError(error)
+                                }, completed: { () -> Void in
+                                    // 3. this tweet become be NOT retweeted
+                                    (self.tweets[index] as! TWPTweet).retweeted = false
+                                    
+                                    subscriber.sendNext(nil)
+                                    subscriber.sendCompleted()
+                            })
+                })
+            }
+            
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+    }
+    
+    // favorite
+    func postFavoriteSignalWithIndex(index: Int) -> RACSignal {
+        var tweet: TWPTweet = self.tweets[index] as! TWPTweet
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            
+            // if haven't favorited yet, try to favorite
+            if (tweet.favorited != true) {
+                self.twitterAPI.postCreateFavoriteWithID(tweet.tweetID!,
+                    includeEntities: false)?.subscribeError({ (error) -> Void in
+                        subscriber.sendError(error)
+                        }, completed: { () -> Void in
+                            (self.tweets[index] as! TWPTweet).favorited = true
+                            
+                            subscriber.sendNext(nil)
+                            subscriber.sendCompleted()
+                    })
+            }
+            // if already have favorited, destroy favorite
+            else {
+                self.twitterAPI.postDestroyFavoriteWithID(tweet.tweetID!,
+                    includeEntities: false)?.subscribeError({ (error) -> Void in
+                        subscriber.sendError(error)
+                        }, completed: { () -> Void in
+                            (self.tweets[index] as! TWPTweet).favorited = false
+                            
+                            subscriber.sendNext(nil)
+                            subscriber.sendCompleted()
+                    })
+            }
+            
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+        
     }
 }

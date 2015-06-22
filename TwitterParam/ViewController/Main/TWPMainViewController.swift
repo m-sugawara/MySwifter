@@ -245,8 +245,13 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.tweetTextLabel.text = tweet.text
         cell.userNameLabel.text = tweet.user?.name
         cell.screenNameLabel.text = tweet.user?.screenNameWithAt
+        cell.retweetCountLabel.text = String(tweet.retweetCount!)
+        cell.favoriteCountLabel.text = String(tweet.favoriteCount!)
+        
         cell.retweetButton.selected = tweet.retweeted!
         cell.favoriteButton.selected = tweet.favorited!
+        
+        cell.timeLabel.text = tweet.createdAt?.stringForTimeIntervalSinceCreated()
         
         // set Cell Actions
         cell.replyButton.tag = TWPMainTableViewButtonType.reply.rawValue

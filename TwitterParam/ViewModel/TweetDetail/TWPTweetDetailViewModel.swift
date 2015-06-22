@@ -27,7 +27,6 @@ class TWPTweetDetailViewModel: NSObject {
             })
             
             return RACDisposable(block: { () -> Void in
-                
             })
         })
     }

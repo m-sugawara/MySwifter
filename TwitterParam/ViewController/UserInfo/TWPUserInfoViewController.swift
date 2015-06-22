@@ -24,6 +24,11 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var userTweetsTableView: UITableView!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tweetListButton: UIButton!
+    @IBOutlet weak var imageListButton: UIButton!
+    @IBOutlet weak var favoriteListButton: UIButton!
+    @IBOutlet weak var loadingView: UIView!
+    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -37,6 +42,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
             self.model.userID = self.tempUserID
             
             // get user info
+            self.startLoading()
             self.model.getUserInfoSignal().subscribeNext({ (user) -> Void in
                 println("viewController.user:\(user)")
                 }, error: { (error) -> Void in
@@ -48,8 +54,10 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                     
                     self.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
                         println("getUserTimeline.error:\(error)")
+                        self.stopLoading()
                         }, completed: { () -> Void in
                             self.tableView.reloadData()
+                            self.stopLoading()
                             println("getUserTimeline completed!")
                     })
             }
@@ -97,9 +105,89 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     // MARK: - Binding
     func bindCommands() {
         self.backButton.rac_command = self.backButtonCommand
+        
+        // SelectListButtons
+        self.tweetListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
+            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+
+                // get users timeline
+                self.startLoading()
+                self.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
+                    println("getUserTimeline.error:\(error)")
+                    self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+                    self.stopLoading()
+                    subscriber.sendCompleted()
+                    }, completed: { () -> Void in
+                        self.tableView.reloadData()
+                        
+                        self.stopLoading()
+                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
+                        
+                        subscriber.sendCompleted()
+                        println("getUserTimeline completed!")
+                })
+
+                return RACDisposable()
+            })
+        })
+        self.imageListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
+            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+
+                // get users imagelist
+                self.startLoading()
+                self.model.getUserImageList().subscribeError({ (error) -> Void in
+                    println("getUserTimeline.error:\(error)")
+                    self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+                    self.stopLoading()
+                    subscriber.sendCompleted()
+                    }, completed: { () -> Void in
+                        self.tableView.reloadData()
+                        
+                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
+                        self.stopLoading()
+                        
+                        subscriber.sendCompleted()
+                        println("getUserTimeline completed!")
+                })
+                
+                return RACDisposable()
+            })
+        })
+        self.favoriteListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
+            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                // get users favoritelist
+                self.startLoading()
+                self.model.getUserFavoritesList().subscribeError({ (error) -> Void in
+                    println("getUserTimeline.error:\(error)")
+                    self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+                    self.stopLoading()
+                    subscriber.sendCompleted()
+                    }, completed: { () -> Void in
+                        self.tableView.reloadData()
+                        
+                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
+                        self.stopLoading()
+                        
+                        subscriber.sendCompleted()
+                        println("getUserTimeline completed!")
+                })
+
+                return RACDisposable()
+            })
+        })
     }
     
     // MARK: - Private Methods
+    func startLoading() {
+        self.loadingView.hidden = false
+        self.activityIndicatorView.startAnimating()
+    }
+    
+    func stopLoading() {
+        self.loadingView.hidden = true
+        self.activityIndicatorView.stopAnimating()
+    }
+    
     func setUserProfile() {
         self.userNameLabel.text = self.model.user.name
         
@@ -113,6 +201,21 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
         self.userIconImageView.sd_setImageWithURL(self.model.user.profileImageUrl,
             placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
+    }
+    
+    func changeListButtonsStatusWithTappedButton(tappedButton: UIButton) {
+        let listButtons: Array<UIButton> = [self.tweetListButton, self.imageListButton, self.favoriteListButton]
+        
+        for listButton in listButtons {
+            if listButton == tappedButton {
+                listButton.selected = true
+                listButton.backgroundColor = UIColor.lightGrayColor()
+            }
+            else {
+                listButton.selected = false
+                listButton.backgroundColor = UIColor.clearColor()
+            }
+        }
     }
     
     // MARK: - UITableViewDataSource

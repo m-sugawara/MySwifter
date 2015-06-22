@@ -134,6 +134,7 @@ class TWPMainViewModel: NSObject {
                         subscriber.sendError(error)
                     }, completed: { () -> Void in
                         (self.tweets[index] as! TWPTweet).retweeted = true
+                        (self.tweets[index] as! TWPTweet).retweetCount = (self.tweets[index] as! TWPTweet).retweetCount! + 1
                         
                         subscriber.sendNext(nil)
                         subscriber.sendCompleted()
@@ -158,6 +159,7 @@ class TWPMainViewModel: NSObject {
                                 }, completed: { () -> Void in
                                     // 3. this tweet become be NOT retweeted
                                     (self.tweets[index] as! TWPTweet).retweeted = false
+                                    (self.tweets[index] as! TWPTweet).retweetCount = (self.tweets[index] as! TWPTweet).retweetCount! - 1
                                     
                                     subscriber.sendNext(nil)
                                     subscriber.sendCompleted()
@@ -183,6 +185,7 @@ class TWPMainViewModel: NSObject {
                         subscriber.sendError(error)
                         }, completed: { () -> Void in
                             (self.tweets[index] as! TWPTweet).favorited = true
+                            (self.tweets[index] as! TWPTweet).favoriteCount = (self.tweets[index] as! TWPTweet).favoriteCount! + 1
                             
                             subscriber.sendNext(nil)
                             subscriber.sendCompleted()
@@ -195,6 +198,7 @@ class TWPMainViewModel: NSObject {
                         subscriber.sendError(error)
                         }, completed: { () -> Void in
                             (self.tweets[index] as! TWPTweet).favorited = false
+                            (self.tweets[index] as! TWPTweet).favoriteCount = (self.tweets[index] as! TWPTweet).favoriteCount! - 1
                             
                             subscriber.sendNext(nil)
                             subscriber.sendCompleted()

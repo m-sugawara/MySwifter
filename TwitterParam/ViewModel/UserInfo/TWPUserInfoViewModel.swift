@@ -14,6 +14,8 @@ class TWPUserInfoViewModel: NSObject {
     var userID:String = ""
     var user:TWPUser = TWPUser()
     
+    var favoriteList:Array<TWPTweet>?
+    
     dynamic var tweets: NSArray = []
 
     // MARK: - Initializer
@@ -54,6 +56,46 @@ class TWPUserInfoViewModel: NSObject {
             return RACDisposable(block: { () -> Void in
             })
         })
+    }
+    
+    // FIXME: - dummy method
+    func getUserImageList() -> RACSignal! {
         
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            NSThread.sleepForTimeInterval(0.5)
+            var dummy = TWPTweet(tweetID: "", text: "not implemented", user: self.user, retweeted: false, favorited: false)
+            self.tweets = [dummy]
+            
+            subscriber.sendNext(nil)
+            subscriber.sendCompleted()
+            
+            return RACDisposable()
+        })
+    }
+    
+    func getUserFavoritesList() -> RACSignal! {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            // if already have got list, return it.
+            if self.favoriteList != nil {
+                self.tweets = self.favoriteList!
+                subscriber.sendNext(nil)
+                subscriber.sendCompleted()
+            }
+            // if not, try to get favorites list
+            else {
+                self.twitterAPI.getFavoritesListWithUserID(self.userID, count: 20)?.subscribeNext({ (next) -> Void in
+                    self.favoriteList = next as? Array
+                    self.tweets = self.favoriteList!
+                    }, error: { (error) -> Void in
+                        subscriber.sendError(error)
+                    }, completed: { () -> Void in
+                        subscriber.sendNext(nil)
+                        subscriber.sendCompleted()
+                })
+            }
+            
+            return RACDisposable()
+        })
     }
 }

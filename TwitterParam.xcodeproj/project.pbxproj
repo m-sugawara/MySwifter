@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5912996E1B37E79E0011EA85 /* String+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5912996D1B37E79E0011EA85 /* String+TWPHelper.swift */; };
+		591299711B37E8390011EA85 /* NSDate+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591299701B37E8390011EA85 /* NSDate+TWPHelper.swift */; };
 		5917020F1B1BEA5D008ADA01 /* TWPMainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917020E1B1BEA5D008ADA01 /* TWPMainViewModel.swift */; };
 		591702131B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591702121B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift */; };
 		591ED1261B3645A300BAB592 /* UIViewController+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591ED1251B3645A300BAB592 /* UIViewController+TWPHelper.swift */; };
@@ -61,6 +63,8 @@
 		3319865DCEC9CC5201D967AB /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		40B47206FD199E703DD1AAA1 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		41E4386D4B50C45F2A58FD39 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5912996D1B37E79E0011EA85 /* String+TWPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+TWPHelper.swift"; path = "Extension/String/String+TWPHelper.swift"; sourceTree = "<group>"; };
+		591299701B37E8390011EA85 /* NSDate+TWPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSDate+TWPHelper.swift"; path = "Extension/NSDate/NSDate+TWPHelper.swift"; sourceTree = "<group>"; };
 		5917020E1B1BEA5D008ADA01 /* TWPMainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPMainViewModel.swift; sourceTree = "<group>"; };
 		591702101B1C0741008ADA01 /* TwitterParam-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TwitterParam-Bridging-Header.h"; sourceTree = "<group>"; };
 		591702121B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPMainViewControllerTableViewCell.swift; sourceTree = "<group>"; };
@@ -111,6 +115,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5912996C1B37E7680011EA85 /* String */ = {
+			isa = PBXGroup;
+			children = (
+				5912996D1B37E79E0011EA85 /* String+TWPHelper.swift */,
+			);
+			name = String;
+			sourceTree = "<group>";
+		};
+		5912996F1B37E81F0011EA85 /* NSDate */ = {
+			isa = PBXGroup;
+			children = (
+				591299701B37E8390011EA85 /* NSDate+TWPHelper.swift */,
+			);
+			name = NSDate;
+			sourceTree = "<group>";
+		};
 		591702111B1C3E82008ADA01 /* CustomSubviews */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,6 +142,8 @@
 		591ED1231B3640A200BAB592 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				5912996F1B37E81F0011EA85 /* NSDate */,
+				5912996C1B37E7680011EA85 /* String */,
 				591ED1241B3640C700BAB592 /* UIViewController */,
 			);
 			name = Extension;
@@ -487,11 +509,13 @@
 			files = (
 				59898DBC1B34014600273760 /* TWPTweetDetailViewModel.swift in Sources */,
 				59F3D2871B1D7F4E00B5235C /* TWPUserHelper.swift in Sources */,
+				591299711B37E8390011EA85 /* NSDate+TWPHelper.swift in Sources */,
 				59AE82741B3537250083F5FF /* TWPUser.swift in Sources */,
 				595FC10E1B1BE8400088A2EB /* TWPMainViewController.swift in Sources */,
 				59898DB91B33FFB200273760 /* TWPTweetDetailViewController.swift in Sources */,
 				595FC10C1B1BE8400088A2EB /* TWPAppDelegate.swift in Sources */,
 				59B578AD1B1EFA6E00E3D801 /* TWPTweet.swift in Sources */,
+				5912996E1B37E79E0011EA85 /* String+TWPHelper.swift in Sources */,
 				597526431B1EA7FD00419C19 /* TWPErrorCodeConst.swift in Sources */,
 				591702131B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift in Sources */,
 				59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */,

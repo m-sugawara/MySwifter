@@ -365,6 +365,38 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Methods(favorite)
+    func getFavoritesListWithUserID(userID: String, count: Int? = nil, sinceID: String? = nil, maxID: String? = nil) -> RACSignal? {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.getFavoritesListWithUserID(userID,
+                count: count,
+                sinceID: sinceID,
+                maxID: maxID,
+                success: { (statuses) -> Void in
+                    println(statuses);
+                    
+                    var tweets: NSMutableArray! = []
+                    for i in 0..<statuses!.count {
+                        var userDictionary:Dictionary<String, JSONValue> = statuses![i]["user"].object as Dictionary<String, JSONValue>!
+                        
+                        // create user
+                        var user:TWPUser = TWPUser(dictionary: userDictionary)
+                        
+                        // create tweet
+                        var tweet:TWPTweet? = TWPTweet(status: statuses![i], user: user)
+                        tweets.addObject(tweet!)
+                    }
+                    
+                    subscriber.sendNext(tweets)
+                    subscriber.sendCompleted()
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            
+            return RACDisposable()
+        })
+    }
+    
     func postCreateFavoriteWithID(id: String, includeEntities: Bool? = nil) -> RACSignal? {
     
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in

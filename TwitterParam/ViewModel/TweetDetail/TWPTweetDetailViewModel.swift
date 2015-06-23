@@ -14,11 +14,16 @@ class TWPTweetDetailViewModel: NSObject {
     var tweetID = ""
     var tweet:TWPTweet?
     
+    // MARK: - Deinit
+    deinit {
+        println("TweetDetailViewModel deinit")
+    }
+    
     func getTweetSignal() -> RACSignal? {
         
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.twitterAPI.getStatuesShowWithID(self.tweetID)?.subscribeNext({ (next) -> Void in
-                self.tweet = (next as? TWPTweet?)!
+        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
+            self!.twitterAPI.getStatuesShowWithID(self!.tweetID)?.subscribeNext({ (next) -> Void in
+                self!.tweet = (next as? TWPTweet?)!
             }, error: { (error) -> Void in
                 subscriber.sendError(error)
             }, completed: { () -> Void in

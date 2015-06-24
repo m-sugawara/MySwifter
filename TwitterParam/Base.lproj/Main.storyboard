@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="h9g-me-rft">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="h9g-me-rft">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
@@ -153,7 +153,7 @@
                                                     </variation>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IsI-t7-eCD" userLabel="TweetLabel">
-                                                    <rect key="frame" x="104" y="32" width="480" height="29"/>
+                                                    <rect key="frame" x="104" y="31" width="480" height="29"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="280" id="Ucg-Fw-5b4"/>
                                                     </constraints>
@@ -168,13 +168,13 @@
                                                     </variation>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UserName" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZHG-WI-La6" userLabel="UserNameLabel">
-                                                    <rect key="frame" x="104" y="12" width="59" height="15"/>
+                                                    <rect key="frame" x="104" y="12" width="59" height="14.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@userID" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ize-Wk-Msu" userLabel="ScreenNameLabel">
-                                                    <rect key="frame" x="173" y="15" width="40" height="12"/>
+                                                    <rect key="frame" x="173" y="14" width="40" height="12"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="RTE-QX-pS1"/>
                                                     </constraints>
@@ -183,7 +183,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="15:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MbW-s6-aLh" userLabel="TimeLabel">
-                                                    <rect key="frame" x="537" y="17" width="55" height="10"/>
+                                                    <rect key="frame" x="537" y="16" width="55" height="10"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="55" id="lk4-jm-sLF"/>
                                                     </constraints>
@@ -308,28 +308,22 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gnz-yn-ivd" userLabel="FooterView">
                                 <rect key="frame" x="0.0" y="530" width="600" height="70"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GQe-3u-uOW" userLabel="AccountButton">
-                                        <rect key="frame" x="170" y="20" width="100" height="30"/>
-                                        <state key="normal" title="Account Login">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pWu-GW-7pQ" userLabel="OAuthButton">
-                                        <rect key="frame" x="337" y="20" width="86" height="30"/>
-                                        <state key="normal" title="OAuth Login">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vEr-Pu-p8h" userLabel="TweetButton">
+                                        <rect key="frame" x="284" y="19" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="32" id="M2F-YN-htl"/>
+                                            <constraint firstAttribute="height" constant="32" id="XvY-pi-vyE"/>
+                                        </constraints>
+                                        <state key="normal" title="Button" image="Main_TweetButton">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="centerY" secondItem="pWu-GW-7pQ" secondAttribute="centerY" id="FHJ-qd-QJX"/>
-                                    <constraint firstAttribute="centerX" secondItem="GQe-3u-uOW" secondAttribute="centerX" constant="80" id="K3S-8Y-Mzq"/>
-                                    <constraint firstAttribute="centerY" secondItem="GQe-3u-uOW" secondAttribute="centerY" id="Qsi-V8-DZw"/>
+                                    <constraint firstAttribute="centerY" secondItem="vEr-Pu-p8h" secondAttribute="centerY" id="iV0-gN-2uH"/>
                                     <constraint firstAttribute="height" constant="70" id="l9r-B8-iay"/>
-                                    <constraint firstAttribute="centerX" secondItem="pWu-GW-7pQ" secondAttribute="centerX" constant="-80" id="mAz-yx-hs1"/>
+                                    <constraint firstAttribute="centerX" secondItem="vEr-Pu-p8h" secondAttribute="centerX" id="wUN-Ae-C5E"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -363,14 +357,13 @@
                         </variation>
                     </view>
                     <connections>
-                        <outlet property="accountButton" destination="GQe-3u-uOW" id="mbN-bK-G66"/>
                         <outlet property="activityIndicatorView" destination="0nf-68-YHp" id="eU1-5g-vv1"/>
                         <outlet property="feedUpdateButton" destination="ByM-wE-Dio" id="f28-OT-bMM"/>
                         <outlet property="footerView" destination="gnz-yn-ivd" id="NDu-2w-Niq"/>
                         <outlet property="loadingView" destination="heq-XH-cxR" id="Axf-P9-R76"/>
                         <outlet property="logoutButton" destination="93L-gs-Ut7" id="NWO-4Q-hQc"/>
-                        <outlet property="oauthButton" destination="pWu-GW-7pQ" id="mc2-m5-zr5"/>
                         <outlet property="tableView" destination="5Tb-Tr-2JF" id="Hex-So-DsZ"/>
+                        <outlet property="tweetButton" destination="vEr-Pu-p8h" id="zer-7k-ADu"/>
                         <segue destination="E1v-bM-Fjn" kind="show" identifier="fromMainToTweetDetail" id="9bH-vG-VwH"/>
                     </connections>
                 </viewController>
@@ -707,7 +700,7 @@
                                         <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FjT-DU-sED" userLabel="UserInfoButton">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FjT-DU-sED" userLabel="UserInfoButton">
                                         <rect key="frame" x="248" y="150" width="297" height="59"/>
                                         <state key="normal">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -793,11 +786,12 @@
         <image name="Main_LogoutButton" width="32" height="32"/>
         <image name="Main_TableViewCellIcon" width="61" height="60"/>
         <image name="Main_TableViewUpdateButton" width="90" height="90"/>
+        <image name="Main_TweetButton" width="128" height="128"/>
         <image name="RetweetButton_NonSelected" width="32" height="32"/>
         <image name="RetweetButton_Selected" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="2T1-9Z-04B"/>
-        <segue reference="khr-fq-Jp8"/>
+        <segue reference="9bH-vG-VwH"/>
     </inferredMetricsTieBreakers>
 </document>

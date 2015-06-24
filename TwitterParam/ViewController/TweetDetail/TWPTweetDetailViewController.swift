@@ -20,6 +20,11 @@ class TWPTweetDetailViewController: UIViewController {
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var screenNameLabel: UILabel!
     
+    // MARK: - Deinit
+    deinit {
+        println("tweetdetail deinit")
+    }
+    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,13 +36,13 @@ class TWPTweetDetailViewController: UIViewController {
         self.model.tweetID = self.tempTweetID
         self.model.getTweetSignal()?.subscribeError({ (error) -> Void in
             println("error:\(error)")
-        }, completed: { () -> Void in
-            self.tweetLabel.text = self.model.tweet?.text
-            self.userIconImageView.sd_setImageWithURL(self.model.tweet?.user?.profileImageUrl,
+        }, completed: { [weak self] () -> Void in
+            self!.tweetLabel.text = self!.model.tweet?.text
+            self!.userIconImageView.sd_setImageWithURL(self!.model.tweet?.user?.profileImageUrl,
                 placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
                 options: SDWebImageOptions.CacheMemoryOnly)
-            self.screenNameLabel.text = self.model.tweet?.user?.screenNameWithAt
-            self.userNameLabel.text = self.model.tweet?.user?.name
+            self!.screenNameLabel.text = self!.model.tweet?.user?.screenNameWithAt
+            self!.userNameLabel.text = self!.model.tweet?.user?.name
         })
     }
     
@@ -49,12 +54,12 @@ class TWPTweetDetailViewController: UIViewController {
             userInfoViewController.tempUserID = self.model.tweet?.user?.userID
             
             // regist backbutton command
-            userInfoViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
+            userInfoViewController.backButtonCommand = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
                 return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
                     subscriber.sendCompleted()
                     
                     return RACDisposable(block: { () -> Void in
-                        self.dismissViewControllerAnimated(true, completion: nil)
+                        self!.dismissViewControllerAnimated(true, completion: nil)
                     })
                 })
             })

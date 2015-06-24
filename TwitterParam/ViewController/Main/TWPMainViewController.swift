@@ -30,15 +30,18 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     var logoutButtonCommand: RACCommand!
     
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var oauthButton: UIButton!
-    @IBOutlet weak var accountButton: UIButton!
+    @IBOutlet weak var tweetButton: UIButton!
     @IBOutlet weak var feedUpdateButton: UIButton!
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var footerView: UIView!
     @IBOutlet weak var loadingView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
-    
+    // MARK: - Deinit
+    deinit {
+        self.stopObserving()
+        println("MainView deinit")
+    }
     
     // MARK: - Disignated Initializer
     required init(coder aDecoder: NSCoder) {
@@ -50,7 +53,11 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
 
-        self.bindCommands();
+        self.startObserving()
+        
+        self.configureViews()
+        
+        self.bindCommands()
         
         // bind tableView Delegate
         self.tableView.dataSource = self
@@ -67,20 +74,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         })
         
         
-        self.textFieldView = TWPTextFieldView.viewWithMaxLength(kTextFieldMaxLength, delegate: self)
-        
-        let textFieldViewOriginX = kTextFieldMarginWidth
-        let textFieldViewOriginY = self.view.frame.size.height - self.textFieldView!.frame.size.height - kTextFieldMarginHeight
-        let textFieldViewSizeWidth = self.view.frame.size.width - (kTextFieldMarginWidth * 2)
-        let textFieldViewSizeHeight = self.textFieldView!.frame.size.height
-        
-        self.textFieldView?.frame = CGRect(
-            x: textFieldViewOriginX,
-            y: textFieldViewOriginY,
-            width: textFieldViewSizeWidth,
-            height: textFieldViewSizeHeight
-        )
-        self.view.addSubview(self.textFieldView!)
+
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -138,6 +132,21 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     // MARK: - Private Methods
+    func startObserving() {
+        var notificationCenter = NSNotificationCenter.defaultCenter()
+        notificationCenter.addObserver(self,
+            selector: "keyboardWillShow:",
+            name: UIKeyboardWillShowNotification,
+            object: nil)
+    }
+    
+    func stopObserving() {
+        var notificationCenter = NSNotificationCenter.defaultCenter()
+        notificationCenter.removeObserver(self,
+            name: UIKeyboardWillShowNotification,
+            object: nil)
+    }
+    
     func startLoading() {
         self.loadingView.hidden = false
         self.activityIndicatorView.startAnimating()
@@ -146,6 +155,23 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     func stopLoading() {
         self.loadingView.hidden = true
         self.activityIndicatorView.stopAnimating()
+    }
+    
+    func configureViews() {
+        self.textFieldView = TWPTextFieldView.viewWithMaxLength(kTextFieldMaxLength, delegate: self)
+        
+        let textFieldViewOriginX = kTextFieldMarginWidth
+        let textFieldViewOriginY = self.view.frame.size.height / 2.0 - self.textFieldView!.frame.size.height - kTextFieldMarginHeight
+        let textFieldViewSizeWidth = self.view.frame.size.width - (kTextFieldMarginWidth * 2)
+        let textFieldViewSizeHeight = self.textFieldView!.frame.size.height
+        
+        self.textFieldView?.frame = CGRect(
+            x: textFieldViewOriginX,
+            y: textFieldViewOriginY,
+            width: textFieldViewSizeWidth,
+            height: textFieldViewSizeHeight
+        )
+        self.view.addSubview(self.textFieldView!)
     }
 
     
@@ -168,50 +194,64 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     func bindCommands() {
         
         // bind Button to the RACCommand
-        self.accountButton.rac_command = self.model.accountButtonCommand
-        self.oauthButton.rac_command = self.model.oauthButtonCommand
+        self.tweetButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
+            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                subscriber.sendCompleted()
+                
+                return RACDisposable(block: { () -> Void in
+                    self!.textFieldView?.hidden = false;
+                    self!.textFieldView?.textFieldWithLimit.becomeFirstResponder()
+                })
+            })
+            
+        })
         self.feedUpdateButton.rac_command = self.model.feedUpdateButtonCommand
         self.logoutButton.rac_command = self.logoutButtonCommand
         
         // subscribe ViewModel's RACSignal
         // Completed Signals
-        self.accountButton.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
-            self.showAlertWithTitle("SUCCESS!", message: "authorize success!")
-        }
-        self.oauthButton.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
-            self.showAlertWithTitle("SUCCESS!", message: "authorize success!")
-        }
-        self.feedUpdateButton.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
-            self.showAlertWithTitle("SUCCESS!", message: "feed update success!")
+        self.feedUpdateButton.rac_command.executionSignals.flatten().subscribeNext { [weak self] (next) -> Void in
+            self!.showAlertWithTitle("SUCCESS!", message: "feed update success!")
         }
         
         // Error Signals
-        self.accountButton.rac_command.errors.subscribeNext { (error) -> Void in
-            println("Account authorize error!:\(error)")
-            if error != nil {
-                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-            }
-        }
-        self.oauthButton.rac_command.errors.subscribeNext { (error) -> Void in
-            println("OAuth authorize error!:\(error)")
-            if error != nil {
-                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-            }
-        }
-        self.feedUpdateButton.rac_command.errors.subscribeNext { (error) -> Void in
+        self.feedUpdateButton.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
             println("feed update error:\(error)")
             if error != nil {
-                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+                self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
             }
         }
+        
+        // TWPTextFieldView Commands
+        self.textFieldView?.cancelButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
+            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                subscriber.sendCompleted()
+                self!.textFieldView?.hidden = true
+                self!.textFieldView?.textFieldWithLimit.text = ""
+                self!.textFieldView?.textFieldWithLimit.limitLabel.text = String(kTextFieldMaxLength)
+
+                self!.textFieldView?.textFieldWithLimit.resignFirstResponder()
+                
+                return RACDisposable()
+            })
+        })
+        
+        self.textFieldView?.tweetButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
+            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                subscriber.sendCompleted()
+                println("tweet!")
+                
+                return RACDisposable()
+            })
+        })
     
         // bind ViewModel's parameter
         self.model.rac_valuesForKeyPath("tapCount", observer: self).subscribeNext { (tapCount) -> Void in
             println(tapCount)
         }
         // TODO: 後で消す
-        self.model.rac_valuesForKeyPath("tweets", observer: self).subscribeNext { (tweets) -> Void in
-            self.tableView.reloadData()
+        self.model.rac_valuesForKeyPath("tweets", observer: self).subscribeNext { [weak self] (tweets) -> Void in
+            self!.tableView.reloadData()
         }
     }
     
@@ -228,21 +268,21 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             println("reply button tapped index:\(indexPath!.row)")
             break
         case .retweet:
-            self.model.postStatusRetweetSignalWithIndex(indexPath!.row).subscribeError({ (error) -> Void in
+            self.model.postStatusRetweetSignalWithIndex(indexPath!.row).subscribeError({ [weak self] (error) -> Void in
                 println("retweet error:\(error)")
-                self.showAlertWithTitle("ERROR", message: error.localizedDescription)
-            }, completed: { () -> Void in
+                self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
+            }, completed: { [weak self] () -> Void in
                 println("retweet success!")
-                self.tableView.reloadData()
+                self!.tableView.reloadData()
             })
             break
         case .favorite:
-            self.model.postFavoriteSignalWithIndex(indexPath!.row).subscribeError({ (error) -> Void in
+            self.model.postFavoriteSignalWithIndex(indexPath!.row).subscribeError({ [weak self] (error) -> Void in
                 println("favorite error:\(error)")
-                self.showAlertWithTitle("ERROR", message: error.localizedDescription)
-            }, completed: { () -> Void in
+                self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
+            }, completed: { [weak self] () -> Void in
                 println("favorite success!")
-                self.tableView.reloadData()
+                self!.tableView.reloadData()
             })
             break
         }

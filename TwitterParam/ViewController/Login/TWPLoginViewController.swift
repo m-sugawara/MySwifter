@@ -38,29 +38,34 @@ class TWPLoginViewController: UIViewController {
         
         if segue.identifier == "fromLoginToMain" {
             let mainViewController: TWPMainViewController = segue.destinationViewController as! TWPMainViewController
-            mainViewController.logoutButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
-                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            mainViewController.logoutButtonCommand = RACCommand(signalBlock: { [weak mainViewController] (input) -> RACSignal! in
+                return RACSignal.createSignal({ [weak mainViewController] (subscriber) -> RACDisposable! in
                     // show alert
-                    println("self:\(NSStringFromClass(self.dynamicType))")
-                    mainViewController.showAlertWithTitle("ALERT", message: "LOGOUT?",
-                        cancelButtonTitle: "NO",
-                        cancelTappedAction: { () -> Void in
-                            subscriber.sendCompleted()
-                        },
-                        otherButtonTitles: ["YES"],
-                        otherButtonTappedActions: { (UIAlertAction) -> Void in
-                        // if selected YES, try to logout and dismissViewController
-                        // TODO: Fuckin'solution, should find out more better solution!
-                        TWPTwitterAPI.sharedInstance.tryToLogout().subscribeCompleted({ () -> Void in
-                            subscriber.sendNext(nil)
-                            subscriber.sendCompleted()
+                    if let strongMainViewController = mainViewController {
+                        mainViewController!.showAlertWithTitle("ALERT", message: "LOGOUT?",
+                            cancelButtonTitle: "NO",
+                            cancelTappedAction: { () -> Void in
+                                subscriber.sendCompleted()
+                            },
+                            otherButtonTitles: ["YES"],
+                            otherButtonTappedActions: { (UIAlertAction) -> Void in
+                                // if selected YES, try to logout and dismissViewController
+                                // TODO: Fuckin'solution, should find out more better solution!
+                                TWPTwitterAPI.sharedInstance.tryToLogout().subscribeCompleted({ () -> Void in
+                                    subscriber.sendNext(nil)
+                                    subscriber.sendCompleted()
+                                })
+                                if let strongMainViewController = mainViewController {
+                                    strongMainViewController.dismissViewControllerAnimated(true, completion: nil)
+                                }
+                                subscriber.sendCompleted()
                         })
-                        subscriber.sendCompleted()
-                        self.dismissViewControllerAnimated(true, completion: nil)
-                    })
+                        
+                    }
                     
                     return RACDisposable(block: { () -> Void in
                     })
+
                 })
             })
         }
@@ -79,18 +84,18 @@ class TWPLoginViewController: UIViewController {
         self.loginButon.rac_command = self.model.loginButtonCommand
         
         // Completed Signals
-        self.loginButon.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
+        self.loginButon.rac_command.executionSignals.flatten().subscribeNext { [weak self] (next) -> Void in
             // Login success
-            self.showAlertWithTitle("SUCCESS", message: "LOGIN SUCCESS", cancelButtonTitle: "OK", cancelTappedAction: { () -> Void in
+            self!.showAlertWithTitle("SUCCESS", message: "LOGIN SUCCESS", cancelButtonTitle: "OK", cancelTappedAction: { () -> Void in
                 // OK button tapped, segue Main page
-                self.performSegueWithIdentifier("fromLoginToMain", sender: nil)
+                self!.performSegueWithIdentifier("fromLoginToMain", sender: nil)
             })
         }
         
         // Error Signals
-        self.loginButon.rac_command.errors.subscribeNext { (error) -> Void in
+        self.loginButon.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
             if error != nil {
-                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+                self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
             }
         }
     }

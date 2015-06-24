@@ -30,6 +30,10 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var loadingView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
+    deinit {
+        println("userInfo deinit")
+    }
+    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         
@@ -47,17 +51,17 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                 println("viewController.user:\(user)")
                 }, error: { (error) -> Void in
                     println("viewController.error:\(error)")
-                }) { () -> Void in
-                    self.setUserProfile()
+                }) { [weak self] () -> Void in
+                    self!.setUserProfile()
                     
                     println("viewController's get userinfo completed")
                     
-                    self.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
+                    self!.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
                         println("getUserTimeline.error:\(error)")
-                        self.stopLoading()
+                        self!.stopLoading()
                         }, completed: { () -> Void in
-                            self.tableView.reloadData()
-                            self.stopLoading()
+                            self!.tableView.reloadData()
+                            self!.stopLoading()
                             println("getUserTimeline completed!")
                     })
             }
@@ -88,13 +92,13 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
             
             tweetDetailViewController.tempTweetID = self.selectedTweetID
             
-            tweetDetailViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
+            tweetDetailViewController.backButtonCommand = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
                 return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
                     // send completed for button status to acitive
                     subscriber.sendCompleted()
                     
                     return RACDisposable(block: { () -> Void in
-                        self.dismissViewControllerAnimated(true, completion: nil)
+                        self!.dismissViewControllerAnimated(true, completion: nil)
                     })
                 })
             })
@@ -107,21 +111,21 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
         self.backButton.rac_command = self.backButtonCommand
         
         // SelectListButtons
-        self.tweetListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
+        self.tweetListButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
             return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
 
                 // get users timeline
-                self.startLoading()
-                self.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
+                self!.startLoading()
+                self!.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
                     println("getUserTimeline.error:\(error)")
-                    self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-                    self.stopLoading()
+                    self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+                    self!.stopLoading()
                     subscriber.sendCompleted()
                     }, completed: { () -> Void in
-                        self.tableView.reloadData()
+                        self!.tableView.reloadData()
                         
-                        self.stopLoading()
-                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
+                        self!.stopLoading()
+                        self!.changeListButtonsStatusWithTappedButton(input as! UIButton)
                         
                         subscriber.sendCompleted()
                         println("getUserTimeline completed!")
@@ -130,21 +134,21 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                 return RACDisposable()
             })
         })
-        self.imageListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
+        self.imageListButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
             return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
 
                 // get users imagelist
-                self.startLoading()
-                self.model.getUserImageList().subscribeError({ (error) -> Void in
+                self!.startLoading()
+                self!.model.getUserImageList().subscribeError({ (error) -> Void in
                     println("getUserTimeline.error:\(error)")
-                    self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-                    self.stopLoading()
+                    self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+                    self!.stopLoading()
                     subscriber.sendCompleted()
                     }, completed: { () -> Void in
-                        self.tableView.reloadData()
+                        self!.tableView.reloadData()
                         
-                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
-                        self.stopLoading()
+                        self!.changeListButtonsStatusWithTappedButton(input as! UIButton)
+                        self!.stopLoading()
                         
                         subscriber.sendCompleted()
                         println("getUserTimeline completed!")
@@ -153,20 +157,20 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                 return RACDisposable()
             })
         })
-        self.favoriteListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
+        self.favoriteListButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
             return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
                 // get users favoritelist
-                self.startLoading()
-                self.model.getUserFavoritesList().subscribeError({ (error) -> Void in
+                self!.startLoading()
+                self!.model.getUserFavoritesList().subscribeError({ (error) -> Void in
                     println("getUserTimeline.error:\(error)")
-                    self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-                    self.stopLoading()
+                    self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+                    self!.stopLoading()
                     subscriber.sendCompleted()
                     }, completed: { () -> Void in
-                        self.tableView.reloadData()
+                        self!.tableView.reloadData()
                         
-                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
-                        self.stopLoading()
+                        self!.changeListButtonsStatusWithTappedButton(input as! UIButton)
+                        self!.stopLoading()
                         
                         subscriber.sendCompleted()
                         println("getUserTimeline completed!")

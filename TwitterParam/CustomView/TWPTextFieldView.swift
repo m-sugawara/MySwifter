@@ -11,6 +11,8 @@ import UIKit
 class TWPTextFieldView: UIView {
     
     @IBOutlet weak var textFieldWithLimit: UITextFieldWithLimit!
+    @IBOutlet weak var tweetButton: UIButton!
+    @IBOutlet weak var cancelButton: UIButton!
     // MARK: - Designated Initializer
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -26,6 +28,15 @@ class TWPTextFieldView: UIView {
         view.textFieldWithLimit.delegate = delegate
         
         return view
+    }
+
+    // MARK: - Actions
+    @IBAction func tweetButtonTapped(sender: AnyObject) {
+        
+    }
+    
+    @IBAction func cancelButtonTapped(sender: AnyObject) {
+        
     }
 
 }

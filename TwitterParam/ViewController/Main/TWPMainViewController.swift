@@ -159,19 +159,36 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func configureViews() {
         self.textFieldView = TWPTextFieldView.viewWithMaxLength(kTextFieldMaxLength, delegate: self)
+        self.textFieldView?.alpha = 0.0
+
+
+        self.view.addSubview(self.textFieldView!)
+    }
+    
+    func keyboardWillShow(notification:NSNotification) {
+        // get frame of keyboard from userinfo
+        var userInfo: NSDictionary = notification.userInfo!
+        let keyboardFrame: CGRect! = userInfo.objectForKey(UIKeyboardFrameEndUserInfoKey)?.CGRectValue()
+        let keyboardAnimationDuration = userInfo.objectForKey(UIKeyboardAnimationDurationUserInfoKey)?.doubleValue
         
+        // update textfield view frame
         let textFieldViewOriginX = kTextFieldMarginWidth
-        let textFieldViewOriginY = self.view.frame.size.height / 2.0 - self.textFieldView!.frame.size.height - kTextFieldMarginHeight
+        let textFieldViewOriginY = keyboardFrame!.origin.y - self.textFieldView!.frame.size.height - kTextFieldMarginHeight
         let textFieldViewSizeWidth = self.view.frame.size.width - (kTextFieldMarginWidth * 2)
         let textFieldViewSizeHeight = self.textFieldView!.frame.size.height
         
-        self.textFieldView?.frame = CGRect(
+        self.textFieldView!.frame = CGRect(
             x: textFieldViewOriginX,
             y: textFieldViewOriginY,
             width: textFieldViewSizeWidth,
-            height: textFieldViewSizeHeight
-        )
-        self.view.addSubview(self.textFieldView!)
+            height: textFieldViewSizeHeight)
+        
+        // show textfield view with animation.
+        self.textFieldView?.alpha = 0.0
+        UIView.animateWithDuration(keyboardAnimationDuration!, animations: { () -> Void in
+            self.textFieldView?.alpha = 1.0
+        })
+        
     }
 
     

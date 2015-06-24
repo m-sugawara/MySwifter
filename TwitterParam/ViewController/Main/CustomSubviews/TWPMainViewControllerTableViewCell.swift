@@ -10,7 +10,7 @@ import UIKit
 
 class TWPMainViewControllerTableViewCell: UITableViewCell {
     @IBOutlet weak var iconImageView: UIImageView!
-    @IBOutlet weak var tweetTextLabel: UILabel!
+    @IBOutlet weak var tweetTextLabel: TTTAttributedLabel!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var screenNameLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!

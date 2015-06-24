@@ -10,7 +10,7 @@ import UIKit
 
 class TWPUserInfoViewControllerTableViewCell: UITableViewCell {
     @IBOutlet weak var iconImageView: UIImageView!
-    @IBOutlet weak var tweetTextLabel: UILabel!
+    @IBOutlet weak var tweetTextLabel: TTTAttributedLabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

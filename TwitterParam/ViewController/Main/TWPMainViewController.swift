@@ -19,7 +19,7 @@ enum TWPMainTableViewButtonType: Int {
     case favorite
 }
 
-class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate, UITextFieldWithLimitDelegate {
+class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate, UITextFieldWithLimitDelegate, TTTAttributedLabelDelegate {
     let model = TWPMainViewModel()
     var textFieldView: TWPTextFieldView?
     var userID: String!
@@ -161,7 +161,6 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.textFieldView = TWPTextFieldView.viewWithMaxLength(kTextFieldMaxLength, delegate: self)
         self.textFieldView?.alpha = 0.0
 
-
         self.view.addSubview(self.textFieldView!)
     }
     
@@ -184,7 +183,6 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             height: textFieldViewSizeHeight)
         
         // show textfield view with animation.
-        self.textFieldView?.alpha = 0.0
         UIView.animateWithDuration(keyboardAnimationDuration!, animations: { () -> Void in
             self.textFieldView?.alpha = 1.0
         })
@@ -216,8 +214,12 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
                 subscriber.sendCompleted()
                 
                 return RACDisposable(block: { () -> Void in
-                    self!.textFieldView?.hidden = false;
+                    self?.textFieldView?.alpha = 0.01;
+                    
                     self!.textFieldView?.textFieldWithLimit.becomeFirstResponder()
+                    self!.textFieldView?.textFieldWithLimit.text = ""
+                    self!.textFieldView?.textFieldWithLimit.limitLabel.text = String(kTextFieldMaxLength)
+                    
                 })
             })
             
@@ -243,10 +245,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.textFieldView?.cancelButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
             return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
                 subscriber.sendCompleted()
-                self!.textFieldView?.hidden = true
-                self!.textFieldView?.textFieldWithLimit.text = ""
-                self!.textFieldView?.textFieldWithLimit.limitLabel.text = String(kTextFieldMaxLength)
-
+                self!.textFieldView?.alpha = 0.0
                 self!.textFieldView?.textFieldWithLimit.resignFirstResponder()
                 
                 return RACDisposable()
@@ -322,6 +321,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
         cell.tweetTextLabel.text = tweet.text
+        cell.tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
         cell.userNameLabel.text = tweet.user?.name
         cell.screenNameLabel.text = tweet.user?.screenNameWithAt
         cell.retweetCountLabel.text = String(tweet.retweetCount!)
@@ -413,6 +413,11 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         else {
             
         }
+    }
+    
+    // MARK: - TTTAttributedLabelDelegate
+    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+        UIApplication.sharedApplication().openURL(url)
     }
 
 }

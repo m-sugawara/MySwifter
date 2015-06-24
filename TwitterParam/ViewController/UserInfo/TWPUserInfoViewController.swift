@@ -10,7 +10,7 @@ import UIKit
 
 let kTWPUserInfoTableViewCellIdentifier = "UserInfoTableViewCell";
 
-class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedLabelDelegate {
     let model = TWPUserInfoViewModel()
     
     var tempUserID: String!
@@ -238,6 +238,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
         cell.tweetTextLabel.text = tweet.text
+        cell.tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
         
         return cell
     }
@@ -254,5 +255,10 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
         performSegueWithIdentifier("fromUserInfoToTweetDetail", sender: nil)
+    }
+    
+    // MARK: - TTTAttributedLabelDelegate
+    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+        UIApplication.sharedApplication().openURL(url)
     }
 }

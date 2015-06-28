@@ -8,6 +8,8 @@
 
 import UIKit
 
+import ReactiveCocoa
+
 class TWPUserInfoViewModel: NSObject {
     let twitterAPI = TWPTwitterAPI.sharedInstance
     
@@ -95,6 +97,46 @@ class TWPUserInfoViewModel: NSObject {
                     }, error: { (error) -> Void in
                         subscriber.sendError(error)
                     }, completed: { () -> Void in
+                        subscriber.sendNext(nil)
+                        subscriber.sendCompleted()
+                })
+            }
+            
+            return RACDisposable()
+        })
+    }
+    
+    // MARK: - RACCommands
+    var followButtonCommand: RACCommand {
+        return RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
+            return self!.followButtonSignal()
+        })
+    }
+    
+    func followButtonSignal() -> RACSignal? {
+        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
+            
+            if self!.user.following == false {
+                self!.twitterAPI.postCreateFriendshipWithID(self!.userID)?.subscribeNext({ (user) -> Void in
+                    }, error: { (error) -> Void in
+                        subscriber.sendError(error)
+                    }, completed: { () -> Void in
+                        println("follow success")
+                        self!.user.following = TWPUserList.sharedInstance.findUserByUserID(self!.userID)?.following
+                        
+                        subscriber.sendNext(nil)
+                        subscriber.sendCompleted()
+                })
+            }
+            // user.following = true
+            else {
+                self!.twitterAPI.postDestroyFriendshipWithID(self!.userID)?.subscribeNext({ (user) -> Void in
+                    }, error: { (error) -> Void in
+                        subscriber.sendError(error)
+                    }, completed: { () -> Void in
+                        println("unfollow success")
+                        self!.user.following = TWPUserList.sharedInstance.findUserByUserID(self!.userID)?.following
+                        
                         subscriber.sendNext(nil)
                         subscriber.sendCompleted()
                 })

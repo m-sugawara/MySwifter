@@ -8,11 +8,18 @@
 
 import Foundation
 
+import ReactiveCocoa
+
+let kNotSelectIndex = -1
+
 class TWPMainViewModel: NSObject {
     let twitterAPI = TWPTwitterAPI.sharedInstance
     
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: NSArray = []
+    
+    var inputtingTweet:String?
+    var selectingIndex:Int?
     
     // because to feed update singal called many times, signal set a variable.
     private var _feedUpdateButtonSignal: RACSignal?
@@ -29,6 +36,13 @@ class TWPMainViewModel: NSObject {
     }
     
     // MARK: - Public Methods
+    func selectingTweetScreenName() -> String? {
+        if self.selectingIndex == kNotSelectIndex {
+            return nil
+        }
+        var selectingTweet:TWPTweet = self.tweets[self.selectingIndex!] as! TWPTweet
+        return selectingTweet.user?.screenName!
+    }
 
     // MARK: - Private Methods
 
@@ -95,18 +109,22 @@ class TWPMainViewModel: NSObject {
         if (_feedUpdateButtonSignal != nil) {
             return _feedUpdateButtonSignal!
         }
-        _feedUpdateButtonSignal =  RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-            self!.twitterAPI.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
-                self!.tweets = next as! NSArray
-                }, error: { (error) -> Void in
-                    subscriber.sendError(error)
-                }, completed: { () -> Void in
-                    subscriber.sendNext(nil)
-                    subscriber.sendCompleted()
+
+        _feedUpdateButtonSignal = RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
+                self!.twitterAPI.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
+                    self!.tweets = next as! NSArray
+                    }, error: { (error) -> Void in
+                        subscriber.sendError(error)
+                    }, completed: { () -> Void in
+                        subscriber.sendNext(nil)
+                        subscriber.sendCompleted()
+                })
             })
             
             return nil
-        })
+            })
+        
         
         return _feedUpdateButtonSignal!
     }
@@ -119,6 +137,40 @@ class TWPMainViewModel: NSObject {
     }
     func logoutButtonSignal() -> RACSignal {
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            return RACDisposable(block: { () -> Void in
+            })
+        })
+    }
+    
+    // tweet
+    var tweetButtonCommand: RACCommand {
+        return RACCommand(enabled:self.rac_valuesForKeyPath("inputtingTweet", observer: self
+            ).map ({ (next) -> AnyObject! in
+                return !(next as! String).isEmpty
+            }),
+            
+            signalBlock: { [weak self] (input) -> RACSignal! in
+            return self!.tweetButtonSignal()
+        })
+    }
+    
+    func tweetButtonSignal() -> RACSignal {
+        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
+            var inReplyToStatusID:String? = nil
+            if (self?.selectingIndex != kNotSelectIndex) {
+                var selectingTweet:TWPTweet = self!.tweets[self!.selectingIndex!] as! TWPTweet
+                inReplyToStatusID = selectingTweet.tweetID
+            }
+            
+            self!.twitterAPI.postStatusUpdate(
+                self!.inputtingTweet!,
+                inReplyToStatusID: inReplyToStatusID)?.subscribeError({ (error) -> Void in
+                subscriber.sendError(error)
+            }, completed: { () -> Void in
+                subscriber.sendNext(nil)
+                subscriber.sendCompleted()
+            })
+            
             return RACDisposable(block: { () -> Void in
             })
         })

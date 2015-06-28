@@ -8,6 +8,8 @@
 
 import UIKit
 
+import UITextFieldWithLimit
+
 class TWPTextFieldView: UIView {
     
     @IBOutlet weak var textFieldWithLimit: UITextFieldWithLimit!

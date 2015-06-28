@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D4265EF82C879BBBCA2C2C3 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5571DCB3324D503C093C83EC /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5912996E1B37E79E0011EA85 /* String+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5912996D1B37E79E0011EA85 /* String+TWPHelper.swift */; };
 		591299711B37E8390011EA85 /* NSDate+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591299701B37E8390011EA85 /* NSDate+TWPHelper.swift */; };
 		591299741B37F6BC0011EA85 /* TWPTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591299731B37F6BC0011EA85 /* TWPTextFieldView.swift */; };
@@ -31,11 +32,13 @@
 		59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */; };
 		59B578AD1B1EFA6E00E3D801 /* TWPTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */; };
 		59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578B01B1F07BF00E3D801 /* TWPUserList.swift */; };
+		59CD8BBA1B3FBAC9000B2E93 /* TWPUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BB91B3FBAC8000B2E93 /* TWPUserListViewController.swift */; };
+		59CD8BBD1B3FEB8E000B2E93 /* TWPUserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BBC1B3FEB8E000B2E93 /* TWPUserListViewModel.swift */; };
+		59CD8BC11B401A32000B2E93 /* TWPUserListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BC01B401A32000B2E93 /* TWPUserListTableViewCell.swift */; };
 		59DDB8DE1B3666B400C89F46 /* TWPLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */; };
 		59DDB8E01B367A0E00C89F46 /* TWPLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DF1B367A0E00C89F46 /* TWPLoginViewModel.swift */; };
 		59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */; };
 		59F3D2871B1D7F4E00B5235C /* TWPUserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */; };
-		7E030F1A78FB05FD0E80CEA1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE1F7F19262D31B910DFE2F /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +67,7 @@
 /* Begin PBXFileReference section */
 		3319865DCEC9CC5201D967AB /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		40B47206FD199E703DD1AAA1 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		5571DCB3324D503C093C83EC /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5912996D1B37E79E0011EA85 /* String+TWPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+TWPHelper.swift"; path = "Extension/String/String+TWPHelper.swift"; sourceTree = "<group>"; };
 		591299701B37E8390011EA85 /* NSDate+TWPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSDate+TWPHelper.swift"; path = "Extension/NSDate/NSDate+TWPHelper.swift"; sourceTree = "<group>"; };
 		591299731B37F6BC0011EA85 /* TWPTextFieldView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTextFieldView.swift; path = CustomView/TWPTextFieldView.swift; sourceTree = "<group>"; };
@@ -92,11 +96,13 @@
 		59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewModel.swift; sourceTree = "<group>"; };
 		59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTweet.swift; sourceTree = "<group>"; };
 		59B578B01B1F07BF00E3D801 /* TWPUserList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserList.swift; sourceTree = "<group>"; };
+		59CD8BB91B3FBAC8000B2E93 /* TWPUserListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserListViewController.swift; path = UserList/TWPUserListViewController.swift; sourceTree = "<group>"; };
+		59CD8BBC1B3FEB8E000B2E93 /* TWPUserListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserListViewModel.swift; path = UserList/TWPUserListViewModel.swift; sourceTree = "<group>"; };
+		59CD8BC01B401A32000B2E93 /* TWPUserListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserListTableViewCell.swift; path = UserList/CustomSubviews/TWPUserListTableViewCell.swift; sourceTree = "<group>"; };
 		59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPLoginViewController.swift; path = Login/TWPLoginViewController.swift; sourceTree = "<group>"; };
 		59DDB8DF1B367A0E00C89F46 /* TWPLoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPLoginViewModel.swift; path = Login/TWPLoginViewModel.swift; sourceTree = "<group>"; };
 		59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTwitterAPI.swift; sourceTree = "<group>"; };
 		59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserHelper.swift; sourceTree = "<group>"; };
-		9EE1F7F19262D31B910DFE2F /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,7 +111,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59AE827E1B353E180083F5FF /* SwifteriOS.framework in Frameworks */,
-				7E030F1A78FB05FD0E80CEA1 /* libPods.a in Frameworks */,
+				0D4265EF82C879BBBCA2C2C3 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +256,7 @@
 				59DDB8DC1B36669500C89F46 /* Login */,
 				595FC12E1B1BE8B80088A2EB /* Main */,
 				59B578A91B1ED1C100E3D801 /* UserInfo */,
+				59CD8BBB1B3FEB6E000B2E93 /* UserList */,
 				59898DBA1B33FFC200273760 /* TweetDetail */,
 			);
 			path = ViewModel;
@@ -261,6 +268,7 @@
 				59DDB8DB1B36668E00C89F46 /* Login */,
 				595FC12D1B1BE8B10088A2EB /* Main */,
 				59B578A61B1ED14900E3D801 /* UserInfo */,
+				59CD8BB81B3FBA8C000B2E93 /* UserList */,
 				59898DB71B33FF8800273760 /* TweetDetail */,
 			);
 			path = ViewController;
@@ -324,6 +332,31 @@
 			path = SharedObject;
 			sourceTree = "<group>";
 		};
+		59CD8BB81B3FBA8C000B2E93 /* UserList */ = {
+			isa = PBXGroup;
+			children = (
+				59CD8BB91B3FBAC8000B2E93 /* TWPUserListViewController.swift */,
+				59CD8BBF1B400D25000B2E93 /* CustomSubviews */,
+			);
+			name = UserList;
+			sourceTree = "<group>";
+		};
+		59CD8BBB1B3FEB6E000B2E93 /* UserList */ = {
+			isa = PBXGroup;
+			children = (
+				59CD8BBC1B3FEB8E000B2E93 /* TWPUserListViewModel.swift */,
+			);
+			name = UserList;
+			sourceTree = "<group>";
+		};
+		59CD8BBF1B400D25000B2E93 /* CustomSubviews */ = {
+			isa = PBXGroup;
+			children = (
+				59CD8BC01B401A32000B2E93 /* TWPUserListTableViewCell.swift */,
+			);
+			name = CustomSubviews;
+			sourceTree = "<group>";
+		};
 		59DDB8DB1B36668E00C89F46 /* Login */ = {
 			isa = PBXGroup;
 			children = (
@@ -379,7 +412,7 @@
 			isa = PBXGroup;
 			children = (
 				59AE827D1B353E180083F5FF /* SwifteriOS.framework */,
-				9EE1F7F19262D31B910DFE2F /* libPods.a */,
+				5571DCB3324D503C093C83EC /* Pods.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -397,6 +430,7 @@
 				595FC1041B1BE8400088A2EB /* Resources */,
 				AC2650F1F28D6296721EF993 /* Copy Pods Resources */,
 				59AE827A1B353BAC0083F5FF /* CopyFiles */,
+				FBF3DBDFEAF4F4241025E136 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -515,6 +549,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		FBF3DBDFEAF4F4241025E136 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -522,6 +571,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59CD8BBD1B3FEB8E000B2E93 /* TWPUserListViewModel.swift in Sources */,
 				59898DBC1B34014600273760 /* TWPTweetDetailViewModel.swift in Sources */,
 				59F3D2871B1D7F4E00B5235C /* TWPUserHelper.swift in Sources */,
 				591299711B37E8390011EA85 /* NSDate+TWPHelper.swift in Sources */,
@@ -535,9 +585,11 @@
 				591702131B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift in Sources */,
 				59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */,
 				59B578A81B1ED17700E3D801 /* TWPUserInfoViewController.swift in Sources */,
+				59CD8BBA1B3FBAC9000B2E93 /* TWPUserListViewController.swift in Sources */,
 				591299741B37F6BC0011EA85 /* TWPTextFieldView.swift in Sources */,
 				59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */,
 				59DDB8E01B367A0E00C89F46 /* TWPLoginViewModel.swift in Sources */,
+				59CD8BC11B401A32000B2E93 /* TWPUserListTableViewCell.swift in Sources */,
 				591ED1261B3645A300BAB592 /* UIViewController+TWPHelper.swift in Sources */,
 				59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */,
 				5917020F1B1BEA5D008ADA01 /* TWPMainViewModel.swift in Sources */,

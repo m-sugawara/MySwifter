@@ -8,6 +8,8 @@
 
 import UIKit
 
+import TTTAttributedLabel
+
 class TWPMainViewControllerTableViewCell: UITableViewCell {
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var tweetTextLabel: TTTAttributedLabel!

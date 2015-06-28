@@ -15,25 +15,34 @@ class TWPUser:NSObject {
     var screenName: String?
     var screenNameWithAt: String?
     var profileImageUrl: NSURL?
+    var following:Bool?
+    var friendsCount: Int?
+    var followersCount: Int?
     
     override init() {
         super.init()
     }
     
-    init(userID: String?, name: String?, screenName: String?, profileImageUrl: String?) {
+    init(userID: String?, name: String?, screenName: String?, profileImageUrl: String?, following: Bool?, friendsCount: Int?, followersCount: Int?) {
         self.userID = userID
         self.name = name
         self.screenName = screenName
         self.screenNameWithAt = "@" + screenName!
         self.profileImageUrl = NSURL(string: profileImageUrl!)
+        self.following = following
+        self.friendsCount = friendsCount
+        self.followersCount = followersCount
     }
     
     convenience init(dictionary: Dictionary<String, JSONValue>) {
         self.init(
-            userID: dictionary["id_str"]?.string,
-            name: dictionary["name"]?.string,
-            screenName: dictionary["screen_name"]?.string,
-            profileImageUrl: dictionary["profile_image_url"]?.string
+            userID:          dictionary["id_str"]?.string,
+            name:            dictionary["name"]?.string,
+            screenName:      dictionary["screen_name"]?.string,
+            profileImageUrl: dictionary["profile_image_url"]?.string,
+            following:       dictionary["following"]?.boolValue,
+            friendsCount:    dictionary["friends_count"]?.integer,
+            followersCount:  dictionary["followers_count"]?.integer
         )
     }
     

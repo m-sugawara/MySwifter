@@ -8,6 +8,10 @@
 
 import UIKit
 
+import TTTAttributedLabel
+import ReactiveCocoa
+import SDWebImage
+
 class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate {
     let model = TWPTweetDetailViewModel()
     
@@ -79,6 +83,7 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
     // MARK: - Binding
     func bindCommands() {
         self.backButton.rac_command = self.backButtonCommand
+        
     }
     
     // MARK: - Private Methods

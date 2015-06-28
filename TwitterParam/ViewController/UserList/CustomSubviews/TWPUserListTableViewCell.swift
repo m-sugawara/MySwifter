@@ -1,18 +1,18 @@
 //
-//  TWPUserInfoViewControllerTableViewCell.swift
+//  TWPUserListTableViewCell.swift
 //  TwitterParam
 //
-//  Created by m_sugawara on 2015/06/19.
+//  Created by M_Sugawara on 2015/06/28.
 //  Copyright (c) 2015年 sugawar. All rights reserved.
 //
 
 import UIKit
 
-import TTTAttributedLabel
+class TWPUserListTableViewCell: UITableViewCell {
 
-class TWPUserInfoViewControllerTableViewCell: UITableViewCell {
-    @IBOutlet weak var iconImageView: UIImageView!
-    @IBOutlet weak var tweetTextLabel: TTTAttributedLabel!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var screenNameLabel: UILabel!
+    @IBOutlet weak var userImageView: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

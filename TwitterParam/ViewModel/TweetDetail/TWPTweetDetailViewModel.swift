@@ -8,6 +8,8 @@
 
 import UIKit
 
+import ReactiveCocoa
+
 class TWPTweetDetailViewModel: NSObject {
     let twitterAPI = TWPTwitterAPI.sharedInstance
     

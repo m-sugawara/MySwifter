@@ -8,6 +8,8 @@
 
 import UIKit
 
+import ReactiveCocoa
+
 class TWPLoginViewModel: NSObject {
     let twitterAPI = TWPTwitterAPI.sharedInstance
     

@@ -1,6 +1,6 @@
 platform :ios, '8.0'
 
-# use_frameworks!
+use_frameworks!
 
 pod 'ReactiveCocoa', '~> 2.5.0'
 pod 'SDWebImage', '~> 3.7.2'

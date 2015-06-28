@@ -8,6 +8,8 @@
 
 import UIKit
 
+import ReactiveCocoa
+
 class TWPLoginViewController: UIViewController {
     let model = TWPLoginViewModel()
 

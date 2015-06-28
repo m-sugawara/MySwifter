@@ -8,11 +8,21 @@
 
 import UIKit
 
+import ReactiveCocoa
+import TTTAttributedLabel
+import SDWebImage
+
 let kTWPUserInfoTableViewCellIdentifier = "UserInfoTableViewCell";
+
+enum TWPUserListType {
+    case followList
+    case followerList
+}
 
 class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedLabelDelegate {
     let model = TWPUserInfoViewModel()
     
+    var selectingUserList: TWPUserListType?
     var tempUserID: String!
     var backButtonCommand: RACCommand!
     
@@ -24,6 +34,9 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var userTweetsTableView: UITableView!
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var followListButton: UIButton!
+    @IBOutlet weak var followerListButton: UIButton!
+    @IBOutlet weak var followButton: UIButton!
     @IBOutlet weak var tweetListButton: UIButton!
     @IBOutlet weak var imageListButton: UIButton!
     @IBOutlet weak var favoriteListButton: UIButton!
@@ -41,9 +54,15 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
         
         self.bindCommands()
         
+        // view did show for the firsttime, load user's timeline
         if self.tempUserID != nil {
             // TODO: bad solution
             self.model.userID = self.tempUserID
+            
+            // set default status
+            if self.model.userID == TWPUserHelper.currentUserID() {
+                self.followButton.hidden = true
+            }
             
             // get user info
             self.startLoading()
@@ -71,12 +90,13 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        
+        // this method doesn't work, viewWillLoad:, therefore alert show here.
         if self.tempUserID == nil {
             self.showAlertWithTitle("ERROR!", message: "user not found!", cancelButtonTitle: "Back", cancelTappedAction: { () -> Void in
                 self.dismissViewControllerAnimated(true, completion: nil)
             })
         }
+
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -104,11 +124,62 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
             })
         
         }
+        else if segue.identifier == "fromUserInfoToUserList" {
+            var userListViewController: TWPUserListViewController = segue.destinationViewController as! TWPUserListViewController
+            userListViewController.tempUserID = self.tempUserID
+            
+            userListViewController.backButtonCommand = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
+                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                    // send completed for button status to acitive
+                    subscriber.sendCompleted()
+                    
+                    return RACDisposable(block: { () -> Void in
+                        self!.dismissViewControllerAnimated(true, completion: nil)
+                    })
+                })
+                })
+        }
     }
     
     // MARK: - Binding
+    
     func bindCommands() {
         self.backButton.rac_command = self.backButtonCommand
+        
+        // follow list button
+        self.followListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
+            return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
+                self!.selectingUserList = TWPUserListType.followList
+                
+                self!.performSegueWithIdentifier("fromUserInfoToUserList", sender: nil)
+                
+                subscriber.sendCompleted()
+                
+                return RACDisposable()
+            })
+        })
+        // follower list button
+        self.followerListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
+            return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
+                self!.selectingUserList = TWPUserListType.followerList
+
+                self!.performSegueWithIdentifier("fromUserInfoToUserList", sender: nil)
+                
+                subscriber.sendCompleted()
+                
+                return RACDisposable()
+                })
+        })
+        
+        // follow button
+        self.followButton.rac_command = self.model.followButtonCommand
+        self.followButton.rac_command.executionSignals.flatten().subscribeNext { [weak self] (next) -> Void in
+            self!.followButton.selected = self!.model.user.following!
+        }
+        self.followButton.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
+            println("user follow error:\(error)")
+            self!.showAlertWithTitle("ERROR", message:error.localizedDescription)
+        }
         
         // SelectListButtons
         self.tweetListButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
@@ -195,6 +266,12 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     func setUserProfile() {
         self.userNameLabel.text = self.model.user.name
         
+        self.followListButton.setTitle(String(self.model.user.friendsCount!) + " follows",
+            forState: UIControlState.Normal)
+        self.followerListButton.setTitle(String(self.model.user.followersCount!) + " followers",
+            forState: UIControlState.Normal)
+        
+        
         if self.model.user.screenName != nil {
             self.screenNameLabel.text = self.model.user.screenNameWithAt!
         }
@@ -205,6 +282,8 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
         self.userIconImageView.sd_setImageWithURL(self.model.user.profileImageUrl,
             placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
+        
+        self.followButton.selected = self.model.user.following!
     }
     
     func changeListButtonsStatusWithTappedButton(tappedButton: UIButton) {

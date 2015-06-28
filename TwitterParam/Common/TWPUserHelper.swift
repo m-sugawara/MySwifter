@@ -85,15 +85,23 @@ class TWPUserHelper {
         return nil
     }
     
-    class func fetchUserQData() -> NSDictionary? {
+    class func currentUserID() -> String? {
         var userDefaults = NSUserDefaults.standardUserDefaults()
         if userDefaults.objectForKey(kKeyForUserTokenUserID) == nil {
             return nil
         }
         
-        var data: NSMutableDictionary = NSMutableDictionary()
-        data["screenName"] = userDefaults.objectForKey(kKeyForUserTokenScreenName) as! String?
-        data["userID"] = userDefaults.objectForKey(kKeyForUserTokenUserID) as! String?
-        return data
+        var userID = userDefaults.objectForKey(kKeyForUserTokenUserID) as! String?
+        return userID
+    }
+    
+    class func currentUser() -> TWPUser? {
+        let currentUserID = TWPUserHelper.currentUserID()
+        if currentUserID == nil {
+            return nil
+        }
+        
+        var currentUser = TWPUserList.sharedInstance.findUserByUserID(currentUserID!)
+        return currentUser
     }
 }

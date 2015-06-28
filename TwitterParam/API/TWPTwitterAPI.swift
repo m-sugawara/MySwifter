@@ -10,6 +10,7 @@ import Foundation
 
 import Accounts
 import SwifteriOS
+import ReactiveCocoa
 
 final class TWPTwitterAPI: NSObject {
     
@@ -89,7 +90,7 @@ final class TWPTwitterAPI: NSObject {
             if TWPUserHelper.fetchUserToken() != nil {
                 // Having AccessToken
                 self.swifter.client.credential = TWPUserHelper.fetchUserToken()
-                let user = TWPUserHelper.fetchUserQData()
+                let user = TWPUserHelper.currentUser()
                 println("user\(user)")
                 
                 subscriber.sendCompleted()
@@ -159,11 +160,7 @@ final class TWPTwitterAPI: NSObject {
     
     // MARK: - Wrapper Method(User)
     func getMyUser() -> RACSignal? {
-        // get my userID
-        let user = TWPUserHelper.fetchUserQData()
-        let userID = user!["userID"] as? String
-        
-        return self.getUsersShowWithUserID(userID!)
+        return self.getUsersShowWithUserID(TWPUserHelper.currentUserID()!)
     }
     
     func getUsersShowWithUserID(userID: String, includeEntities: Bool? = nil) -> RACSignal? {
@@ -174,7 +171,7 @@ final class TWPTwitterAPI: NSObject {
                     println("TwitterAPI's user\(user)")
                     
                     // create TWPUser Instance
-                    var userInfo = TWPUser(userID: userID, name: user!["name"]!.string, screenName: user!["screen_name"]!.string, profileImageUrl: user!["profile_image_url"]!.string)
+                    var userInfo = TWPUser(dictionary: user!)
                     // store shared instance
                     TWPUserList.sharedInstance.appendUser(userInfo)
                     
@@ -187,6 +184,49 @@ final class TWPTwitterAPI: NSObject {
             return RACDisposable(block: { () -> Void in
             })
             
+        })
+    }
+    // MARK: - Wrapper Method(Follow)
+    func getFriendListWithID(id: String, cursor: Int? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil) -> RACSignal? {
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.getFriendsListWithID(id,
+                cursor: cursor,
+                count: count,
+                skipStatus: skipStatus,
+                includeUserEntities: includeUserEntities,
+                success: { (users, previousCursor, nextCursor) -> Void in
+                    println("\(users)")
+                    var resultUsers:Array<TWPUser> = []
+                    for user:JSONValue in users! {
+                        println("what is user? : \(user)")
+                        var resultUser = TWPUser(dictionary: user.object!)
+                        resultUsers.append(resultUser)
+                    }
+                    subscriber.sendNext(resultUsers)
+                    subscriber.sendCompleted()
+                    
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            
+            return RACDisposable()
+        })
+    }
+    // MARK: - Wrapper Method(Followers)
+    func getFollowersListWithID(id: String, cursor: Int? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil) -> RACSignal? {
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.getFollowersListWithID(id,
+                cursor: cursor,
+                count: count,
+                skipStatus: skipStatus,
+                includeUserEntities: includeUserEntities,
+                success: { (users, previousCursor, nextCursor) -> Void in
+                    println("\(users)")
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            
+            return RACDisposable()
         })
     }
     
@@ -271,6 +311,29 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Method(Tweet)
+    func postStatusUpdate(status: String, inReplyToStatusID: String? = nil, lat: Double? = nil, long: Double? = nil, placeID: Double? = nil, displayCoordinates: Bool? = nil, trimUser: Bool? = nil) -> RACSignal? {
+        
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.postStatusUpdate(status,
+                inReplyToStatusID: inReplyToStatusID,
+                lat: lat,
+                long: long,
+                placeID: placeID,
+                displayCoordinates: displayCoordinates,
+                trimUser: trimUser,
+                success: { (status) -> Void in
+                    println(status)
+                    
+                    subscriber.sendCompleted()
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            
+            return RACDisposable()
+        })
+    }
+    
+    
     func getStatuesShowWithID(id: String, count: Int? = nil, trimUser: Bool? = nil, includeMyRetweet: Bool? = nil, includeEntities: Bool? = nil) -> RACSignal? {
         
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
@@ -430,6 +493,41 @@ final class TWPTwitterAPI: NSObject {
             })
         })
     }
+    
+    // MARK: - Wrapper Methods(follow)
+    func postCreateFriendshipWithID(id: String, follow: Bool? = nil) -> RACSignal? {
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.postCreateFriendshipWithID(id,
+                follow: follow,
+                success: { (user) -> Void in
+                    println("post create friend ship success:\(user)")
+                    TWPUserList.sharedInstance.findUserByUserID(id)?.following = true
+                    
+                    subscriber.sendNext(nil)
+                    subscriber.sendCompleted()
+                }) { (error) -> Void in
+                    subscriber.sendError(error)
+            }
 
+            return RACDisposable()
+        })
+    }
+    
+    func postDestroyFriendshipWithID(id: String) -> RACSignal? {
+        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+            self.swifter.postDestroyFriendshipWithID(id,
+                success: { (user) -> Void in
+                    println("post destroy friend ship success:\(user)")
+                    TWPUserList.sharedInstance.findUserByUserID(id)?.following = false
+                    
+                    subscriber.sendNext(nil)
+                    subscriber.sendCompleted()
+            }, failure: { (error) -> Void in
+                subscriber.sendError(error)
+            })
+            return RACDisposable()
+        })
+    }
+    
 }
 

@@ -1,6 +1,8 @@
 language: objective-c
 before_script:
     - brew update && brew upgrade xctool
+before_instll:
+    - gem install cocoapods -v '0.37.1'
 xcode_project: TwitterParam.xcodeproj
 xcode_scheme: TwitterParamTests
 xcode_sdk: iphonesimulator

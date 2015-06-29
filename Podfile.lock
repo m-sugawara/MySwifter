@@ -24,4 +24,4 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
   UITextFieldWithLimit: 7b292ab1fe30fb03fa2f9b595be2c414f93cdb6d
 
-COCOAPODS: 0.37.1
+COCOAPODS: 0.37.2

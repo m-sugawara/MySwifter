@@ -327,7 +327,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         var indexPath = self.tableView.indexPathForRowAtPoint(point)
         
         // set selecting Index to ViewModel
-        self.model.selectingIndex = indexPath?.row
+        self.model.selectingIndex = indexPath!.row
         
         var type: TWPMainTableViewButtonType = TWPMainTableViewButtonType(rawValue: sender.tag)!
         switch type {

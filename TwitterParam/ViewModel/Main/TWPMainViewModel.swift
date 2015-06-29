@@ -19,7 +19,7 @@ class TWPMainViewModel: NSObject {
     dynamic var tweets: NSArray = []
     
     var inputtingTweet:String?
-    var selectingIndex:Int?
+    var selectingIndex:Int = kNotSelectIndex
     
     // because to feed update singal called many times, signal set a variable.
     private var _feedUpdateButtonSignal: RACSignal?
@@ -40,7 +40,7 @@ class TWPMainViewModel: NSObject {
         if self.selectingIndex == kNotSelectIndex {
             return nil
         }
-        var selectingTweet:TWPTweet = self.tweets[self.selectingIndex!] as! TWPTweet
+        var selectingTweet:TWPTweet = self.tweets[self.selectingIndex] as! TWPTweet
         return selectingTweet.user?.screenName!
     }
 
@@ -158,7 +158,7 @@ class TWPMainViewModel: NSObject {
         return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
             var inReplyToStatusID:String? = nil
             if (self?.selectingIndex != kNotSelectIndex) {
-                var selectingTweet:TWPTweet = self!.tweets[self!.selectingIndex!] as! TWPTweet
+                var selectingTweet:TWPTweet = self!.tweets[self!.selectingIndex] as! TWPTweet
                 inReplyToStatusID = selectingTweet.tweetID
             }
             

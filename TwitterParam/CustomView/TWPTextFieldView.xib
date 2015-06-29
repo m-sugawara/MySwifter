@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="TWPTextFieldView" customModule="TwitterParam" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="200" height="120"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="What's Happening?" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5yX-0N-Wal" customClass="UITextFieldWithLimit">
+                    <rect key="frame" x="10" y="10" width="180" height="60"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zij-5u-2tp" userLabel="CancelButton">
+                    <rect key="frame" x="115" y="78" width="57" height="30"/>
+                    <state key="normal" title="Cancel">
+                        <color key="titleColor" red="0.0" green="0.25098040700000002" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="cancelButtonTapped:" destination="iN0-l3-epB" eventType="touchUpInside" id="kzL-tJ-On8"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VTe-ky-nbm" userLabel="TweetButton">
+                    <rect key="frame" x="28" y="78" width="57" height="30"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <state key="normal" title="Tweet">
+                        <color key="titleColor" red="0.0" green="0.25098040700000002" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="disabled">
+                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="tweetButtonTapped:" destination="iN0-l3-epB" eventType="touchUpInside" id="gCo-OF-0iJ"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="5yX-0N-Wal" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="10" id="94Y-PP-Ynk"/>
+                <constraint firstItem="Zij-5u-2tp" firstAttribute="leading" secondItem="VTe-ky-nbm" secondAttribute="trailing" constant="30" id="AYZ-Qc-fi3"/>
+                <constraint firstAttribute="bottom" secondItem="5yX-0N-Wal" secondAttribute="bottom" constant="50" id="F4y-1L-Nwd"/>
+                <constraint firstAttribute="trailing" secondItem="Zij-5u-2tp" secondAttribute="trailing" constant="28" id="IKp-gE-mbs"/>
+                <constraint firstAttribute="trailing" secondItem="5yX-0N-Wal" secondAttribute="trailing" constant="10" id="Ufj-kO-XhL"/>
+                <constraint firstItem="VTe-ky-nbm" firstAttribute="top" secondItem="5yX-0N-Wal" secondAttribute="bottom" constant="8" id="edu-HT-CNk"/>
+                <constraint firstItem="5yX-0N-Wal" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="10" id="kl4-96-qNL"/>
+                <constraint firstItem="Zij-5u-2tp" firstAttribute="bottom" secondItem="VTe-ky-nbm" secondAttribute="bottom" id="qfC-eA-6wp"/>
+                <constraint firstItem="Zij-5u-2tp" firstAttribute="width" secondItem="VTe-ky-nbm" secondAttribute="width" id="rFz-gG-IjQ"/>
+                <constraint firstItem="VTe-ky-nbm" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="28" id="raV-Zx-6gH"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="cancelButton" destination="Zij-5u-2tp" id="r86-0c-s61"/>
+                <outlet property="textFieldWithLimit" destination="5yX-0N-Wal" id="HQZ-XO-U9Y"/>
+                <outlet property="tweetButton" destination="VTe-ky-nbm" id="vcJ-sX-gzz"/>
+            </connections>
+        </view>
+    </objects>
+</document>

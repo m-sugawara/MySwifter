@@ -8,7 +8,15 @@
 
 import UIKit
 
+import ReactiveCocoa
+import TTTAttributedLabel
+import UITextFieldWithLimit
+import SDWebImage
+
 let kTWPMainTableViewCellIdentifier = "MainTableViewCell";
+let kTextFieldMaxLength = 140;
+let kTextFieldMarginWidth: CGFloat = 20.0;
+let kTextFieldMarginHeight: CGFloat = 20.0;
 
 enum TWPMainTableViewButtonType: Int {
     case reply = 1
@@ -16,8 +24,9 @@ enum TWPMainTableViewButtonType: Int {
     case favorite
 }
 
-class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate {
+class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate, UITextFieldWithLimitDelegate, TTTAttributedLabelDelegate {
     let model = TWPMainViewModel()
+    var textFieldView: TWPTextFieldView?
     var userID: String!
     var selectedTweetID: String!
     
@@ -26,13 +35,18 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     var logoutButtonCommand: RACCommand!
     
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var oauthButton: UIButton!
-    @IBOutlet weak var accountButton: UIButton!
+    @IBOutlet weak var tweetButton: UIButton!
     @IBOutlet weak var feedUpdateButton: UIButton!
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var footerView: UIView!
     @IBOutlet weak var loadingView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    
+    // MARK: - Deinit
+    deinit {
+        self.stopObserving()
+        println("MainView deinit")
+    }
     
     // MARK: - Disignated Initializer
     required init(coder aDecoder: NSCoder) {
@@ -44,7 +58,12 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
 
-        self.bindCommands();
+        self.startObserving()
+        
+        self.configureViews()
+        
+        self.bindParameters()
+        self.bindCommands()
         
         // bind tableView Delegate
         self.tableView.dataSource = self
@@ -59,6 +78,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.stopLoading()
             println("first feed update completed!")
         })
+
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -69,13 +89,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             var userInfoViewController:TWPUserInfoViewController = segue.destinationViewController as! TWPUserInfoViewController
             
             // TODO: bad solution
-            let user = TWPUserHelper.fetchUserQData()
-            if user != nil {
-                userInfoViewController.tempUserID = user!["userID"] as! String?
-            }
-            else {
-                userInfoViewController.tempUserID = nil
-            }
+            userInfoViewController.tempUserID = TWPUserHelper.currentUserID()
             
             // bind Next ViewController's Commands
             userInfoViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
@@ -116,6 +130,21 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     // MARK: - Private Methods
+    func startObserving() {
+        var notificationCenter = NSNotificationCenter.defaultCenter()
+        notificationCenter.addObserver(self,
+            selector: "keyboardWillShow:",
+            name: UIKeyboardWillShowNotification,
+            object: nil)
+    }
+    
+    func stopObserving() {
+        var notificationCenter = NSNotificationCenter.defaultCenter()
+        notificationCenter.removeObserver(self,
+            name: UIKeyboardWillShowNotification,
+            object: nil)
+    }
+    
     func startLoading() {
         self.loadingView.hidden = false
         self.activityIndicatorView.startAnimating()
@@ -124,6 +153,72 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     func stopLoading() {
         self.loadingView.hidden = true
         self.activityIndicatorView.stopAnimating()
+    }
+    
+    func configureViews() {
+        self.textFieldView = TWPTextFieldView.viewWithMaxLength(kTextFieldMaxLength, delegate: self)
+        self.textFieldView?.alpha = 0.0
+
+        self.view.addSubview(self.textFieldView!)
+    }
+    
+    func showTextFieldView(screenName:String? = "") {
+        for view:UIView in self.view.subviews as! Array {
+            if let subview = view as? TWPTextFieldView {
+                continue
+            }
+            view.userInteractionEnabled = false
+        }
+        
+        var defaultScreenName = ""
+        if screenName != "" {
+            defaultScreenName = "@" + screenName! + ": "
+        }
+        
+        self.textFieldView?.alpha = 0.01;
+        self.textFieldView?.textFieldWithLimit.becomeFirstResponder()
+        self.textFieldView?.textFieldWithLimit.text = defaultScreenName
+        self.textFieldView?.textFieldWithLimit.limitLabel.text = String(kTextFieldMaxLength)
+    }
+    
+    func hideTextFieldView() {
+        for view:UIView in self.view.subviews as! Array {
+            if let subview = view as? TWPTextFieldView {
+                continue
+            }
+            view.userInteractionEnabled = true
+        }
+        
+        // reset selecting Index, when hide textfield view.
+        self.model.selectingIndex = kNotSelectIndex
+        
+        self.textFieldView?.alpha = 0.0
+        self.textFieldView?.textFieldWithLimit.resignFirstResponder()
+    }
+    
+    func keyboardWillShow(notification:NSNotification) {
+        // get frame of keyboard from userinfo
+        var userInfo: NSDictionary = notification.userInfo!
+        let keyboardFrame: CGRect! = userInfo.objectForKey(UIKeyboardFrameEndUserInfoKey)?.CGRectValue()
+        let keyboardAnimationDuration = userInfo.objectForKey(UIKeyboardAnimationDurationUserInfoKey)?.doubleValue
+        
+        // update textfield view frame
+        let textFieldViewOriginX = kTextFieldMarginWidth
+        let textFieldViewOriginY = keyboardFrame!.origin.y - self.textFieldView!.frame.size.height - kTextFieldMarginHeight
+        let textFieldViewSizeWidth = self.view.frame.size.width - (kTextFieldMarginWidth * 2)
+        let textFieldViewSizeHeight = self.textFieldView!.frame.size.height
+        
+        self.textFieldView!.frame = CGRect(
+            x: textFieldViewOriginX,
+            y: textFieldViewOriginY,
+            width: textFieldViewSizeWidth,
+            height: textFieldViewSizeHeight)
+        
+        // show textfield view with animation.
+        UIView.animateWithDuration(keyboardAnimationDuration!, animations: { () -> Void in
+            self.textFieldView?.alpha = 1.0
+        })
+        
     }
 
     
@@ -143,53 +238,84 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     // MARK: - Binding
+    func bindParameters() {
+        self.textFieldView?.textFieldWithLimit.rac_textSignal().setKeyPath("inputtingTweet", onObject: self.model)
+        
+
+    }
+    
     func bindCommands() {
         
         // bind Button to the RACCommand
-        self.accountButton.rac_command = self.model.accountButtonCommand
-        self.oauthButton.rac_command = self.model.oauthButtonCommand
+        self.tweetButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
+            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                subscriber.sendCompleted()
+                
+                return RACDisposable(block: { () -> Void in
+                    self?.showTextFieldView()
+                })
+            })
+            
+        })
         self.feedUpdateButton.rac_command = self.model.feedUpdateButtonCommand
         self.logoutButton.rac_command = self.logoutButtonCommand
         
+        // TWPTextFieldView Commands
+        self.textFieldView?.cancelButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
+            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+                subscriber.sendCompleted()
+                
+                self?.hideTextFieldView()
+
+                return RACDisposable()
+            })
+            })
+        
+        self.textFieldView?.tweetButton.rac_command = self.model.tweetButtonCommand
+        
         // subscribe ViewModel's RACSignal
         // Completed Signals
-        self.accountButton.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
-            self.showAlertWithTitle("SUCCESS!", message: "authorize success!")
+        self.feedUpdateButton.rac_command.executionSignals.flatten().subscribeNext { [weak self] (next) -> Void in
+            self!.showAlertWithTitle("SUCCESS!", message: "feed update success!")
         }
-        self.oauthButton.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
-            self.showAlertWithTitle("SUCCESS!", message: "authorize success!")
-        }
-        self.feedUpdateButton.rac_command.executionSignals.flatten().subscribeNext { (next) -> Void in
-            self.showAlertWithTitle("SUCCESS!", message: "feed update success!")
-        }
+        self.textFieldView?.tweetButton.rac_command.executionSignals.flatten().subscribeNext({ [weak self] (next) -> Void in
+            self?.hideTextFieldView()
+            
+            self?.showAlertWithTitle("SUCCESS!", message: "tweet success!")
+            
+            // if tweet update success, feed update.
+            self!.model.feedUpdateButtonSignal().subscribeNext({ (next) -> Void in
+                
+            }, error: { (error) -> Void in
+                self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
+            })
+            
+            })
         
         // Error Signals
-        self.accountButton.rac_command.errors.subscribeNext { (error) -> Void in
-            println("Account authorize error!:\(error)")
-            if error != nil {
-                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-            }
-        }
-        self.oauthButton.rac_command.errors.subscribeNext { (error) -> Void in
-            println("OAuth authorize error!:\(error)")
-            if error != nil {
-                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-            }
-        }
-        self.feedUpdateButton.rac_command.errors.subscribeNext { (error) -> Void in
+        self.feedUpdateButton.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
             println("feed update error:\(error)")
             if error != nil {
-                self.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+                self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
             }
         }
+        self.textFieldView?.tweetButton.rac_command.errors.subscribeNext({ [weak self] (error) -> Void in
+            self?.hideTextFieldView()
+            println("tweet error:\(error)")
+            if error != nil {
+                self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
+            }
+        })
+        
+
     
         // bind ViewModel's parameter
         self.model.rac_valuesForKeyPath("tapCount", observer: self).subscribeNext { (tapCount) -> Void in
             println(tapCount)
         }
         // TODO: 後で消す
-        self.model.rac_valuesForKeyPath("tweets", observer: self).subscribeNext { (tweets) -> Void in
-            self.tableView.reloadData()
+        self.model.rac_valuesForKeyPath("tweets", observer: self).subscribeNext { [weak self] (tweets) -> Void in
+            self!.tableView.reloadData()
         }
     }
     
@@ -200,27 +326,36 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         var point = touch.locationInView(self.tableView)
         var indexPath = self.tableView.indexPathForRowAtPoint(point)
         
+        // set selecting Index to ViewModel
+        self.model.selectingIndex = indexPath?.row
+        
         var type: TWPMainTableViewButtonType = TWPMainTableViewButtonType(rawValue: sender.tag)!
         switch type {
         case .reply:
             println("reply button tapped index:\(indexPath!.row)")
+            self.showTextFieldView(screenName: self.model.selectingTweetScreenName())
+            
             break
         case .retweet:
-            self.model.postStatusRetweetSignalWithIndex(indexPath!.row).subscribeError({ (error) -> Void in
+            self.model.postStatusRetweetSignalWithIndex(indexPath!.row).subscribeError({ [weak self] (error) -> Void in
                 println("retweet error:\(error)")
-                self.showAlertWithTitle("ERROR", message: error.localizedDescription)
-            }, completed: { () -> Void in
+                self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
+                self!.model.selectingIndex = kNotSelectIndex
+            }, completed: { [weak self] () -> Void in
                 println("retweet success!")
-                self.tableView.reloadData()
+                self!.tableView.reloadData()
+                self!.model.selectingIndex = kNotSelectIndex
             })
             break
         case .favorite:
-            self.model.postFavoriteSignalWithIndex(indexPath!.row).subscribeError({ (error) -> Void in
+            self.model.postFavoriteSignalWithIndex(indexPath!.row).subscribeError({ [weak self] (error) -> Void in
                 println("favorite error:\(error)")
-                self.showAlertWithTitle("ERROR", message: error.localizedDescription)
-            }, completed: { () -> Void in
+                self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
+                self!.model.selectingIndex = kNotSelectIndex
+            }, completed: { [weak self] () -> Void in
                 println("favorite success!")
-                self.tableView.reloadData()
+                self!.tableView.reloadData()
+                self!.model.selectingIndex = kNotSelectIndex
             })
             break
         }
@@ -243,6 +378,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: SDWebImageOptions.CacheMemoryOnly)
         cell.tweetTextLabel.text = tweet.text
+        cell.tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
         cell.userNameLabel.text = tweet.user?.name
         cell.screenNameLabel.text = tweet.user?.screenNameWithAt
         cell.retweetCountLabel.text = String(tweet.retweetCount!)
@@ -334,6 +470,11 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         else {
             
         }
+    }
+    
+    // MARK: - TTTAttributedLabelDelegate
+    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+        UIApplication.sharedApplication().openURL(url)
     }
 
 }

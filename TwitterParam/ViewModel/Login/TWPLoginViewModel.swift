@@ -8,14 +8,20 @@
 
 import UIKit
 
+import ReactiveCocoa
+
 class TWPLoginViewModel: NSObject {
     let twitterAPI = TWPTwitterAPI.sharedInstance
     
+    // MARK: - Deinit
+    deinit {
+        println("LoginViewModel deinit")
+    }
     
     // MARK: - RACCommands
     var loginButtonCommand: RACCommand {
-        return RACCommand(signalBlock: { (input) -> RACSignal! in
-            return self.loginButtonSignal
+        return RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
+            return self!.loginButtonSignal
         })
     }
     

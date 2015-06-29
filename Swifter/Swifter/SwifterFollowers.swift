@@ -462,7 +462,7 @@ public extension Swifter {
 
     At this time, results are ordered with the most recent following first — however, this ordering is subject to unannounced change and eventual consistency issues. Results are given in groups of 20 users and multiple "pages" of results can be navigated through using the next_cursor value in subsequent requests. See Using cursors to navigate collections for more information.
     */
-    public func getFollowersListWithID(id: String, cursor: Int? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil, success: ((users: [JSONValue]?, previousCursor: Int?, nextCursor: Int?) -> Void)? = nil, failure: FailureHandler? = nil) {
+    public func getFollowersListWithID(id: String, cursor: Int? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil, success: ((users: [JSONValue]?, previousCursor: String?, nextCursor: String?) -> Void)? = nil, failure: FailureHandler? = nil) {
         let path = "followers/list.json"
 
         var parameters = Dictionary<String, AnyObject>()
@@ -484,7 +484,7 @@ public extension Swifter {
         self.getJSONWithPath(path, baseURL: self.apiURL, parameters: parameters, uploadProgress: nil, downloadProgress: nil, success: {
             json, response in
 
-            success?(users: json["users"].array, previousCursor: json["previous_cursor"].integer, nextCursor: json["next_cursor"].integer)
+            success?(users: json["users"].array, previousCursor: json["previous_cursor"].string, nextCursor: json["next_cursor"].string)
 
             }, failure: failure)
     }

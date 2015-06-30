@@ -30,6 +30,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     var userID: String!
     var selectedTweetID: String!
     
+    var scrollBeginingPoint: CGPoint!
     var footerViewHidden: Bool!
     
     var logoutButtonCommand: RACCommand!
@@ -41,6 +42,8 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var footerView: UIView!
     @IBOutlet weak var loadingView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    
+    @IBOutlet weak var footerViewHeightConstraint: NSLayoutConstraint!
     
     // MARK: - Deinit
     deinit {
@@ -403,7 +406,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 120.0
+        return 130.0
     }
     
     // MARK: - UITableViewDelegate
@@ -418,48 +421,44 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     // MARK: - UIScrollViewDelegate
-    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
-        
+
+    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        scrollBeginingPoint = scrollView.contentOffset
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        var currentPoint = scrollView.contentOffset
+        if (scrollBeginingPoint.y < currentPoint.y) {
+            scrollDown()
+        }
+        else {
+            scrollUp()
+        }
+    }
+    
+    func scrollDown() {
         if footerViewHidden != true {
             self.footerViewHidden = true
             UIView.animateWithDuration(0.5,
                 animations: { () -> Void in
-                    let tableViewFrame = self.tableView.frame
-                    let footerViewFrame = self.footerView.frame
-                    // tableView
-                    var newTableViewFrame = CGRect(origin: tableViewFrame.origin,
-                        size: CGSize(width: tableViewFrame.size.width, height: tableViewFrame.size.height + footerViewFrame.size.height)
-                    )
-                    self.tableView.frame = newTableViewFrame
-                    // footerView
-                    var newFooterViewFrame = CGRect(origin: CGPoint(x: footerViewFrame.origin.x, y: footerViewFrame.origin.y + footerViewFrame.size.height), size: footerViewFrame.size)
-                    self.footerView.frame = newFooterViewFrame
+                    self.tweetButton.hidden = true
+                    self.footerViewHeightConstraint.constant = 0.0
+                    self.view.layoutIfNeeded()
+                    
             })
         }
     }
 
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        
-        if scrollView.contentOffset.y == 0.0 && self.footerViewHidden == true {
+    func scrollUp() {
+        if self.footerViewHidden == true {
             self.footerViewHidden = false
             UIView.animateWithDuration(0.5,
                 animations: { () -> Void in
-                    UIView.animateWithDuration(1.0,
-                        animations: { () -> Void in
-                            let tableViewFrame = self.tableView.frame
-                            let footerViewFrame = self.footerView.frame
-                            // tableView
-                            var newTableViewFrame = CGRect(origin: tableViewFrame.origin,
-                                size: CGSize(width: tableViewFrame.size.width, height: tableViewFrame.size.height - footerViewFrame.size.height)
-                            )
-                            self.tableView.frame = newTableViewFrame
-                            // footerView
-                            var newFooterViewFrame = CGRect(origin: CGPoint(x: footerViewFrame.origin.x, y: footerViewFrame.origin.y - footerViewFrame.size.height), size: footerViewFrame.size)
-                            self.footerView.frame = newFooterViewFrame
-                    })
+                    self.footerViewHeightConstraint.constant = 70.0
+                    self.tweetButton.hidden = false
+                    self.view.layoutIfNeeded()
             })
         }
-        
     }
 
     // MARK: - UIAlertViewDelegate

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D4265EF82C879BBBCA2C2C3 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5571DCB3324D503C093C83EC /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		5905DEA21B418D1E00D1BE9B /* SwifteriOS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59AE827D1B353E180083F5FF /* SwifteriOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5912996E1B37E79E0011EA85 /* String+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5912996D1B37E79E0011EA85 /* String+TWPHelper.swift */; };
 		591299711B37E8390011EA85 /* NSDate+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591299701B37E8390011EA85 /* NSDate+TWPHelper.swift */; };
 		591299741B37F6BC0011EA85 /* TWPTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591299731B37F6BC0011EA85 /* TWPTextFieldView.swift */; };
@@ -23,11 +24,10 @@
 		595FC1161B1BE8400088A2EB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 595FC1141B1BE8400088A2EB /* LaunchScreen.xib */; };
 		595FC1221B1BE8400088A2EB /* TwitterParamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */; };
 		597526431B1EA7FD00419C19 /* TWPErrorCodeConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */; };
-		597839F91B363EB10032549A /* SwifteriOS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59AE827D1B353E180083F5FF /* SwifteriOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		598911091B4180600039E3A2 /* TWPPushAnimationSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598911081B4180600039E3A2 /* TWPPushAnimationSegue.swift */; };
 		59898DB91B33FFB200273760 /* TWPTweetDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */; };
 		59898DBC1B34014600273760 /* TWPTweetDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DBB1B34014600273760 /* TWPTweetDetailViewModel.swift */; };
 		59AE82741B3537250083F5FF /* TWPUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AE82731B3537250083F5FF /* TWPUser.swift */; };
-		59AE827E1B353E180083F5FF /* SwifteriOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AE827D1B353E180083F5FF /* SwifteriOS.framework */; };
 		59B578A81B1ED17700E3D801 /* TWPUserInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578A71B1ED17700E3D801 /* TWPUserInfoViewController.swift */; };
 		59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */; };
 		59B578AD1B1EFA6E00E3D801 /* TWPTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */; };
@@ -35,6 +35,7 @@
 		59CD8BBA1B3FBAC9000B2E93 /* TWPUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BB91B3FBAC8000B2E93 /* TWPUserListViewController.swift */; };
 		59CD8BBD1B3FEB8E000B2E93 /* TWPUserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BBC1B3FEB8E000B2E93 /* TWPUserListViewModel.swift */; };
 		59CD8BC11B401A32000B2E93 /* TWPUserListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BC01B401A32000B2E93 /* TWPUserListTableViewCell.swift */; };
+		59DD48501B418E38007B5CD8 /* SwifteriOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AE827D1B353E180083F5FF /* SwifteriOS.framework */; };
 		59DDB8DE1B3666B400C89F46 /* TWPLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */; };
 		59DDB8E01B367A0E00C89F46 /* TWPLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DF1B367A0E00C89F46 /* TWPLoginViewModel.swift */; };
 		59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */; };
@@ -58,7 +59,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				597839F91B363EB10032549A /* SwifteriOS.framework in CopyFiles */,
+				5905DEA21B418D1E00D1BE9B /* SwifteriOS.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +89,7 @@
 		595FC1201B1BE8400088A2EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterParamTests.swift; sourceTree = "<group>"; };
 		597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPErrorCodeConst.swift; sourceTree = "<group>"; };
+		598911081B4180600039E3A2 /* TWPPushAnimationSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPPushAnimationSegue.swift; path = Segue/TWPPushAnimationSegue.swift; sourceTree = "<group>"; };
 		59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewController.swift; path = TweetDetail/TWPTweetDetailViewController.swift; sourceTree = "<group>"; };
 		59898DBB1B34014600273760 /* TWPTweetDetailViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewModel.swift; path = TweetDetail/TWPTweetDetailViewModel.swift; sourceTree = "<group>"; };
 		59AE82731B3537250083F5FF /* TWPUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUser.swift; sourceTree = "<group>"; };
@@ -110,7 +112,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59AE827E1B353E180083F5FF /* SwifteriOS.framework in Frameworks */,
+				59DD48501B418E38007B5CD8 /* SwifteriOS.framework in Frameworks */,
 				0D4265EF82C879BBBCA2C2C3 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,6 +214,7 @@
 				59F3D2801B1D53D900B5235C /* CustomClass */,
 				591299721B37F6840011EA85 /* CustomView */,
 				591ED1231B3640A200BAB592 /* Extension */,
+				598911071B4180360039E3A2 /* Segue */,
 				59B578B21B1F11DC00E3D801 /* SharedObject */,
 				595FC12B1B1BE89C0088A2EB /* ViewModel */,
 				595FC12C1B1BE8A60088A2EB /* ViewController */,
@@ -289,6 +292,14 @@
 				5917020E1B1BEA5D008ADA01 /* TWPMainViewModel.swift */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		598911071B4180360039E3A2 /* Segue */ = {
+			isa = PBXGroup;
+			children = (
+				598911081B4180600039E3A2 /* TWPPushAnimationSegue.swift */,
+			);
+			name = Segue;
 			sourceTree = "<group>";
 		};
 		59898DB71B33FF8800273760 /* TweetDetail */ = {
@@ -589,6 +600,7 @@
 				591299741B37F6BC0011EA85 /* TWPTextFieldView.swift in Sources */,
 				59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */,
 				59DDB8E01B367A0E00C89F46 /* TWPLoginViewModel.swift in Sources */,
+				598911091B4180600039E3A2 /* TWPPushAnimationSegue.swift in Sources */,
 				59CD8BC11B401A32000B2E93 /* TWPUserListTableViewCell.swift in Sources */,
 				591ED1261B3645A300BAB592 /* UIViewController+TWPHelper.swift in Sources */,
 				59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */,
@@ -724,7 +736,10 @@
 			baseConfigurationReference = 3319865DCEC9CC5201D967AB /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Swifter/build/Debug-iphoneos",
+				);
 				INFOPLIST_FILE = "TwitterParam/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/../Frameworks/";
@@ -738,7 +753,10 @@
 			baseConfigurationReference = 40B47206FD199E703DD1AAA1 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Swifter/build/Debug-iphoneos",
+				);
 				INFOPLIST_FILE = "TwitterParam/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/../Frameworks/";

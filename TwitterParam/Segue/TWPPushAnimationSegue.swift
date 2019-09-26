@@ -10,15 +10,15 @@ import UIKit
 
 class TWPPushAnimationSegue: UIStoryboardSegue {
     override func perform() {
-        let destinationViewController: UIViewController = self.destinationViewController as! UIViewController
-        let sourceViewController: UIViewController = self.sourceViewController as! UIViewController
+        let destinationViewController: UIViewController = self.destination
+        let sourceViewController: UIViewController = self.source
         
         let transition = CATransition()
         transition.duration = 0.5;
-        transition.type = kCATransitionMoveIn
-        transition.subtype = kCATransitionFromRight
+        transition.type = CATransitionType.moveIn
+        transition.subtype = CATransitionSubtype.fromRight
         
-        destinationViewController.view.layer.addAnimation(transition, forKey: kCATransition)
-        sourceViewController.presentViewController(destinationViewController, animated: true, completion: nil)
+        destinationViewController.view.layer.add(transition, forKey: kCATransition)
+        sourceViewController.present(destinationViewController, animated: true, completion: nil)
     }
 }

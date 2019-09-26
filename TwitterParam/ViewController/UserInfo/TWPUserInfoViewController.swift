@@ -44,7 +44,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
     deinit {
-        println("userInfo deinit")
+        print("userInfo deinit")
     }
     
     // MARK: - LifeCycle
@@ -61,45 +61,40 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
             
             // set default status
             if self.model.userID == TWPUserHelper.currentUserID() {
-                self.followButton.hidden = true
+                self.followButton.isHidden = true
             }
             
             // get user info
             self.startLoading()
-            self.model.getUserInfoSignal().subscribeNext({ (user) -> Void in
-                println("viewController.user:\(user)")
+            self.model.getUserInfoSignal().start({ (user) -> Void in
                 }, error: { (error) -> Void in
-                    println("viewController.error:\(error)")
                 }) { [weak self] () -> Void in
                     self!.setUserProfile()
-                    
-                    println("viewController's get userinfo completed")
-                    
-                    self!.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
-                        println("getUserTimeline.error:\(error)")
+                    self!.model.getUserTimelineSignal().startWithFailed({ error in
+                        print("getUserTimeline.error:\(error)")
                         self!.stopLoading()
                         }, completed: { () -> Void in
                             self!.tableView.reloadData()
                             self!.stopLoading()
-                            println("getUserTimeline completed!")
+                            print("getUserTimeline completed!")
                     })
             }
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // this method doesn't work, viewWillLoad:, therefore alert show here.
         if self.tempUserID == nil {
-            self.showAlertWithTitle("ERROR!", message: "user not found!", cancelButtonTitle: "Back", cancelTappedAction: { () -> Void in
-                self.dismissViewControllerAnimated(true, completion: nil)
+            self.showAlertWithTitle(title: "ERROR!", message: "user not found!", cancelButtonTitle: "Back", cancelTappedAction: { () -> Void in
+                self.dismiss(animated: true, completion: nil)
             })
         }
 
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
     }
@@ -177,7 +172,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
             self!.followButton.selected = self!.model.user.following!
         }
         self.followButton.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
-            println("user follow error:\(error)")
+            print("user follow error:\(error)")
             self!.showAlertWithTitle("ERROR", message:error.localizedDescription)
         }
         
@@ -188,7 +183,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                 // get users timeline
                 self!.startLoading()
                 self!.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
-                    println("getUserTimeline.error:\(error)")
+                    print("getUserTimeline.error:\(error)")
                     self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
                     self!.stopLoading()
                     subscriber.sendCompleted()
@@ -199,7 +194,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                         self!.changeListButtonsStatusWithTappedButton(input as! UIButton)
                         
                         subscriber.sendCompleted()
-                        println("getUserTimeline completed!")
+                        print("getUserTimeline completed!")
                 })
 
                 return RACDisposable()
@@ -211,7 +206,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                 // get users imagelist
                 self!.startLoading()
                 self!.model.getUserImageList().subscribeError({ (error) -> Void in
-                    println("getUserTimeline.error:\(error)")
+                    print("getUserTimeline.error:\(error)")
                     self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
                     self!.stopLoading()
                     subscriber.sendCompleted()
@@ -222,7 +217,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                         self!.stopLoading()
                         
                         subscriber.sendCompleted()
-                        println("getUserTimeline completed!")
+                        print("getUserTimeline completed!")
                 })
                 
                 return RACDisposable()
@@ -233,7 +228,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                 // get users favoritelist
                 self!.startLoading()
                 self!.model.getUserFavoritesList().subscribeError({ (error) -> Void in
-                    println("getUserTimeline.error:\(error)")
+                    print("getUserTimeline.error:\(error)")
                     self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
                     self!.stopLoading()
                     subscriber.sendCompleted()
@@ -244,7 +239,7 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
                         self!.stopLoading()
                         
                         subscriber.sendCompleted()
-                        println("getUserTimeline completed!")
+                        print("getUserTimeline completed!")
                 })
 
                 return RACDisposable()

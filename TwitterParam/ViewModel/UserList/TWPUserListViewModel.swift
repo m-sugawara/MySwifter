@@ -7,8 +7,7 @@
 //
 
 import UIKit
-
-import ReactiveCocoa
+import ReactiveSwift
 
 class TWPUserListViewModel: NSObject {
     let twitterAPI = TWPTwitterAPI.sharedInstance
@@ -16,18 +15,17 @@ class TWPUserListViewModel: NSObject {
     var userList:Array<TWPUser> = []
    
     // MARK: - Signals
-    func getUserList() -> RACSignal? {
-        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-            self?.twitterAPI.getFriendListWithID(self!.selectingUserID!,count: 20)?.subscribeNext({ (resultUsers) -> Void in
+    func getUserList() -> SignalProducer<Void, Error>? {
+        return SignalProducer<Void, Error> { [weak self] innerObserver, _ in
+            guard let self = self else { return }
+            self.twitterAPI.getFriendListWithID(self.selectingUserID!,count: 20)?.subscribeNext({ (resultUsers) -> Void in
                 self!.userList = resultUsers as! Array<TWPUser>
             }, error: { (error) -> Void in
-                subscriber.sendError(error)
+                innerObserver.sendError(error)
             }, completed: { () -> Void in
-                subscriber.sendNext(nil)
-                subscriber.sendCompleted()
+                innerObserver.send(value: ())
+                innerObserver.sendCompleted()
             })
-            
-            return RACDisposable()
-        })
+        }
     }
 }

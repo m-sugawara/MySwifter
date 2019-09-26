@@ -10,7 +10,7 @@ import Foundation
 
 final class TWPUserList:NSObject {
     
-    var users:Array<TWPUser> = []
+    var users: Array<TWPUser> = []
     
     // MARK: - Singleton
     static let sharedInstance = TWPUserList()

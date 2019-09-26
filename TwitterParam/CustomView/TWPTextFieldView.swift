@@ -15,18 +15,14 @@ class TWPTextFieldView: UIView {
     @IBOutlet weak var textFieldWithLimit: UITextFieldWithLimit!
     @IBOutlet weak var tweetButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
-    // MARK: - Designated Initializer
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
+
     // MARK: - Convenience Initializer
     class func viewWithMaxLength(maxLength: Int, delegate: UITextFieldWithLimitDelegate) -> TWPTextFieldView {
-        let view: TWPTextFieldView = NSBundle.mainBundle().loadNibNamed("TWPTextFieldView", owner: self, options: nil).first as! TWPTextFieldView
-        view.setTranslatesAutoresizingMaskIntoConstraints(true)
-        view.autoresizingMask = UIViewAutoresizing.FlexibleWidth|UIViewAutoresizing.FlexibleHeight
+        let view: TWPTextFieldView = Bundle.main.loadNibNamed("TWPTextFieldView", owner: self, options: nil)?.first as! TWPTextFieldView
+        view.translatesAutoresizingMaskIntoConstraints = true
+        view.autoresizingMask = UIView.AutoresizingMask(rawValue: UIView.AutoresizingMask.flexibleWidth.rawValue | UIView.AutoresizingMask.flexibleHeight.rawValue)
         
-        view.textFieldWithLimit.maxLength = maxLength
+        view.textFieldWithLimit.maxLength = maxLength as NSNumber
         view.textFieldWithLimit.delegate = delegate
         
         return view

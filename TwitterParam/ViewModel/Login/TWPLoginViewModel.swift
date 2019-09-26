@@ -15,7 +15,7 @@ class TWPLoginViewModel: NSObject {
     
     // MARK: - Deinit
     deinit {
-        println("LoginViewModel deinit")
+        print("LoginViewModel deinit")
     }
     
     // MARK: - RACCommands

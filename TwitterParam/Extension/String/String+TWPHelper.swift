@@ -9,11 +9,11 @@
 import Foundation
 
 extension String {
-    func dateWithFormat(format: String?, localeIdentifier: String? = "ja") -> NSDate {
-        var formatter = DateFormatter()
-        formatter.locale = NSLocale(localeIdentifier: localeIdentifier!)
+    func date(with format: String?, localeIdentifier: String? = "ja") -> Date {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: localeIdentifier!)
         formatter.dateFormat = format
         
-        return formatter.dateFromString(self)!
+        return formatter.date(from: self)!
     }
 }

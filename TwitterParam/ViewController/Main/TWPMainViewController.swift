@@ -48,7 +48,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     // MARK: - Deinit
     deinit {
         self.stopObserving()
-        println("MainView deinit")
+        print("MainView deinit")
     }
     
     // MARK: - Disignated Initializer
@@ -79,7 +79,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.showAlertWithTitle("ERROR", message: error.localizedDescription)
         }, completed: { () -> Void in
             self.stopLoading()
-            println("first feed update completed!")
+            print("first feed update completed!")
         })
 
     }
@@ -230,14 +230,14 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         error in
         
         if error != nil {
-            println("ViewController's error:\(error.localizedDescription)")
+            print("ViewController's error:\(error.localizedDescription)")
         }
         else {
-            println("ViewController's error is nil")
+            print("ViewController's error is nil")
         }
     }
     let completedHandler: (() -> Void) = {
-        println("ViewController's completed!")
+        print("ViewController's completed!")
     }
     
     // MARK: - Binding
@@ -297,14 +297,14 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         // Error Signals
         self.feedUpdateButton.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
-            println("feed update error:\(error)")
+            print("feed update error:\(error)")
             if error != nil {
                 self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
             }
         }
         self.textFieldView?.tweetButton.rac_command.errors.subscribeNext({ [weak self] (error) -> Void in
             self?.hideTextFieldView()
-            println("tweet error:\(error)")
+            print("tweet error:\(error)")
             if error != nil {
                 self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
             }
@@ -314,7 +314,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     
         // bind ViewModel's parameter
         self.model.rac_valuesForKeyPath("tapCount", observer: self).subscribeNext { (tapCount) -> Void in
-            println(tapCount)
+            print(tapCount)
         }
         // TODO: 後で消す
         self.model.rac_valuesForKeyPath("tweets", observer: self).subscribeNext { [weak self] (tweets) -> Void in
@@ -335,28 +335,28 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         var type: TWPMainTableViewButtonType = TWPMainTableViewButtonType(rawValue: sender.tag)!
         switch type {
         case .reply:
-            println("reply button tapped index:\(indexPath!.row)")
+            print("reply button tapped index:\(indexPath!.row)")
             self.showTextFieldView(screenName: self.model.selectingTweetScreenName())
             
             break
         case .retweet:
             self.model.postStatusRetweetSignalWithIndex(indexPath!.row).subscribeError({ [weak self] (error) -> Void in
-                println("retweet error:\(error)")
+                print("retweet error:\(error)")
                 self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
                 self!.model.selectingIndex = kNotSelectIndex
             }, completed: { [weak self] () -> Void in
-                println("retweet success!")
+                print("retweet success!")
                 self!.tableView.reloadData()
                 self!.model.selectingIndex = kNotSelectIndex
             })
             break
         case .favorite:
             self.model.postFavoriteSignalWithIndex(indexPath!.row).subscribeError({ [weak self] (error) -> Void in
-                println("favorite error:\(error)")
+                print("favorite error:\(error)")
                 self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
                 self!.model.selectingIndex = kNotSelectIndex
             }, completed: { [weak self] () -> Void in
-                println("favorite success!")
+                print("favorite success!")
                 self!.tableView.reloadData()
                 self!.model.selectingIndex = kNotSelectIndex
             })
@@ -464,7 +464,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     // MARK: - UIAlertViewDelegate
     func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
         if buttonIndex == alertView.cancelButtonIndex {
-            println("AlertView cancel button tapped.")
+            print("AlertView cancel button tapped.")
         }
         else {
             

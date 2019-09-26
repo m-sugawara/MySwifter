@@ -16,18 +16,13 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
     let model = TWPTweetDetailViewModel()
     
     var tempTweetID:String!
-    var backButtonCommand:RACCommand!
+    var backButtonCommand: CocoaAction<UIButton>?
 
     @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var tweetLabel: TTTAttributedLabel!
     @IBOutlet weak var userIconImageView: UIImageView!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var screenNameLabel: UILabel!
-    
-    // MARK: - Deinit
-    deinit {
-        println("tweetdetail deinit")
-    }
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -41,7 +36,7 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
         // TODO: Bad Solution
         self.model.tweetID = self.tempTweetID
         self.model.getTweetSignal()?.subscribeError({ (error) -> Void in
-            println("error:\(error)")
+            print("error:\(error)")
         }, completed: { [weak self] () -> Void in
             self!.tweetLabel.text = self!.model.tweet?.text
             self!.userIconImageView.sd_setImageWithURL(self!.model.tweet?.user?.profileImageUrl,
@@ -51,27 +46,33 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
             self!.userNameLabel.text = self!.model.tweet?.user?.name
         })
     }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        super.prepareForSegue(segue, sender: sender)
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
         
         if segue.identifier == "fromTweetDetailToUserInfo" {
-            var userInfoViewController: TWPUserInfoViewController = segue.destinationViewController as! TWPUserInfoViewController
+            var userInfoViewController: TWPUserInfoViewController = segue.destination as! TWPUserInfoViewController
             userInfoViewController.tempUserID = self.model.tweet?.user?.userID
             
             // regist backbutton command
-            userInfoViewController.backButtonCommand = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-                    subscriber.sendCompleted()
-                    
-                    return RACDisposable(block: { () -> Void in
-                        self!.dismissViewControllerAnimated(true, completion: nil)
-                    })
-                })
-            })
-            
+            userInfoViewController.backButtonCommand = CocoaAction(didTapBackbutton)
+
+//                CocoaAction(signalBlock: { [weak self] (input) -> RACSignal! in
+//                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
+//                    subscriber.sendCompleted()
+//
+//                    return RACDisposable(block: { () -> Void in
+//                        self!.dismissViewControllerAnimated(true, completion: nil)
+//                    })
+//                })
+//            })
+
             
         }
+    }
+
+    func didTapBackbutton() {
+        self.dismiss(animated: true, completion: nil)
     }
 
     // MARK: - Memory Management
@@ -82,18 +83,17 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
     
     // MARK: - Binding
     func bindCommands() {
-        self.backButton.rac_command = self.backButtonCommand
-        
+        self.backButton.reactive.pressed = self.backButtonCommand
     }
     
     // MARK: - Private Methods
     func configureViews() {
-        self.tweetLabel.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        self.tweetLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
     }
     
     // MARK: - TTTAttributedLabelDelegate
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-        UIApplication.sharedApplication().openURL(url)
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
 
 }

@@ -29,7 +29,7 @@ class TWPUserHelper {
     class func saveUserToken(data: SwifterCredential.OAuthAccessToken) -> Bool {
         
         var userDefaults = NSUserDefaults.standardUserDefaults()
-        println(data)
+        print(data)
         userDefaults.setObject(TWPUserAccountType.oAuth.hashValue, forKey: kKeyForUserAccountType)
         userDefaults.setObject(data.key, forKey: kKeyForUserTokenKey)
         userDefaults.setObject(data.secret, forKey: kKeyForUserTokenSecret)
@@ -44,7 +44,7 @@ class TWPUserHelper {
     class func saveUserAccount(account: ACAccount) -> Bool {
         
         let userID:String = account.valueForKeyPath("properties.user_id")! as! String
-        println("userID:\(userID)")
+        print("userID:\(userID)")
         
         var userDefaults = NSUserDefaults.standardUserDefaults()
         userDefaults.setObject(TWPUserAccountType.acAccount.hashValue, forKey: kKeyForUserAccountType)

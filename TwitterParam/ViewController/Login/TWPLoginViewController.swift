@@ -19,7 +19,7 @@ class TWPLoginViewController: UIViewController {
     
     // MARK: - Deinit
     deinit {
-        println("deinit login ViewController")
+        print("deinit login ViewController")
     }
     
     // MARK: - LifeCycle

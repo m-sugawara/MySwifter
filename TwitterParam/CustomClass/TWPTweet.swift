@@ -9,7 +9,7 @@
 import UIKit
 import SwifteriOS
 
-class TWPTweet:NSObject {
+class TWPTweet: NSObject {
     var tweetID: String?
     var text: String?
     var user: TWPUser?
@@ -17,9 +17,9 @@ class TWPTweet:NSObject {
     var retweetCount: Int?
     var favorited: Bool?
     var favoriteCount: Int?
-    var createdAt: NSDate?
+    var createdAt: Date?
     
-    init(tweetID: String?, text: String?, user: TWPUser?, retweeted: Bool? = nil, retweetCount: Int? = nil, favorited: Bool? = nil, favoriteCount: Int? = nil, createdAt: NSDate? = nil) {
+    init(tweetID: String?, text: String?, user: TWPUser?, retweeted: Bool? = nil, retweetCount: Int? = nil, favorited: Bool? = nil, favoriteCount: Int? = nil, createdAt: Date? = nil) {
         self.tweetID = tweetID
         self.text = text
         self.user = user
@@ -38,7 +38,7 @@ class TWPTweet:NSObject {
             retweetCount: status["retweet_count"].integer,
             favorited: status["favorited"].bool,
             favoriteCount: status["favorite_count"].integer,
-            createdAt: status["created_at"].string?.dateWithFormat("EEE MMM dd HH:mm:ss Z yyyy", localeIdentifier: "en_US")
+            createdAt: status["created_at"].string?.date(with: "EEE MMM dd HH:mm:ss Z yyyy", localeIdentifier: "en_US")
         )
     }
     
@@ -50,7 +50,7 @@ class TWPTweet:NSObject {
             retweetCount: dictionary["retweet_count"]?.integer,
             favorited: dictionary["favorited"]!.bool,
             favoriteCount: dictionary["favorite_count"]?.integer,
-            createdAt: dictionary["created_at"]!.string?.dateWithFormat("EEE MMM dd HH:mm:ss Z yyyy", localeIdentifier: "en_US")
+            createdAt: dictionary["created_at"]!.string?.date(with: "EEE MMM dd HH:mm:ss Z yyyy", localeIdentifier: "en_US")
         )
     }
     

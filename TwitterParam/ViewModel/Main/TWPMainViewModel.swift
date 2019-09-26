@@ -26,7 +26,7 @@ class TWPMainViewModel: NSObject {
     
     // MARK: - Deinit
     deinit {
-        println("MainViewModel deinit")
+        print("MainViewModel deinit")
     }
     
     // MARK: - Initializer

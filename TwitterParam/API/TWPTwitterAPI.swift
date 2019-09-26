@@ -59,14 +59,14 @@ final class TWPTwitterAPI: NSObject {
                         }
                     }
                     else {
-                        println("There are no Twitter accounts configured.")
+                        print("There are no Twitter accounts configured.")
                         
                         let error = self.errorWithCode(kTWPErrorCodeNoTwitterAccount, message: "There are no Twitter accounts configured")
                         subscriber.sendError(error)
                     }
                 }
                 else {
-                    println("ACAccount access failed.")
+                    print("ACAccount access failed.")
                     
                     let error = self.errorWithCode(kTWPErrorCodeNotGrantedACAccount, message: "ACAccount access failed")
                     subscriber.sendError(error)
@@ -91,7 +91,7 @@ final class TWPTwitterAPI: NSObject {
                 // Having AccessToken
                 self.swifter.client.credential = TWPUserHelper.fetchUserToken()
                 let user = TWPUserHelper.currentUser()
-                println("user\(user)")
+                print("user\(user)")
                 
                 subscriber.sendCompleted()
             }
@@ -99,7 +99,7 @@ final class TWPTwitterAPI: NSObject {
                 // Nothing AccessToken
                 self.swifter.authorizeWithCallbackURL(NSURL(string: "tekitou://success")!,
                     success: { (accessToken, response) -> Void in
-                        println("Successfully authorized")
+                        print("Successfully authorized")
                         var accessToken = self.swifter.client.credential?.accessToken
                         TWPUserHelper.saveUserToken(accessToken!)
                         
@@ -168,7 +168,7 @@ final class TWPTwitterAPI: NSObject {
             self.swifter.getUsersShowWithUserID(userID,
                 includeEntities: includeEntities,
                 success: { (user: Dictionary<String, JSON>?) -> Void in
-                    println("TwitterAPI's user\(user)")
+                    print("TwitterAPI's user\(user)")
                     
                     // create TWPUser Instance
                     var userInfo = TWPUser(dictionary: user!)
@@ -177,7 +177,7 @@ final class TWPTwitterAPI: NSObject {
                     
                     subscriber.sendCompleted()
                 }, failure: { (error) -> Void in
-                    println("error:\(error)")
+                    print("error:\(error)")
                     subscriber.sendError(error)
             })
             
@@ -195,10 +195,10 @@ final class TWPTwitterAPI: NSObject {
                 skipStatus: skipStatus,
                 includeUserEntities: includeUserEntities,
                 success: { (users, previousCursor, nextCursor) -> Void in
-                    println("\(users)")
+                    print("\(users)")
                     var resultUsers:Array<TWPUser> = []
                     for user:JSON in users! {
-                        println("what is user? : \(user)")
+                        print("what is user? : \(user)")
                         var resultUser = TWPUser(dictionary: user.object!)
                         resultUsers.append(resultUser)
                     }
@@ -221,7 +221,7 @@ final class TWPTwitterAPI: NSObject {
                 skipStatus: skipStatus,
                 includeUserEntities: includeUserEntities,
                 success: { (users, previousCursor, nextCursor) -> Void in
-                    println("\(users)")
+                    print("\(users)")
             }, failure: { (error) -> Void in
                 subscriber.sendError(error)
             })
@@ -242,7 +242,7 @@ final class TWPTwitterAPI: NSObject {
                 contributorDetails: contributorDetails,
                 includeEntities: includeEntities,
                 success: { (statuses: [JSON]?) -> Void in
-                    println(statuses)
+                    print(statuses)
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
@@ -282,7 +282,7 @@ final class TWPTwitterAPI: NSObject {
                 contributorDetails: contributorDetails,
                 includeEntities: includeEntities,
                 success: { (statuses: [JSON]?) -> Void in
-                    println(statuses);
+                    print(statuses);
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
@@ -322,7 +322,7 @@ final class TWPTwitterAPI: NSObject {
                 displayCoordinates: displayCoordinates,
                 trimUser: trimUser,
                 success: { (status) -> Void in
-                    println(status)
+                    print(status)
                     
                     subscriber.sendCompleted()
             }, failure: { (error) -> Void in
@@ -343,7 +343,7 @@ final class TWPTwitterAPI: NSObject {
                 includeMyRetweet: includeMyRetweet,
                 includeEntities: includeEntities,
                 success: { (status: Dictionary<String, JSON>?) -> Void in
-                    println(status);
+                    print(status);
                     var userDictionary:Dictionary<String, JSON> = status!["user"]!.object as Dictionary<String, JSON>!
                     
                     // create user
@@ -374,7 +374,7 @@ final class TWPTwitterAPI: NSObject {
             self.swifter.getStatusesShowWithID(id,
                 includeMyRetweet: true,
                 success: { (status) -> Void in
-                    println(status)
+                    print(status)
                     var currentUserRetweet: Dictionary<String, JSON> = status!["current_user_retweet"]!.object as Dictionary<String, JSON>!
                     
                     var currentUserRetweetID: String! = currentUserRetweet["id_str"]?.string!
@@ -436,7 +436,7 @@ final class TWPTwitterAPI: NSObject {
                 sinceID: sinceID,
                 maxID: maxID,
                 success: { (statuses) -> Void in
-                    println(statuses);
+                    print(statuses);
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
@@ -500,7 +500,7 @@ final class TWPTwitterAPI: NSObject {
             self.swifter.postCreateFriendshipWithID(id,
                 follow: follow,
                 success: { (user) -> Void in
-                    println("post create friend ship success:\(user)")
+                    print("post create friend ship success:\(user)")
                     TWPUserList.sharedInstance.findUserByUserID(id)?.following = true
                     
                     subscriber.sendNext(nil)
@@ -517,7 +517,7 @@ final class TWPTwitterAPI: NSObject {
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
             self.swifter.postDestroyFriendshipWithID(id,
                 success: { (user) -> Void in
-                    println("post destroy friend ship success:\(user)")
+                    print("post destroy friend ship success:\(user)")
                     TWPUserList.sharedInstance.findUserByUserID(id)?.following = false
                     
                     subscriber.sendNext(nil)

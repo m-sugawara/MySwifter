@@ -18,7 +18,7 @@ class TWPTweetDetailViewModel: NSObject {
     
     // MARK: - Deinit
     deinit {
-        println("TweetDetailViewModel deinit")
+        print("TweetDetailViewModel deinit")
     }
     
     func getTweetSignal() -> RACSignal? {

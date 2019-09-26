@@ -16,7 +16,7 @@ class TWPUserListViewController: UIViewController, UITableViewDataSource, UITabl
 
     // use move from userInfo etc
     var tempUserID: String?
-    var backButtonCommand: RACCommand?
+    var backButtonCommand: CocoaAction?
     // use move to userInfo
     var selectedUserID: String?
     
@@ -39,7 +39,7 @@ class TWPUserListViewController: UIViewController, UITableViewDataSource, UITabl
         self.model.getUserList()?.subscribeNext({ [weak self] (next) -> Void in
             
         }, error: { (error) -> Void in
-            println("\(error)")
+            print("\(error)")
         }, completed: { () -> Void in
             self.userListTableView.reloadData()
             self.stopLoading()

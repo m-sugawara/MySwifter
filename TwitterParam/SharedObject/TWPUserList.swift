@@ -22,8 +22,8 @@ final class TWPUserList:NSObject {
     
     // MARK: - Public Methods
     func appendUser(_user:TWPUser) {
-        if self.findUserByUserID(_user.userID!) != nil {
-            self.updateUser(_user)
+        if self.findUserByUserID(userID: _user.userID!) != nil {
+            self.updateUser(_user: _user)
         }
         else {
             self.users.append(_user)
@@ -37,7 +37,7 @@ final class TWPUserList:NSObject {
                 self.users[i] = _user
                 return
             }
-            i++
+            i += 1
         }
     }
     

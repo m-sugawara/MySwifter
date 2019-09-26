@@ -24,12 +24,12 @@ class TWPMainViewControllerTableViewCell: UITableViewCell {
     @IBOutlet weak var favoriteButton: UIButton!
     
     // MARK: Designated Initializer
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     

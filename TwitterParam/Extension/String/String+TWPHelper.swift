@@ -10,7 +10,7 @@ import Foundation
 
 extension String {
     func dateWithFormat(format: String?, localeIdentifier: String? = "ja") -> NSDate {
-        var formatter = NSDateFormatter()
+        var formatter = DateFormatter()
         formatter.locale = NSLocale(localeIdentifier: localeIdentifier!)
         formatter.dateFormat = format
         

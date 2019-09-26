@@ -9,7 +9,6 @@
 #ifndef TwitterParam_TwitterParam_Bridging_Header_h
 #define TwitterParam_TwitterParam_Bridging_Header_h
 
-#import <ReactiveCocoa/ReactiveCocoa.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <UITextFieldWithLimit/UITextFieldWithLimit.h>
 #import <TTTAttributedLabel/TTTAttributedLabel.h>

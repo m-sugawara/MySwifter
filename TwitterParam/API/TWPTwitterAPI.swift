@@ -167,7 +167,7 @@ final class TWPTwitterAPI: NSObject {
         return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
             self.swifter.getUsersShowWithUserID(userID,
                 includeEntities: includeEntities,
-                success: { (user: Dictionary<String, JSONValue>?) -> Void in
+                success: { (user: Dictionary<String, JSON>?) -> Void in
                     println("TwitterAPI's user\(user)")
                     
                     // create TWPUser Instance
@@ -197,7 +197,7 @@ final class TWPTwitterAPI: NSObject {
                 success: { (users, previousCursor, nextCursor) -> Void in
                     println("\(users)")
                     var resultUsers:Array<TWPUser> = []
-                    for user:JSONValue in users! {
+                    for user:JSON in users! {
                         println("what is user? : \(user)")
                         var resultUser = TWPUser(dictionary: user.object!)
                         resultUsers.append(resultUser)
@@ -241,17 +241,17 @@ final class TWPTwitterAPI: NSObject {
                 trimUser: trimUser,
                 contributorDetails: contributorDetails,
                 includeEntities: includeEntities,
-                success: { (statuses: [JSONValue]?) -> Void in
+                success: { (statuses: [JSON]?) -> Void in
                     println(statuses)
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
-                        var userDictionary:Dictionary<String, JSONValue> = statuses![i]["user"].object as Dictionary<String, JSONValue>!
+                        var userDictionary:Dictionary<String, JSON> = statuses![i]["user"].object as Dictionary<String, JSON>!
                         
                         // create user
                         var user:TWPUser = TWPUser(dictionary: userDictionary)
                         // create tweet
-                        var status:JSONValue = statuses![i]
+                        var status:JSON = statuses![i]
                         status["id_str"].string
                         var tweet:TWPTweet? = TWPTweet(status: statuses![i], user: user)
                         
@@ -281,12 +281,12 @@ final class TWPTwitterAPI: NSObject {
                 trimUser: trimUser,
                 contributorDetails: contributorDetails,
                 includeEntities: includeEntities,
-                success: { (statuses: [JSONValue]?) -> Void in
+                success: { (statuses: [JSON]?) -> Void in
                     println(statuses);
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
-                        var userDictionary:Dictionary<String, JSONValue> = statuses![i]["user"].object as Dictionary<String, JSONValue>!
+                        var userDictionary:Dictionary<String, JSON> = statuses![i]["user"].object as Dictionary<String, JSON>!
                         
                         // create user
                         var user:TWPUser = TWPUser(dictionary: userDictionary)
@@ -342,9 +342,9 @@ final class TWPTwitterAPI: NSObject {
                 trimUser: trimUser,
                 includeMyRetweet: includeMyRetweet,
                 includeEntities: includeEntities,
-                success: { (status: Dictionary<String, JSONValue>?) -> Void in
+                success: { (status: Dictionary<String, JSON>?) -> Void in
                     println(status);
-                    var userDictionary:Dictionary<String, JSONValue> = status!["user"]!.object as Dictionary<String, JSONValue>!
+                    var userDictionary:Dictionary<String, JSON> = status!["user"]!.object as Dictionary<String, JSON>!
                     
                     // create user
                     var user:TWPUser = TWPUser(dictionary: userDictionary)
@@ -375,7 +375,7 @@ final class TWPTwitterAPI: NSObject {
                 includeMyRetweet: true,
                 success: { (status) -> Void in
                     println(status)
-                    var currentUserRetweet: Dictionary<String, JSONValue> = status!["current_user_retweet"]!.object as Dictionary<String, JSONValue>!
+                    var currentUserRetweet: Dictionary<String, JSON> = status!["current_user_retweet"]!.object as Dictionary<String, JSON>!
                     
                     var currentUserRetweetID: String! = currentUserRetweet["id_str"]?.string!
                     
@@ -440,7 +440,7 @@ final class TWPTwitterAPI: NSObject {
                     
                     var tweets: NSMutableArray! = []
                     for i in 0..<statuses!.count {
-                        var userDictionary:Dictionary<String, JSONValue> = statuses![i]["user"].object as Dictionary<String, JSONValue>!
+                        var userDictionary:Dictionary<String, JSON> = statuses![i]["user"].object as Dictionary<String, JSON>!
                         
                         // create user
                         var user:TWPUser = TWPUser(dictionary: userDictionary)

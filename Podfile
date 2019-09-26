@@ -1,8 +1,19 @@
-platform :ios, '8.0'
+# Uncomment the next line to define a global platform for your project
+platform :ios, '11.0'
 
-use_frameworks!
+target 'TwitterParam' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
 
-pod 'ReactiveCocoa', '~> 2.5.0'
-pod 'SDWebImage', '~> 3.7.2'
-pod 'UITextFieldWithLimit', '~> 0.1.1'
-pod 'TTTAttributedLabel'
+  # Pods for TwitterParam
+  pod 'ReactiveCocoa'
+  pod 'SDWebImage'
+  pod 'UITextFieldWithLimit'
+  pod 'TTTAttributedLabel'
+
+  target 'TwitterParamTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end

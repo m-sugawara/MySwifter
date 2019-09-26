@@ -19,11 +19,6 @@ class TWPUserInfoViewModel: NSObject {
     var favoriteList:Array<TWPTweet>?
     
     dynamic var tweets: NSArray = []
-    
-    // MARK: - Deinit
-    deinit {
-        println("UserInfoViewModel deinit")
-    }
 
     // MARK: - Initializer
     override init() {

@@ -34,7 +34,7 @@ class TWPUser:NSObject {
         self.followersCount = followersCount
     }
     
-    convenience init(dictionary: Dictionary<String, JSONValue>) {
+    convenience init(dictionary: Dictionary<String, JSON>) {
         self.init(
             userID:          dictionary["id_str"]?.string,
             name:            dictionary["name"]?.string,

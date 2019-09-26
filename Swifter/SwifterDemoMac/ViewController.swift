@@ -28,71 +28,53 @@ import Accounts
 import SwifterMac
 
 class ViewController: NSViewController {
-
-    let useACAccount = true
-                            
+    
+    let useACAccount = false
+    
+    @objc dynamic var tweets: [Tweet] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let failureHandler: ((NSError) -> Void) = {
-            error in
-
-            println(error.localizedDescription)
-        }
-
+        
+        let failureHandler: (Error) -> Void = { print($0.localizedDescription) }
+        
         if useACAccount {
             let accountStore = ACAccountStore()
-            let accountType = accountStore.accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)
-
-            accountStore.requestAccessToAccountsWithType(accountType, options: nil) {
-                granted, error in
-
-                if granted {
-                    let twitterAccounts = accountStore.accountsWithAccountType(accountType)
-
-                    if (twitterAccounts != nil) {
-                        if twitterAccounts.count == 0 {
-                            println("There are no Twitter accounts configured. You can add or create a Twitter account in Settings.")
-                        }
-                        else {
-                            let twitterAccount = twitterAccounts[0] as! ACAccount
-
-                            let swifter = Swifter(account: twitterAccount)
-
-                            swifter.getStatusesHomeTimelineWithCount(20, success: {
-                                (statuses: [JSONValue]?) in
-
-                                println(statuses)
-
-                                },
-                                failure: failureHandler)
-                        }
-                    }
-                    else {
-                        println("There are no Twitter accounts configured. You can add or create a Twitter account in Settings.")
-                    }
+            let accountType = accountStore.accountType(withAccountTypeIdentifier: ACAccountTypeIdentifierTwitter)
+            
+            accountStore.requestAccessToAccounts(with: accountType, options: nil) { granted, error in
+                guard granted else {
+                    print("There are no Twitter accounts configured. You can add or create a Twitter account in Settings.")
+                    return
                 }
-            }
-        }
-        else {
-            let swifter = Swifter(consumerKey: "RErEmzj7ijDkJr60ayE2gjSHT", consumerSecret: "SbS0CHk11oJdALARa7NDik0nty4pXvAxdt7aj0R5y1gNzWaNEx")
-
-            swifter.authorizeWithCallbackURL(NSURL(string: "swifter://success")!, success: {
-                accessToken, response in
-
-                println("Successfully authorized")
-
-                swifter.getStatusesHomeTimelineWithCount(20, success: {
-                    (statuses: [JSONValue]?) in
-
-                    println(statuses)
-
-                    },
-                    failure: failureHandler)
-
+                
+                guard let twitterAccounts = accountStore.accounts(with: accountType) , !twitterAccounts.isEmpty else {
+                    print("There are no Twitter accounts configured. You can add or create a Twitter account in Settings.")
+                    return
+                }
+                
+                let twitterAccount = twitterAccounts[0] as! ACAccount
+                let swifter = Swifter(account: twitterAccount)
+                
+                swifter.getHomeTimeline(count: 20, success: { statuses in
+                    print(statuses)
                 }, failure: failureHandler)
+            }
+        } else {
+            let swifter = Swifter(consumerKey: "nLl1mNYc25avPPF4oIzMyQzft",
+                                  consumerSecret: "Qm3e5JTXDhbbLl44cq6WdK00tSUwa17tWlO8Bf70douE4dcJe2")
+            let callbackUrl = URL(string: "swifter://success")!
+            swifter.authorize(withCallback: callbackUrl, success: { _, _ in
+                swifter.getHomeTimeline(count: 100, success: { statuses in
+                    guard let tweets = statuses.array else { return }
+                    self.tweets = tweets.map {
+                        return Tweet(name: $0["user"]["name"].string!, text: $0["text"].string!)
+                    }
+                }, failure: failureHandler)
+            }, failure: failureHandler)
         }
     }
-
 }
+
+
 

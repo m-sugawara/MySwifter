@@ -30,7 +30,7 @@ class TWPTweet:NSObject {
         self.createdAt = createdAt
     }
     
-    convenience init(status: JSONValue, user: TWPUser?) {
+    convenience init(status: JSON, user: TWPUser?) {
         self.init(tweetID: status["id_str"].string,
             text: status["text"].string,
             user: user,
@@ -42,7 +42,7 @@ class TWPTweet:NSObject {
         )
     }
     
-    convenience init(dictionary: Dictionary<String, JSONValue>, user: TWPUser?) {
+    convenience init(dictionary: Dictionary<String, JSON>, user: TWPUser?) {
         self.init(tweetID: dictionary["id_str"]!.string,
             text: dictionary["text"]!.string,
             user: user,

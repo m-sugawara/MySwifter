@@ -25,83 +25,61 @@ class TWPUserHelper {
     static let kKeyForUserTokenScreenName = "userTokenScreenName"
     static let kKeyForUserTokenUserID = "userTokenUserID"
     static let kKeyForUserTokenVerifier = "userTokenVerifier"
+
+    private static var userDefaults = UserDefaults.standard
     
-    class func saveUserToken(data: SwifterCredential.OAuthAccessToken) -> Bool {
-        
-        var userDefaults = NSUserDefaults.standardUserDefaults()
-        print(data)
-        userDefaults.setObject(TWPUserAccountType.oAuth.hashValue, forKey: kKeyForUserAccountType)
-        userDefaults.setObject(data.key, forKey: kKeyForUserTokenKey)
-        userDefaults.setObject(data.secret, forKey: kKeyForUserTokenSecret)
-        userDefaults.setObject(data.screenName, forKey: kKeyForUserTokenScreenName)
-        userDefaults.setObject(data.userID, forKey: kKeyForUserTokenUserID)
-        userDefaults.setObject(data.verifier, forKey: kKeyForUserTokenVerifier)
-        userDefaults.synchronize()
+    class func saveUserToken(data: Credential.OAuthAccessToken) -> Bool {
+        userDefaults.set(TWPUserAccountType.oAuth.hashValue, forKey: kKeyForUserAccountType)
+        userDefaults.set(data.key, forKey: kKeyForUserTokenKey)
+        userDefaults.set(data.secret, forKey: kKeyForUserTokenSecret)
+        userDefaults.set(data.screenName, forKey: kKeyForUserTokenScreenName)
+        userDefaults.set(data.userID, forKey: kKeyForUserTokenUserID)
+        userDefaults.set(data.verifier, forKey: kKeyForUserTokenVerifier)
         
         return true
     }
     
     class func saveUserAccount(account: ACAccount) -> Bool {
-        
-        let userID:String = account.valueForKeyPath("properties.user_id")! as! String
-        print("userID:\(userID)")
-        
-        var userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(TWPUserAccountType.acAccount.hashValue, forKey: kKeyForUserAccountType)
-        userDefaults.setObject(nil, forKey: kKeyForUserTokenKey)
-        userDefaults.setObject(nil, forKey: kKeyForUserTokenSecret)
-        userDefaults.setObject(userID, forKey: kKeyForUserTokenUserID)
-        userDefaults.setObject(account.username, forKey: kKeyForUserTokenScreenName)
-        userDefaults.setObject(nil, forKey: kKeyForUserTokenVerifier)
-        userDefaults.synchronize()
+        guard let userID = account.value(forKeyPath: "properties.user_id") as? String else { return false }
+
+        userDefaults.set(TWPUserAccountType.acAccount.hashValue, forKey: kKeyForUserAccountType)
+        userDefaults.set(nil, forKey: kKeyForUserTokenKey)
+        userDefaults.set(nil, forKey: kKeyForUserTokenSecret)
+        userDefaults.set(userID, forKey: kKeyForUserTokenUserID)
+        userDefaults.set(account.username, forKey: kKeyForUserTokenScreenName)
+        userDefaults.set(nil, forKey: kKeyForUserTokenVerifier)
         
         return true
     }
     
     class func removeUserToken() -> Bool {
-        var userDefaults = NSUserDefaults.standardUserDefaults()
-        
-        userDefaults.removeObjectForKey(kKeyForUserTokenKey)
-        userDefaults.removeObjectForKey(kKeyForUserTokenSecret)
-        userDefaults.removeObjectForKey(kKeyForUserTokenUserID)
-        userDefaults.removeObjectForKey(kKeyForUserTokenScreenName)
-        userDefaults.removeObjectForKey(kKeyForUserTokenVerifier)
-        userDefaults.synchronize()
+        userDefaults.removeObject(forKey: kKeyForUserTokenKey)
+        userDefaults.removeObject(forKey: kKeyForUserTokenSecret)
+        userDefaults.removeObject(forKey: kKeyForUserTokenUserID)
+        userDefaults.removeObject(forKey: kKeyForUserTokenScreenName)
+        userDefaults.removeObject(forKey: kKeyForUserTokenVerifier)
         
         return true
     }
     
-    class func fetchUserToken() -> SwifterCredential? {
-        
-        var userDefaults = NSUserDefaults.standardUserDefaults()
-        
-        if var tokenKey = userDefaults.objectForKey(kKeyForUserTokenKey) as? String {
-            if var tokenSecret = userDefaults.objectForKey(kKeyForUserTokenSecret) as? String {
-                
-                var access = SwifterCredential.OAuthAccessToken(key: tokenKey, secret: tokenSecret)
-                return SwifterCredential(accessToken: access)
-            }
-        }
-        return nil
+    class func fetchUserToken() -> Credential? {
+        guard let tokenKey = userDefaults.object(forKey: kKeyForUserTokenKey) as? String, let tokenSecret = userDefaults.object(forKey: kKeyForUserTokenSecret) as? String else { return nil }
+
+        let access = Credential.OAuthAccessToken(key: tokenKey, secret: tokenSecret)
+        return Credential(accessToken: access)
     }
     
     class func currentUserID() -> String? {
-        var userDefaults = NSUserDefaults.standardUserDefaults()
-        if userDefaults.objectForKey(kKeyForUserTokenUserID) == nil {
-            return nil
-        }
-        
-        var userID = userDefaults.objectForKey(kKeyForUserTokenUserID) as! String?
+        guard let userID = userDefaults.object(forKey: kKeyForUserTokenUserID) as? String else { return nil }
         return userID
     }
     
     class func currentUser() -> TWPUser? {
-        let currentUserID = TWPUserHelper.currentUserID()
-        if currentUserID == nil {
+        guard let currentUserID = TWPUserHelper.currentUserID() else {
             return nil
         }
         
-        var currentUser = TWPUserList.sharedInstance.findUserByUserID(currentUserID!)
+        let currentUser = TWPUserList.sharedInstance.findUserByUserID(userID: currentUserID)
         return currentUser
     }
 }

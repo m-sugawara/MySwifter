@@ -8,55 +8,55 @@
 
 import Foundation
 
-extension NSDate {
-    func stringWithFormat(format: String?, localeIdentifier: String? = "ja") -> String {
-        var formatter = NSDateFormatter()
-        formatter.locale = NSLocale(localeIdentifier: localeIdentifier!)
+extension Date {
+    func stringWithFormat(format: String?, localeIdentifier: String = "ja") -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: localeIdentifier)
         formatter.dateFormat = format
         
-        return formatter.stringFromDate(self)
+        return formatter.string(from: self)
     }
     
     func stringForTimeIntervalSinceCreated() -> String {
-        return stringForTimeIntervalSinceCreated(nowDate: NSDate())
+        return stringForTimeIntervalSinceCreated(nowDate: Date())
     }
     
-    func stringForTimeIntervalSinceCreated(#nowDate: NSDate) -> String {
-        var MinInterval  :Int = 0
-        var HourInterval :Int = 0
-        var DayInterval  :Int = 0
-        var DayModules   :Int = 0
-        let interval = abs(Int(self.timeIntervalSinceDate(nowDate)))
+    func stringForTimeIntervalSinceCreated(nowDate: Date) -> String {
+        var minInterval = 0
+        var hourInterval = 0
+        var dayInterval = 0
+        var dayModules = 0
+        let interval = abs(Int(timeIntervalSince(nowDate)))
         if (interval >= 86400) {
-            DayInterval = interval / 86400
-            DayModules = interval % 86400
-            if (DayModules != 0) {
-                if (DayModules >= 3600) {
+            dayInterval = interval / 86400
+            dayModules = interval % 86400
+            if (dayModules != 0) {
+                if (dayModules >= 3600) {
                     // HourInterval=DayModules/3660;
-                    return String(DayInterval) + " days"
+                    return String(dayInterval) + " days"
                 }
                 else {
-                    if (DayModules >= 60) {
+                    if (dayModules >= 60) {
                         // MinInterval=DayModules/60;
-                        return String(DayInterval) + " days"
+                        return String(dayInterval) + " days"
                     }
                     else {
-                        return String(DayInterval) + " days"
+                        return String(dayInterval) + " days"
                     }
                 }
             }
             else {
-                return String(DayInterval) + " days"
+                return String(dayInterval) + " days"
             }
         }
         else {
             if (interval >= 3600) {
-                HourInterval = interval / 3600
-                return String(HourInterval) + " hours"
+                hourInterval = interval / 3600
+                return String(hourInterval) + " hours"
             }
             else if (interval >= 60) {
-                MinInterval = interval / 60
-                return String(MinInterval) + " minutes"
+                minInterval = interval / 60
+                return String(minInterval) + " minutes"
             }
             else {
                 return String(interval) + " sec"

@@ -21,20 +21,20 @@ final class TWPUserList:NSObject {
     }
     
     // MARK: - Public Methods
-    func appendUser(_user:TWPUser) {
-        if self.findUserByUserID(userID: _user.userID!) != nil {
-            self.updateUser(_user: _user)
+    func appendUser(_ user:TWPUser) {
+        if self.findUserByUserID(userID: user.userID!) != nil {
+            self.updateUser(user)
         }
         else {
-            self.users.append(_user)
+            self.users.append(user)
         }
     }
     
-    func updateUser(_user:TWPUser) {
+    func updateUser(_ target: TWPUser) {
         var i = 0
         for user in self.users {
-            if (_user.userID == user.userID) {
-                self.users[i] = _user
+            if (target.userID == user.userID) {
+                self.users[i] = target
                 return
             }
             i += 1

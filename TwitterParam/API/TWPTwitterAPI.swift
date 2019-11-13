@@ -10,12 +10,13 @@ import Foundation
 
 import Accounts
 import SwifteriOS
-import ReactiveCocoa
+import ReactiveSwift
 
 final class TWPTwitterAPI: NSObject {
     
-    typealias FailureHandler = (error: NSError) -> Void
-    private var swifter:Swifter = Swifter(consumerKey: "5UwojnG3QBtSA3StY4JOvjVAK", consumerSecret: "XAKBmM3I4Mgt1lQtICLLKkuCWZzN0nXGe4sJ5qwDhqKK4PtCYd")
+    typealias FailureHandler = (_ error: Error) -> Void
+
+    private var swifter: Swifter
     
     // MARK: - Singleton
     static let sharedInstance = TWPTwitterAPI()
@@ -23,6 +24,7 @@ final class TWPTwitterAPI: NSObject {
     // MARK: - Initializer
     private override init() {
         super.init()
+        self.swifter = Swifter(consumerKey: "5UwojnG3QBtSA3StY4JOvjVAK", consumerSecret: "XAKBmM3I4Mgt1lQtICLLKkuCWZzN0nXGe4sJ5qwDhqKK4PtCYd")
     }
     
     // MARK: - ErrorHelper
@@ -31,160 +33,124 @@ final class TWPTwitterAPI: NSObject {
     }
 
     // MARK: - ACAccount
-    func twitterAuthorizeWithAccount() -> RACSignal {
-        let accountStore = ACAccountStore()
-        let accountType = accountStore.accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierTwitter)
-        
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            accountStore.requestAccessToAccountsWithType(accountType, options: nil) {
-                granted, error in
-                
-                if granted {
-                    let twitterAccounts = accountStore.accountsWithAccountType(accountType)
-                    
-                    if (twitterAccounts != nil) {
-                        if twitterAccounts.count == 0 {
-                            let error = self.errorWithCode(kTWPErrorCodeNoTwitterAccount, message: "There are no Twitter accounts configured")
-                            subscriber.sendError(error)
-                        }
-                        else {
-                            let twitterAccount = twitterAccounts[0] as! ACAccount
-                            
-                            self.swifter = Swifter(account: twitterAccount)
-                            
-                            // Save User's AccessToken
-                            TWPUserHelper.saveUserAccount(twitterAccount)
-                            
-                            subscriber.sendCompleted()
-                        }
-                    }
-                    else {
-                        print("There are no Twitter accounts configured.")
-                        
-                        let error = self.errorWithCode(kTWPErrorCodeNoTwitterAccount, message: "There are no Twitter accounts configured")
-                        subscriber.sendError(error)
-                    }
-                }
-                else {
-                    print("ACAccount access failed.")
-                    
-                    let error = self.errorWithCode(kTWPErrorCodeNotGrantedACAccount, message: "ACAccount access failed")
-                    subscriber.sendError(error)
-                }
+    func twitterAuthorizeWithAccount() -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
             }
-            
-            return RACDisposable(block: { () -> Void in
-                
-            })
 
-        })
+            let accountStore = ACAccountStore()
+            let accountType = accountStore.accountType(withAccountTypeIdentifier: ACAccountTypeIdentifierTwitter)
+            accountStore.requestAccessToAccounts(with: accountType, options: nil) { [weak self] granted, error in
+                guard let self = self else {
+                    observer.sendInterrupted()
+                    return
+                }
+                guard granted else {
+                    let error = self.errorWithCode(code: kTWPErrorCodeNotGrantedACAccount, message: "granted account not found")
+                    observer.send(error: error)
+                    return
+                }
+                guard let twitterAccount = accountStore.accounts(with: accountType)?.first as? ACAccount else {
+                    let error = self.errorWithCode(code: kTWPErrorCodeNoTwitterAccount, message: "There is no configured Twitter account")
+                    observer.send(error: error)
+                    return
+                }
+                self.swifter = Swifter(account: twitterAccount)
+
+                // Save User's AccessToken
+                _ = TWPUserHelper.saveUserAccount(account: twitterAccount)
+
+                observer.sendCompleted()
+            }
+        }
     }
     
     // MARK: - OAuth
-    func twitterAuthorizeWithOAuth() -> RACSignal! {
-
-        swifter = Swifter(consumerKey: "5UwojnG3QBtSA3StY4JOvjVAK", consumerSecret: "XAKBmM3I4Mgt1lQtICLLKkuCWZzN0nXGe4sJ5qwDhqKK4PtCYd")
-        
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            
-            if TWPUserHelper.fetchUserToken() != nil {
-                // Having AccessToken
-                self.swifter.client.credential = TWPUserHelper.fetchUserToken()
-                let user = TWPUserHelper.currentUser()
-                print("user\(user)")
-                
-                subscriber.sendCompleted()
+    func twitterAuthorizeWithOAuth() -> SignalProducer<Void, Error>! {
+        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+            guard let self = self else {
+                observer.sendInterrupted()
+                return
             }
-            else {
+            guard let userToken = TWPUserHelper.fetchUserToken() else {
                 // Nothing AccessToken
-                self.swifter.authorizeWithCallbackURL(NSURL(string: "tekitou://success")!,
-                    success: { (accessToken, response) -> Void in
-                        print("Successfully authorized")
-                        var accessToken = self.swifter.client.credential?.accessToken
-                        TWPUserHelper.saveUserToken(accessToken!)
-                        
-                        subscriber.sendCompleted()
+                self.swifter.authorize(withCallback: URL(string: "tekitou://success")!, presentingFrom: nil,
+                    success: { accessToken, response -> Void in
+                        _ = TWPUserHelper.saveUserToken(data: accessToken!)
+                        observer.sendCompleted()
                     },
                     failure: { (error) -> Void in
-                        subscriber.sendError(error)
+                        let error = self.errorWithCode(code: kTWPErrorCodeNoTwitterAccount, message: error.localizedDescription)
+                        observer.send(error: error)
                 })
+                return
             }
-            
-            
-            return RACDisposable(block: { () -> Void in
-                
-            })
-        })
-
+            print("found valid user token")
+            self.swifter.client.credential = userToken
+            observer.sendCompleted()
+        }
     }
     
     // MARK: - Logout
-    func tryToLogout() -> RACSignal {
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            TWPUserHelper.removeUserToken()
-            subscriber.sendCompleted()
-            
-            return RACDisposable(block: { () -> Void in
-            })
-        })
+    func logout() {
+        _ = TWPUserHelper.removeUserToken()
     }
     
     // MARK: - Wrapper Method(Login)
-    func tryToLogin() -> RACSignal? {
-        // try to Login
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.twitterAuthorizeWithAccount().subscribeError({ (error) -> Void in
-                
-                if (error.code == kTWPErrorCodeNoTwitterAccount || error.code == kTWPErrorCodeNotGrantedACAccount) {
-                    // if try to login for using ACAccount failed, try to login with OAuth.
-                    self.twitterAuthorizeWithOAuth().subscribeError( { (error) -> Void in
-                        subscriber.sendError(error)
-                    }, completed: { () -> Void in
-                        // OAuth access success!
-                        subscriber.sendCompleted()
-                    })
+    func tryToLogin() -> SignalProducer<Void, Error>? {
+        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+            self?.twitterAuthorizeWithAccount().start { event in
+                switch event {
+                case .failed(let error):
+                    if (error as NSError).code == kTWPErrorCodeNoTwitterAccount,
+                        (error as NSError).code == kTWPErrorCodeNotGrantedACAccount {
+                        // if try to login for using ACAccount failed, try to login with OAuth.
+                        self?.twitterAuthorizeWithOAuth().start { event in
+                            switch event {
+                            case .failed(let error):
+                                observer.send(error: error)
+                            case .completed:
+                                observer.sendCompleted()
+                            default:
+                                break
+                            }
+                        }
+                    } else {
+                        observer.send(error: error)
+                    }
+                case .completed:
+                    observer.sendCompleted()
+                default:
+                    break
                 }
-                else {
-                    subscriber.sendError(error)
-                }
-                
-            }, completed: { () -> Void in
-                // ACAccount access success!
-                subscriber.sendCompleted()
-            })
-            
-            return RACDisposable(block: { () -> Void in
-            })
-        })
+            }
+        }
     }
     
     // MARK: - Wrapper Method(User)
-    func getMyUser() -> RACSignal? {
-        return self.getUsersShowWithUserID(TWPUserHelper.currentUserID()!)
+    func getMyUser() -> SignalProducer<Void, Error> {
+        return self.getUsersShow(with: .id(TWPUserHelper.currentUserID()!))
     }
     
-    func getUsersShowWithUserID(userID: String, includeEntities: Bool? = nil) -> RACSignal? {
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.getUsersShowWithUserID(userID,
+    func getUsersShow(with userTag: UserTag, includeEntities: Bool? = nil) -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self?.swifter.showUser(userTag,
                 includeEntities: includeEntities,
-                success: { (user: Dictionary<String, JSON>?) -> Void in
-                    print("TwitterAPI's user\(user)")
-                    
-                    // create TWPUser Instance
-                    var userInfo = TWPUser(dictionary: user!)
-                    // store shared instance
-                    TWPUserList.sharedInstance.appendUser(userInfo)
-                    
-                    subscriber.sendCompleted()
+                success: { json in
+                    let user = TWPUser(dictionary: json.object!)
+                    TWPUserList.sharedInstance.appendUser(user)
+
+                    observer.sendCompleted()
                 }, failure: { (error) -> Void in
-                    print("error:\(error)")
-                    subscriber.sendError(error)
+                    observer.send(error: error)
             })
-            
-            return RACDisposable(block: { () -> Void in
-            })
-            
-        })
+        }
     }
     // MARK: - Wrapper Method(Follow)
     func getFriendListWithID(id: String, cursor: Int? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil) -> RACSignal? {

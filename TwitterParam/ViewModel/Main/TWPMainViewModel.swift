@@ -9,10 +9,11 @@
 import Foundation
 
 import ReactiveCocoa
+import ReactiveSwift
 
 let kNotSelectIndex = -1
 
-class TWPMainViewModel: NSObject {
+class TWPMainViewModel {
     let twitterAPI = TWPTwitterAPI.sharedInstance
     
     dynamic var tapCount: NSInteger = 0
@@ -27,12 +28,6 @@ class TWPMainViewModel: NSObject {
     // MARK: - Deinit
     deinit {
         print("MainViewModel deinit")
-    }
-    
-    // MARK: - Initializer
-    override init() {
-        super.init();
-        
     }
     
     // MARK: - Public Methods
@@ -75,8 +70,13 @@ class TWPMainViewModel: NSObject {
     }
 
     // account
-    var accountButtonCommand: RACCommand {
-        return RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
+    var accountButtonCommand: Action<Void, Void, Error> {
+        return Action {
+            return SignalProducer { observer, _ in
+                
+            }
+        }
+            RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
             return self!.accountButtonSignal
         })
     }
@@ -100,7 +100,7 @@ class TWPMainViewModel: NSObject {
     }
     
     // feed update
-    var feedUpdateButtonCommand: RACCommand {
+    var feedUpdateButtonCommand: Command {
         return RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
             return self!.feedUpdateButtonSignal()
         })

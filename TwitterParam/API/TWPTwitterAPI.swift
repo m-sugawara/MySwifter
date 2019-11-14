@@ -153,30 +153,24 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     // MARK: - Wrapper Method(Follow)
-    func getFriendListWithID(id: String, cursor: Int? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil) -> RACSignal? {
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.getFriendsListWithID(id,
+    func getFriendList(with id: String, cursor: String? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil) -> SignalProducer<[TWPUser], Error>? {
+        return SignalProducer<[TWPUser], Error> { observer, lifetime in
+            self.swifter.getUserFollowingIDs(
+                for: .id(id),
                 cursor: cursor,
                 count: count,
-                skipStatus: skipStatus,
-                includeUserEntities: includeUserEntities,
-                success: { (users, previousCursor, nextCursor) -> Void in
-                    print("\(users)")
-                    var resultUsers:Array<TWPUser> = []
-                    for user:JSON in users! {
-                        print("what is user? : \(user)")
-                        var resultUser = TWPUser(dictionary: user.object!)
+                success: { json, previousCursor, nextCursor in
+                    var resultUsers: [TWPUser] = []
+                    for userJSON in json.array! {
+                        let resultUser = TWPUser(dictionary: userJSON.object!)
                         resultUsers.append(resultUser)
                     }
-                    subscriber.sendNext(resultUsers)
-                    subscriber.sendCompleted()
-                    
-            }, failure: { (error) -> Void in
-                subscriber.sendError(error)
+                    observer.send(value: resultUsers)
+                    observer.sendCompleted()
+            }, failure: { error in
+                observer.send(error: error)
             })
-            
-            return RACDisposable()
-        })
+        }
     }
     // MARK: - Wrapper Method(Followers)
     func getFollowersListWithID(id: String, cursor: Int? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil) -> RACSignal? {

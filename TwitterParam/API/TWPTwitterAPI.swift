@@ -155,6 +155,10 @@ final class TWPTwitterAPI: NSObject {
     // MARK: - Wrapper Method(Follow)
     func getFriendList(with id: String, cursor: String? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil) -> SignalProducer<[TWPUser], Error>? {
         return SignalProducer<[TWPUser], Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
             self.swifter.getUserFollowingIDs(
                 for: .id(id),
                 cursor: cursor,
@@ -173,21 +177,28 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     // MARK: - Wrapper Method(Followers)
-    func getFollowersListWithID(id: String, cursor: Int? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil) -> RACSignal? {
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.getFollowersListWithID(id,
+    func getFollowersList(with id: String, cursor: String? = nil, count: Int? = nil, skipStatus: Bool? = nil, includeUserEntities: Bool? = nil) -> SignalProducer<[TWPUser], Error>? {
+        return SignalProducer<[TWPUser], Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self.swifter.getUserFollowersIDs(
+                for: .id(id),
                 cursor: cursor,
                 count: count,
-                skipStatus: skipStatus,
-                includeUserEntities: includeUserEntities,
-                success: { (users, previousCursor, nextCursor) -> Void in
-                    print("\(users)")
-            }, failure: { (error) -> Void in
-                subscriber.sendError(error)
-            })
-            
-            return RACDisposable()
-        })
+                success: { json, previousCursor, nextCursor in
+                    var resultUsers: [TWPUser] = []
+                    for userJSON in json.array! {
+                        let resultUser = TWPUser(dictionary: userJSON.object!)
+                        resultUsers.append(resultUser)
+                    }
+                    observer.send(value: resultUsers)
+                    observer.sendCompleted()
+            }) { error in
+                observer.send(error: error)
+            }
+        }
     }
     
     // MARK: - Wrapper Method(Timeline)

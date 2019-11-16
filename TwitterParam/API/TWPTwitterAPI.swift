@@ -287,26 +287,31 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Method(Tweet)
-    func postStatusUpdate(status: String, inReplyToStatusID: String? = nil, lat: Double? = nil, long: Double? = nil, placeID: Double? = nil, displayCoordinates: Bool? = nil, trimUser: Bool? = nil) -> RACSignal? {
-        
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.postStatusUpdate(status,
+    func postStatusUpdate(status: String, inReplyToStatusID: String? = nil, coordinate: (lat: Double, long: Double)? = nil, autoPopulateReplyMetadata: Bool? = nil, excludeReplyUserIds: Bool? = nil, placeID: Double? = nil, displayCoordinates: Bool? = nil, trimUser: Bool? = nil, mediaIDs: [String] = [], attachmentURL: URL? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
+
+        return SignalProducer<Void, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self.swifter.postTweet(
+                status: status,
                 inReplyToStatusID: inReplyToStatusID,
-                lat: lat,
-                long: long,
+                coordinate: coordinate,
+                autoPopulateReplyMetadata: autoPopulateReplyMetadata,
+                excludeReplyUserIds: excludeReplyUserIds,
                 placeID: placeID,
                 displayCoordinates: displayCoordinates,
                 trimUser: trimUser,
-                success: { (status) -> Void in
-                    print(status)
-                    
-                    subscriber.sendCompleted()
-            }, failure: { (error) -> Void in
-                subscriber.sendError(error)
-            })
-            
-            return RACDisposable()
-        })
+                mediaIDs: mediaIDs,
+                attachmentURL: attachmentURL,
+                tweetMode: tweetMode,
+                success: { json in
+                    observer.sendCompleted()
+            }) { error in
+                observer.send(error: error)
+            }
+        }
     }
     
     

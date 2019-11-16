@@ -349,27 +349,31 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Method(Retweet)
-    func getCurrentUserRetweetIDWithID(id: String) -> RACSignal? {
-        
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.getStatusesShowWithID(id,
+    func getCurrentUserRetweetID(with id: String) -> SignalProducer<String, Error> {
+        return SignalProducer<String, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self.swifter.getTweet(
+                for: id,
                 includeMyRetweet: true,
-                success: { (status) -> Void in
-                    print(status)
-                    var currentUserRetweet: Dictionary<String, JSON> = status!["current_user_retweet"]!.object as Dictionary<String, JSON>!
-                    
-                    var currentUserRetweetID: String! = currentUserRetweet["id_str"]?.string!
-                    
-                    subscriber.sendNext(currentUserRetweetID)
-                    subscriber.sendCompleted()
-                }, failure: { (error) -> Void in
-                    subscriber.sendError(error)
-            })
-            
-            return RACDisposable(block: { () -> Void in
-                
-            })
-        })
+                tweetMode: .default,
+                success: { json in
+                    let currentUserRetweet = json["current_user_retweet"].object
+                    guard let currentUserRetweetId = currentUserRetweet?["id_str"]?.string else {
+                        let error = self.errorWithCode(
+                            code: kTWPErrorCodeFailedToParseJSON,
+                            message: "failed to get currentUserRetweetID")
+                        observer.send(error: error)
+                        return
+                    }
+                    observer.send(value: currentUserRetweetId)
+                    observer.sendCompleted()
+            }) { error in
+                observer.send(error: error)
+            }
+        }
     }
     
     func postStatusRetweetWithID(id: String, trimUser: Bool? = nil) -> RACSignal? {

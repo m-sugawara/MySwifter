@@ -202,7 +202,7 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Method(Timeline)
-    func getStatusesHomeTimeline(with count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error>? {
+    func getStatusesHomeTimeline(with count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
 
         return SignalProducer<[TWPTweet], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -218,21 +218,12 @@ final class TWPTwitterAPI: NSObject {
                 includeEntities: includeEntities,
                 tweetMode: tweetMode,
                 success: { json in
-                    guard let statuses = json.array else {
+                    guard let tweets = self.parseTweets(from: json) else {
                         let error = self.errorWithCode(
                             code: kTWPErrorCodeFailedToParseJSON,
                             message: "failed to parse JSON Data")
                         observer.send(error: error)
                         return
-                    }
-                    var tweets = [TWPTweet]()
-                    for statusJSON in statuses {
-                        guard let userDictionary = statusJSON["user"].object else {
-                            continue
-                        }
-                        let user = TWPUser(dictionary: userDictionary)
-                        let tweet = TWPTweet(status: statusJSON, user: user)
-                        tweets.append(tweet)
                     }
 
                     observer.send(value: tweets)
@@ -243,43 +234,56 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     
-    func getStatusesUserTimelineWithUserID(userID: String, count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil) -> RACSignal? {
-        
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.getStatusesUserTimelineWithUserID(userID,
+    func getUserTimeline(with userId: String, customParam: [String: Any] = [:], count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, excludeReplies: Bool? = nil, includeRetweets: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
+
+        return SignalProducer<[TWPTweet], Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self.swifter.getTimeline(
+                for: .id(userId),
+                customParam: customParam,
                 count: count,
                 sinceID: sinceID,
                 maxID: maxID,
                 trimUser: trimUser,
+                excludeReplies: excludeReplies,
+                includeRetweets: includeRetweets,
                 contributorDetails: contributorDetails,
                 includeEntities: includeEntities,
-                success: { (statuses: [JSON]?) -> Void in
-                    print(statuses);
-                    
-                    var tweets: NSMutableArray! = []
-                    for i in 0..<statuses!.count {
-                        var userDictionary:Dictionary<String, JSON> = statuses![i]["user"].object as Dictionary<String, JSON>!
-                        
-                        // create user
-                        var user:TWPUser = TWPUser(dictionary: userDictionary)
-                        
-                        // create tweet
-                        var tweet:TWPTweet? = TWPTweet(status: statuses![i], user: user)
-                        tweets.addObject(tweet!)
+                tweetMode: tweetMode,
+                success: { json in
+                    guard let tweets = self.parseTweets(from: json) else {
+                        let error = self.errorWithCode(
+                            code: kTWPErrorCodeFailedToParseJSON,
+                            message: "failed to parse JSON Data")
+                        observer.send(error: error)
+                        return
                     }
-                    
-                    subscriber.sendNext(tweets)
-                    subscriber.sendCompleted()
-                },
-                failure: { (error) -> Void in
-                    subscriber.sendError(error)
-            })
-            
-            return RACDisposable(block: { () -> Void in
-                
-            })
-        })
-        
+
+                    observer.send(value: tweets)
+                    observer.sendCompleted()
+            }) { error in
+                observer.send(error: error)
+            }
+        }
+    }
+
+    private func parseTweets(from json: JSON) -> [TWPTweet]? {
+        guard let statuses = json.array else {
+            return nil
+        }
+        var tweets = [TWPTweet]()
+        for statusJSON in statuses {
+            guard let userDictionary = statusJSON["user"].object else {
+                continue
+            }
+            let user = TWPUser(dictionary: userDictionary)
+            let tweet = TWPTweet(status: statusJSON, user: user)
+            tweets.append(tweet)
+        }
+        return tweets
     }
     
     // MARK: - Wrapper Method(Tweet)

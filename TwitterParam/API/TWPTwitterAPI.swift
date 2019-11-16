@@ -234,7 +234,7 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     
-    func getUserTimeline(with userId: String, customParam: [String: Any] = [:], count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, excludeReplies: Bool? = nil, includeRetweets: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
+    func getUserTimeline(with userID: String, customParam: [String: Any] = [:], count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, excludeReplies: Bool? = nil, includeRetweets: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
 
         return SignalProducer<[TWPTweet], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -242,7 +242,7 @@ final class TWPTwitterAPI: NSObject {
                 return
             }
             self.swifter.getTimeline(
-                for: .id(userId),
+                for: .id(userID),
                 customParam: customParam,
                 count: count,
                 sinceID: sinceID,
@@ -416,36 +416,34 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Methods(favorite)
-    func getFavoritesListWithUserID(userID: String, count: Int? = nil, sinceID: String? = nil, maxID: String? = nil) -> RACSignal? {
-        
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.getFavoritesListWithUserID(userID,
+    func getFavoritesList(with userID: String, count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
+
+        return SignalProducer<[TWPTweet], Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self.swifter.getRecentlyFavoritedTweets(
+                for: .id(userID),
                 count: count,
                 sinceID: sinceID,
                 maxID: maxID,
-                success: { (statuses) -> Void in
-                    print(statuses);
-                    
-                    var tweets: NSMutableArray! = []
-                    for i in 0..<statuses!.count {
-                        var userDictionary:Dictionary<String, JSON> = statuses![i]["user"].object as Dictionary<String, JSON>!
-                        
-                        // create user
-                        var user:TWPUser = TWPUser(dictionary: userDictionary)
-                        
-                        // create tweet
-                        var tweet:TWPTweet? = TWPTweet(status: statuses![i], user: user)
-                        tweets.addObject(tweet!)
+                tweetMode: tweetMode,
+                success: { json in
+                    guard let tweets = self.parseTweets(from: json) else {
+                        let error = self.errorWithCode(
+                            code: kTWPErrorCodeFailedToParseJSON,
+                            message: "failed to parse JSON Data")
+                        observer.send(error: error)
+                        return
                     }
-                    
-                    subscriber.sendNext(tweets)
-                    subscriber.sendCompleted()
-            }, failure: { (error) -> Void in
-                subscriber.sendError(error)
-            })
-            
-            return RACDisposable()
-        })
+
+                    observer.send(value: tweets)
+                    observer.sendCompleted()
+            }) { error in
+                observer.send(error: error)
+            }
+        }
     }
     
     func postCreateFavoriteWithID(id: String, includeEntities: Bool? = nil) -> RACSignal? {

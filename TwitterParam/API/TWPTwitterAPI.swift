@@ -396,22 +396,23 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     
-    func postStatusesDestroyWithID(id: String, trimUser: Bool? = nil) -> RACSignal? {
-        
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.postStatusesDestroyWithID(id,
+    func postStatusesDestroyWithID(id: String, trimUser: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self.swifter.destroyTweet(
+                forID: id,
                 trimUser: trimUser,
-                success: { (status) -> Void in
-                    subscriber.sendNext(nil)
-                    subscriber.sendCompleted()
-            }, failure: { (error) -> Void in
-                subscriber.sendError(error)
-            })
-            
-            return RACDisposable(block: { () -> Void in
-                
-            })
-        })
+                tweetMode: tweetMode,
+                success: { json in
+                    observer.send(value: ())
+                    observer.sendCompleted()
+            }) { error in
+                observer.send(error: error)
+            }
+        }
     }
     
     // MARK: - Wrapper Methods(favorite)

@@ -275,15 +275,19 @@ final class TWPTwitterAPI: NSObject {
             return nil
         }
         var tweets = [TWPTweet]()
-        for statusJSON in statuses {
-            guard let userDictionary = statusJSON["user"].object else {
-                continue
-            }
-            let user = TWPUser(dictionary: userDictionary)
-            let tweet = TWPTweet(status: statusJSON, user: user)
+        statuses.forEach {
+            guard let tweet = parseTweet(from: $0) else { return }
             tweets.append(tweet)
         }
         return tweets
+    }
+
+    private func parseTweet(from json: JSON) -> TWPTweet? {
+        guard let userDictionary = json["user"].object else {
+            return nil
+        }
+        let user = TWPUser(dictionary: userDictionary)
+        return TWPTweet(status: json, user: user)
     }
     
     // MARK: - Wrapper Method(Tweet)
@@ -315,37 +319,33 @@ final class TWPTwitterAPI: NSObject {
     }
     
     
-    func getStatuesShowWithID(id: String, count: Int? = nil, trimUser: Bool? = nil, includeMyRetweet: Bool? = nil, includeEntities: Bool? = nil) -> RACSignal? {
-        
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.getStatusesShowWithID(id,
-                count: count,
+    func getStatuesShow(with id: String, trimUser: Bool? = nil, includeMyRetweet: Bool? = nil, includeEntities: Bool? = nil, includeExtAltText: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<TWPTweet, Error> {
+
+        return SignalProducer<TWPTweet, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self.swifter.getTweet(
+                for: id,
                 trimUser: trimUser,
                 includeMyRetweet: includeMyRetweet,
                 includeEntities: includeEntities,
-                success: { (status: Dictionary<String, JSON>?) -> Void in
-                    print(status);
-                    var userDictionary:Dictionary<String, JSON> = status!["user"]!.object as Dictionary<String, JSON>!
-                    
-                    // create user
-                    var user:TWPUser = TWPUser(dictionary: userDictionary)
-                    
-                    // create tweet
-                    var tweet:TWPTweet? = TWPTweet(dictionary: status!, user: user)
-//                    var tweet:TWPTweet = TWPTweet(text: status!["text"]!.string, profileImageUrl:status!["user"]["profile_image_url"]!.string)
-                    
-                    subscriber.sendNext(tweet)
-                    subscriber.sendCompleted()
-                    
-            }, failure: { (error) -> Void in
-                subscriber.sendError(error)
-            })
-            
-            return RACDisposable(block: { () -> Void in
-                
-            })
-        })
-        
+                includeExtAltText: includeExtAltText,
+                tweetMode: tweetMode,
+                success: { json in
+                    guard let tweet = self.parseTweet(from: json) else {
+                        let error = self.errorWithCode(
+                            code: kTWPErrorCodeFailedToParseJSON,
+                            message: "failed to parse JSON Data")
+                        observer.send(error: error)
+                        return
+                    }
+                    observer.send(value: tweet)
+            }) { error in
+                observer.send(error: error)
+            }
+        }
     }
     
     // MARK: - Wrapper Method(Retweet)

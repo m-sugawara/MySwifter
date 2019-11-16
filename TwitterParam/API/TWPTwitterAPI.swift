@@ -487,22 +487,23 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Methods(follow)
-    func postCreateFriendshipWithID(id: String, follow: Bool? = nil) -> RACSignal? {
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.postCreateFriendshipWithID(id,
-                follow: follow,
-                success: { (user) -> Void in
-                    print("post create friend ship success:\(user)")
-                    TWPUserList.sharedInstance.findUserByUserID(id)?.following = true
-                    
-                    subscriber.sendNext(nil)
-                    subscriber.sendCompleted()
-                }) { (error) -> Void in
-                    subscriber.sendError(error)
+    func postCreateFriendshipWithID(id: String, follow: Bool? = nil) -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
             }
-
-            return RACDisposable()
-        })
+            self.swifter.followUser(
+                .id(id),
+                follow: follow,
+                success: { json in
+                    TWPUserList.sharedInstance.findUserByUserID(userID: id)?.following = true
+                    observer.send(value: ())
+                    observer.sendCompleted()
+            }) { error in
+                observer.send(error: error)
+            }
+        }
     }
     
     func postDestroyFriendshipWithID(id: String) -> RACSignal? {

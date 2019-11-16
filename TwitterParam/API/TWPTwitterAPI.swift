@@ -23,8 +23,8 @@ final class TWPTwitterAPI: NSObject {
     
     // MARK: - Initializer
     private override init() {
-        super.init()
         self.swifter = Swifter(consumerKey: "5UwojnG3QBtSA3StY4JOvjVAK", consumerSecret: "XAKBmM3I4Mgt1lQtICLLKkuCWZzN0nXGe4sJ5qwDhqKK4PtCYd")
+        super.init()
     }
     
     // MARK: - ErrorHelper
@@ -506,20 +506,22 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     
-    func postDestroyFriendshipWithID(id: String) -> RACSignal? {
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            self.swifter.postDestroyFriendshipWithID(id,
-                success: { (user) -> Void in
-                    print("post destroy friend ship success:\(user)")
-                    TWPUserList.sharedInstance.findUserByUserID(id)?.following = false
-                    
-                    subscriber.sendNext(nil)
-                    subscriber.sendCompleted()
-            }, failure: { (error) -> Void in
-                subscriber.sendError(error)
-            })
-            return RACDisposable()
-        })
+    func postDestroyFriendshipWithID(id: String) -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self.swifter.unfollowUser(
+                .id(id),
+                success: { json in
+                    TWPUserList.sharedInstance.findUserByUserID(userID: id)?.following = false
+                    observer.send(value: ())
+                    observer.sendCompleted()
+            }) { error in
+                observer.send(error: error)
+            }
+        }
     }
     
 }

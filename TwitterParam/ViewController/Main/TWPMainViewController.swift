@@ -34,7 +34,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     var scrollBeginingPoint: CGPoint!
     var footerViewHidden: Bool!
     
-    var logoutButtonCommand: RACCommand!
+    var logoutButtonAction: Action<Void, Void, Error>!
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tweetButton: UIButton!
@@ -235,7 +235,8 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     // MARK: - Binding
     func bindParameters() {
-        textFieldView?.textFieldWithLimit.reactive.text <~ model.inputtingTweet
+        // TODO: need to investigate
+//        textFieldView?.textFieldWithLimit.reactive.text <~ model.inputtingTweet
     }
     
     func bindCommands() {
@@ -244,18 +245,17 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         _ = tweetButton.reactive.trigger(for: #selector(showTextFieldView(screenName:)))
 
         feedUpdateButton.reactive.pressed = CocoaAction(model.feedUpdateButtonCommand)
-        logoutButton.rac_command = self.logoutButtonCommand
+        let logoutButtonAction = CocoaAction<UIButton>(self.logoutButtonAction)
+        logoutButton.reactive.pressed = logoutButtonAction
         
         // TWPTextFieldView Commands
-        self.textFieldView?.cancelButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-                subscriber.sendCompleted()
-                
-                self?.hideTextFieldView()
+        self.textFieldView?.cancelButton.reactive.pressed = CocoaAction(Action(execute: { _ -> SignalProducer<Void, Error> in
+            return SignalProducer<Void, Error> { observer, lifetime in
+                self.hideTextFieldView()
 
-                return RACDisposable()
-            })
-        })
+                observer.sendCompleted()
+            }
+        }))
         
         self.textFieldView?.tweetButton.rac_command = self.model.tweetButtonCommand
         

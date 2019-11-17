@@ -34,9 +34,9 @@ class TWPLoginViewController: UIViewController {
         
         self.bindCommands()
     }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        super.prepareForSegue(segue, sender: sender)
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
         
         if segue.identifier == "fromLoginToMain" {
             let mainViewController: TWPMainViewController = segue.destinationViewController as! TWPMainViewController

@@ -83,7 +83,7 @@ class TWPLoginViewController: UIViewController {
     // MARK: - Binding
     func bindCommands() {
         
-        self.loginButon.rac_command = self.model.loginButtonCommand
+        self.loginButon.reactive.pressed = CocoaAction(self.model.loginButtonAction)
         
         // Completed Signals
         self.loginButon.rac_command.executionSignals.flatten().subscribeNext { [weak self] (next) -> Void in

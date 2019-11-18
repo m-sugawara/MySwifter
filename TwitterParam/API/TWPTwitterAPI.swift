@@ -70,7 +70,7 @@ final class TWPTwitterAPI: NSObject {
     // MARK: - OAuth
     func twitterAuthorizeWithOAuth() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-            guard let self = self else {
+            guard let self = self, !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
             }

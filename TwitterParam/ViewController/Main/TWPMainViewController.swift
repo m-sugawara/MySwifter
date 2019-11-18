@@ -106,7 +106,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
             // TweetDetailViewController
         else if segue.identifier == "fromMainToTweetDetail" {
-            var tweetDetailViewController:TWPTweetDetailViewController = segue.destination as! TWPTweetDetailViewController
+            let tweetDetailViewController = segue.destination as! TWPTweetDetailViewController
             
             // TODO: bad solution
             tweetDetailViewController.tempTweetID = self.selectedTweetID
@@ -185,7 +185,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         // reset selecting Index, when hide textfield view.
-        self.model.selectingIndex = kNotSelectIndex
+        self.model.selectingIndex = nil
         
         self.textFieldView?.alpha = 0.0
         self.textFieldView?.textFieldWithLimit.resignFirstResponder()

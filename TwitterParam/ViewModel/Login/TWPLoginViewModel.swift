@@ -8,10 +8,10 @@
 
 import UIKit
 
-import ReactiveCocoa
+import ReactiveSwift
 
 class TWPLoginViewModel: NSObject {
-    let twitterAPI = TWPTwitterAPI.sharedInstance
+    private let twitterAPI = TWPTwitterAPI.sharedInstance
     
     // MARK: - Deinit
     deinit {
@@ -19,24 +19,9 @@ class TWPLoginViewModel: NSObject {
     }
     
     // MARK: - RACCommands
-    var loginButtonCommand: RACCommand {
-        return RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-            return self!.loginButtonSignal
-        })
-    }
-    
-    var loginButtonSignal: RACSignal {
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            
-            self.twitterAPI.tryToLogin()?.subscribeError({ (error) -> Void in
-                subscriber.sendError(error)
-                }, completed: { () -> Void in
-                    subscriber.sendNext(nil)
-                    subscriber.sendCompleted()
-            })
-            
-            return RACDisposable(block: { () -> Void in
-            })
-        })
+    var loginButtonAction: Action<Void, Void, Error> {
+        return Action<Void, Void, Error> {
+            return self.twitterAPI.tryToLogin()
+        }
     }
 }

@@ -11,19 +11,17 @@ import Foundation
 import ReactiveCocoa
 import ReactiveSwift
 
-let kNotSelectIndex = -1
-
 class TWPMainViewModel {
     let twitterAPI = TWPTwitterAPI.sharedInstance
     
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: NSArray = []
     
-    var inputtingTweet:String?
-    var selectingIndex:Int = kNotSelectIndex
+    var inputtingTweet: String?
+    var selectingIndex: Int?
     
     // because to feed update singal called many times, signal set a variable.
-    private var _feedUpdateButtonSignal: RACSignal?
+    private var _feedUpdateButtonSignal: Action<Void, Void, Error>?
     
     // MARK: - Deinit
     deinit {
@@ -32,71 +30,26 @@ class TWPMainViewModel {
     
     // MARK: - Public Methods
     func selectingTweetScreenName() -> String? {
-        if self.selectingIndex == kNotSelectIndex {
+        guard let selectingIndex = selectingIndex else {
             return nil
         }
-        var selectingTweet:TWPTweet = self.tweets[self.selectingIndex] as! TWPTweet
-        return selectingTweet.user?.screenName!
+        let selectingTweet = self.tweets[selectingIndex] as? TWPTweet
+        return selectingTweet?.user?.screenName
     }
-
-    // MARK: - Private Methods
-
     
     // MARK: - RACCommands
     // oauth
-    var oauthButtonCommand: RACCommand {
-        return RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-            
-            return self!.oauthButtonSignal
-        })
-    }
-    var oauthButtonSignal: RACSignal {
-        
-        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-            self!.twitterAPI.twitterAuthorizeWithOAuth().subscribeNext({ (next) -> Void in
-                
-                self!.tweets = next as! NSArray
-                
-                }, error: { (error) -> Void in
-                    subscriber.sendError(error)
-                }, completed: { () -> Void in
-                    subscriber.sendNext(nil)
-                    subscriber.sendCompleted()
-            })
-            
-            return RACDisposable(block: { () -> Void in
-            })
-        })
+    var oauthButtonAction: Action<Void, Void, Error> {
+        return Action<Void, Void, Error> { _ -> SignalProducer<Void, Error> in
+            return self.twitterAPI.twitterAuthorizeWithOAuth()
+        }
     }
 
     // account
-    var accountButtonCommand: Action<Void, Void, Error> {
-        return Action {
-            return SignalProducer { observer, _ in
-                
-            }
+    var accountButtonAction: Action<Void, Void, Error> {
+        return Action<Void, Void, Error> {
+            return self.twitterAPI.twitterAuthorizeWithAccount()
         }
-            RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-            return self!.accountButtonSignal
-        })
-    }
-    var accountButtonSignal: RACSignal {
-        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-            self!.twitterAPI.twitterAuthorizeWithAccount().subscribeNext({ (next) -> Void in
-                
-                self!.tweets = next as! NSArray
-                
-                subscriber.sendNext(next)
-            }, error: { (error) -> Void in
-                subscriber.sendError(error)
-            }, completed: { () -> Void in
-                subscriber.sendNext(nil)
-                subscriber.sendCompleted()
-            })
-            
-            return RACDisposable(block: { () -> Void in
-            })
-        })
     }
     
     // feed update

@@ -39,7 +39,7 @@ class TWPLoginViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
         
         if segue.identifier == "fromLoginToMain" {
-            let mainViewController: TWPMainViewController = segue.destinationViewController as! TWPMainViewController
+            let mainViewController: TWPMainViewController = segue.destination as! TWPMainViewController
             mainViewController.logoutButtonCommand = RACCommand(signalBlock: { [weak mainViewController] (input) -> RACSignal! in
                 return RACSignal.createSignal({ [weak mainViewController] (subscriber) -> RACDisposable! in
                     // show alert
@@ -84,21 +84,18 @@ class TWPLoginViewController: UIViewController {
     func bindCommands() {
         
         self.loginButon.reactive.pressed = CocoaAction(self.model.loginButtonAction)
-        
-        // Completed Signals
-        self.loginButon.rac_command.executionSignals.flatten().subscribeNext { [weak self] (next) -> Void in
+
+        self.model.loginButtonAction.events.observeCompleted {
             // Login success
-            self!.showAlertWithTitle("SUCCESS", message: "LOGIN SUCCESS", cancelButtonTitle: "OK", cancelTappedAction: { () -> Void in
+            self.showAlert(with: "SUCCESS", message: "LOGIN SUCCESS", cancelButtonTitle: "OK", cancelTappedAction: { () -> Void in
                 // OK button tapped, segue Main page
-                self!.performSegueWithIdentifier("fromLoginToMain", sender: nil)
+                self.performSegue(withIdentifier: "fromLoginToMain", sender: nil)
             })
         }
         
         // Error Signals
-        self.loginButon.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
-            if error != nil {
-                self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-            }
+        self.model.loginButtonAction.events.observeFailed { [weak self] _ in
+            self?.showAlert(with: "ERROR!", message: "error.localizedDescription")
         }
     }
 

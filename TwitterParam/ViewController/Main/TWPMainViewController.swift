@@ -34,7 +34,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     var scrollBeginingPoint: CGPoint!
     var footerViewHidden: Bool!
     
-    var logoutButtonAction: Action<Void, Void, Error>!
+    var logoutButtonAction: Action<Void, Void, Error>
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tweetButton: UIButton!

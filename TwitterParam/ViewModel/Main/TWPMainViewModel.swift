@@ -15,7 +15,7 @@ class TWPMainViewModel {
     let twitterAPI = TWPTwitterAPI.sharedInstance
     
     dynamic var tapCount: NSInteger = 0
-    dynamic var tweets: NSArray = []
+    dynamic var tweets: [TWPTweet] = [TWPTweet]()
     
     var inputtingTweet: String?
     var selectingIndex: Int?
@@ -33,8 +33,8 @@ class TWPMainViewModel {
         guard let selectingIndex = selectingIndex else {
             return nil
         }
-        let selectingTweet = self.tweets[selectingIndex] as? TWPTweet
-        return selectingTweet?.user?.screenName
+        let selectingTweet = self.tweets[selectingIndex]
+        return selectingTweet.user?.screenName
     }
     
     // MARK: - RACCommands
@@ -53,85 +53,74 @@ class TWPMainViewModel {
     }
     
     // feed update
-    var feedUpdateButtonCommand: Command {
-        return RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-            return self!.feedUpdateButtonSignal()
-        })
-    }
-    func feedUpdateButtonSignal() -> RACSignal {
-        if (_feedUpdateButtonSignal != nil) {
-            return _feedUpdateButtonSignal!
+    var feedUpdateButtonAction: Action<Void, Void, Error> {
+        return Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self, !lifetime.hasEnded else {
+                    observer.sendInterrupted()
+                    return
+                }
+                self.twitterAPI.getStatusesHomeTimeline().startWithResult { result in
+                    switch result {
+                    case .success(let tweets):
+                        self.tweets = tweets
+                    case .failure(let error):
+                        observer.send(error: error)
+                    }
+                }
+            }
         }
-
-        _feedUpdateButtonSignal = RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
-                self!.twitterAPI.getStatusesHomeTimelineWithCount(20)?.subscribeNext({ (next) -> Void in
-                    self!.tweets = next as! NSArray
-                    }, error: { (error) -> Void in
-                        subscriber.sendError(error)
-                    }, completed: { () -> Void in
-                        subscriber.sendNext(nil)
-                        subscriber.sendCompleted()
-                })
-            })
-            
-            return nil
-            })
-        
-        
-        return _feedUpdateButtonSignal!
     }
     
     // logout
-    var logoutButtonCommand: RACCommand {
-        return RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-            return self!.logoutButtonSignal()
-        })
-    }
-    func logoutButtonSignal() -> RACSignal {
-        return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-            return RACDisposable(block: { () -> Void in
-            })
-        })
-    }
-    
-    // tweet
-    var tweetButtonCommand: RACCommand {
-        return RACCommand(enabled:self.rac_valuesForKeyPath("inputtingTweet", observer: self
-            ).map ({ (next) -> AnyObject! in
-                return !(next as! String).isEmpty
-            }),
-            
-            signalBlock: { [weak self] (input) -> RACSignal! in
-            return self!.tweetButtonSignal()
-        })
-    }
-    
-    func tweetButtonSignal() -> RACSignal {
-        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-            var inReplyToStatusID:String? = nil
-            if (self?.selectingIndex != kNotSelectIndex) {
-                var selectingTweet:TWPTweet = self!.tweets[self!.selectingIndex] as! TWPTweet
-                inReplyToStatusID = selectingTweet.tweetID
+    var logoutButtonAction: Action<Void, Void, Error> {
+        return Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self, !lifetime.hasEnded else {
+                    observer.sendInterrupted()
+                    return
+                }
+                self.twitterAPI.logout()
             }
-            
-            self!.twitterAPI.postStatusUpdate(
-                self!.inputtingTweet!,
-                inReplyToStatusID: inReplyToStatusID)?.subscribeError({ (error) -> Void in
-                subscriber.sendError(error)
-            }, completed: { () -> Void in
-                subscriber.sendNext(nil)
-                subscriber.sendCompleted()
-            })
-            
-            return RACDisposable(block: { () -> Void in
-            })
-        })
+        }
+    }
+
+    // tweet
+    var tweetButtonAction: Action<Void, Void, Error> {
+        return Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self, !lifetime.hasEnded else {
+                    observer.sendInterrupted()
+                    return
+                }
+                var isReplyToStatusID: String?
+                if let index = self.selectingIndex, index < self.tweets.count {
+                    isReplyToStatusID = self.tweets[index].tweetID
+                }
+                self.twitterAPI.postStatusUpdate(status: self.inputtingTweet!, inReplyToStatusID: isReplyToStatusID).startWithResult { result in
+                    switch result {
+                    case .success:
+                        observer.sendCompleted()
+                    case .failure(let error):
+                        observer.send(error: error)
+                    }
+                }
+            }
+        }
+    }
+//        return RACCommand(enabled:self.rac_valuesForKeyPath("inputtingTweet", observer: self
+//            ).map ({ (next) -> AnyObject! in
+//                return !(next as! String).isEmpty
+//            }),
+//
+//            signalBlock: { [weak self] (input) -> RACSignal! in
+//            return self!.tweetButtonSignal()
+//        })
     }
     
     // retweet
     func postStatusRetweetSignalWithIndex(index: Int) -> RACSignal {
-        var tweet: TWPTweet = self.tweets[index] as! TWPTweet
+        var tweet = self.tweets[index]
         
         return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
             
@@ -182,7 +171,7 @@ class TWPMainViewModel {
     
     // favorite
     func postFavoriteSignalWithIndex(index: Int) -> RACSignal {
-        var tweet: TWPTweet = self.tweets[index] as! TWPTweet
+        var tweet = self.tweets[index]
         
         return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
             

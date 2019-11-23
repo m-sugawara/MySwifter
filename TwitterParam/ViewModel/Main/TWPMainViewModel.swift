@@ -17,7 +17,7 @@ class TWPMainViewModel {
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: [TWPTweet] = [TWPTweet]()
     
-    var inputtingTweet: String?
+    var inputtingTweet: MutableProperty<String> = MutableProperty<String>("")
     var selectingIndex: Int?
     
     // because to feed update singal called many times, signal set a variable.
@@ -89,7 +89,8 @@ class TWPMainViewModel {
     var tweetButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
             return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-                guard let self = self, !lifetime.hasEnded else {
+                guard let self = self, !lifetime.hasEnded,
+                    !self.inputtingTweet.value.isEmpty else {
                     observer.sendInterrupted()
                     return
                 }
@@ -97,7 +98,7 @@ class TWPMainViewModel {
                 if let index = self.selectingIndex, index < self.tweets.count {
                     isReplyToStatusID = self.tweets[index].tweetID
                 }
-                self.twitterAPI.postStatusUpdate(status: self.inputtingTweet!, inReplyToStatusID: isReplyToStatusID).startWithResult { result in
+                self.twitterAPI.postStatusUpdate(status: self.inputtingTweet.value, inReplyToStatusID: isReplyToStatusID).startWithResult { result in
                     switch result {
                     case .success:
                         observer.sendCompleted()
@@ -108,65 +109,64 @@ class TWPMainViewModel {
             }
         }
     }
-//        return RACCommand(enabled:self.rac_valuesForKeyPath("inputtingTweet", observer: self
-//            ).map ({ (next) -> AnyObject! in
-//                return !(next as! String).isEmpty
-//            }),
-//
-//            signalBlock: { [weak self] (input) -> RACSignal! in
-//            return self!.tweetButtonSignal()
-//        })
-    }
     
     // retweet
-    func postStatusRetweetSignalWithIndex(index: Int) -> RACSignal {
-        var tweet = self.tweets[index]
-        
-        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-            
-            // if haven't retweeted yet, try to retweet
-            if (tweet.retweeted != true) {
-                self!.twitterAPI.postStatusRetweetWithID(tweet.tweetID!,
-                    trimUser: false)?.subscribeError({ (error) -> Void in
-                        subscriber.sendError(error)
-                    }, completed: { () -> Void in
-                        (self!.tweets[index] as! TWPTweet).retweeted = true
-                        (self!.tweets[index] as! TWPTweet).retweetCount = (self!.tweets[index] as! TWPTweet).retweetCount! + 1
-                        
-                        subscriber.sendNext(nil)
-                        subscriber.sendCompleted()
-                    })
+    func postStatusRetweetAction(with index: Int) -> Action<Void, Void, Error> {
+        return Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self, !lifetime.hasEnded,
+                    self.tweets.count > index else {
+                        observer.sendInterrupted()
+                        return
+                }
+                let tweet = self.tweets[index]
+
+                // if selected tweet hasn't been retweeted yet, try to retweet
+                if tweet.retweeted != true {
+                    self.twitterAPI.postStatusRetweet(with: tweet.tweetID!, trimUser: false).startWithResult { result in
+                        switch result {
+                        case .success:
+                            self.markAsRetweeted(true, at: index)
+                            observer.sendCompleted()
+                        case .failure(let error):
+                            observer.send(error: error)
+                        }
+                    }
+                } else {
+                    self.twitterAPI.getCurrentUserRetweetID(with: tweet.tweetID!).startWithResult { result in
+                        switch result {
+                        case .success(let retweetId):
+                            self.twitterAPI.postStatusesDestroy(with: retweetId, trimUser: false).startWithResult { result in
+                                switch result {
+                                case .success:
+                                    self.markAsRetweeted(false, at: index)
+                                    observer.sendCompleted()
+                                case .failure(let error):
+                                    observer.send(error: error)
+                                }
+                            }
+                        case .failure(let error):
+                            observer.send(error: error)
+                        }
+                    }
+
+                }
+
             }
-            // if already have retweeted, destroy retweet
-            else {
-                var retweetID:String?
-                
-                // 1. get current user's retweetID
-                self!.twitterAPI.getCurrentUserRetweetIDWithID(tweet.tweetID!)?.subscribeNext({ (next) -> Void in
-                    // if successed, current user's retweetID
-                    retweetID = next as? String
-                    }, error: { (error) -> Void in
-                        subscriber.sendError(error)
-                    }, completed: { () -> Void in
-                        // 2. destroy current user's retweet
-                        self!.twitterAPI.postStatusesDestroyWithID(retweetID!,
-                            trimUser: false)!.subscribeNext({ (next) -> Void in
-                                }, error: { (error) -> Void in
-                                    subscriber.sendError(error)
-                                }, completed: { () -> Void in
-                                    // 3. this tweet become be NOT retweeted
-                                    (self!.tweets[index] as! TWPTweet).retweeted = false
-                                    (self!.tweets[index] as! TWPTweet).retweetCount = (self!.tweets[index] as! TWPTweet).retweetCount! - 1
-                                    
-                                    subscriber.sendNext(nil)
-                                    subscriber.sendCompleted()
-                            })
-                })
-            }
-            
-            return RACDisposable(block: { () -> Void in
-            })
-        })
+        }
+    }
+
+    private func markAsRetweeted(_ retweeted: Bool, at index: Int) {
+        guard tweets.count > index else { return }
+        let newTweet = tweets[index]
+        if retweeted {
+            newTweet.retweeted = true
+            newTweet.retweetCount = newTweet.retweetCount! + 1
+        } else {
+            newTweet.retweeted = false
+            newTweet.retweetCount = newTweet.retweetCount! - 1
+        }
+        tweets[index] = newTweet
     }
     
     // favorite

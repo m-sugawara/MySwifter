@@ -376,7 +376,7 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     
-    func postStatusRetweetWithID(id: String, trimUser: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
+    func postStatusRetweet(with id: String, trimUser: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
 
         return SignalProducer<Void, Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -396,7 +396,7 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     
-    func postStatusesDestroyWithID(id: String, trimUser: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
+    func postStatusesDestroy(with id: String, trimUser: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()

@@ -14,10 +14,10 @@ import TTTAttributedLabel
 import UITextFieldWithLimit
 import SDWebImage
 
-let kTWPMainTableViewCellIdentifier = "MainTableViewCell";
-let kTextFieldMaxLength = 140;
-let kTextFieldMarginWidth: CGFloat = 20.0;
-let kTextFieldMarginHeight: CGFloat = 20.0;
+let kTWPMainTableViewCellIdentifier = "MainTableViewCell"
+let kTextFieldMaxLength = 140
+let kTextFieldMarginWidth: CGFloat = 20.0
+let kTextFieldMarginHeight: CGFloat = 20.0
 
 enum TWPMainTableViewButtonType: Int {
     case reply = 1
@@ -26,6 +26,7 @@ enum TWPMainTableViewButtonType: Int {
 }
 
 class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate, UITextFieldWithLimitDelegate, TTTAttributedLabelDelegate {
+
     let model = TWPMainViewModel()
     var textFieldView: TWPTextFieldView?
     var userID: String!
@@ -74,14 +75,15 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         // first, load current user's home timeline
         self.startLoading()
-        self.model.feedUpdateButtonSignal().subscribeError({ (error) -> Void in
-            self.stopLoading()
-            self.showAlertWithTitle("ERROR", message: error.localizedDescription)
-        }, completed: { () -> Void in
-            self.stopLoading()
-            print("first feed update completed!")
-        })
-
+        self.model.feedUpdate.startWithResult { [weak self] result in
+            switch result {
+            case .success:
+                self?.stopLoading()
+            case .failure(let error):
+                self?.stopLoading()
+                self?.showAlert(with: "ERROR", message: error.localizedDescription)
+            }
+        }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -244,220 +246,160 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         // bind Button to the RACCommand
         _ = tweetButton.reactive.trigger(for: #selector(showTextFieldView(screenName:)))
 
-        feedUpdateButton.reactive.pressed = CocoaAction(model.feedUpdateButtonCommand)
-        let logoutButtonAction = CocoaAction<UIButton>(self.logoutButtonAction)
-        logoutButton.reactive.pressed = logoutButtonAction
+        feedUpdateButton.reactive.pressed = CocoaAction(model.feedUpdateButtonAction)
+        logoutButton.reactive.pressed = CocoaAction(model.logoutButtonAction)
         
         // TWPTextFieldView Commands
         self.textFieldView?.cancelButton.reactive.pressed = CocoaAction(Action(execute: { _ -> SignalProducer<Void, Error> in
             return SignalProducer<Void, Error> { observer, lifetime in
                 self.hideTextFieldView()
-
                 observer.sendCompleted()
             }
         }))
         
-        self.textFieldView?.tweetButton.rac_command = self.model.tweetButtonCommand
+        self.textFieldView?.tweetButton.reactive.pressed = CocoaAction(self.model.tweetButtonAction)
         
         // subscribe ViewModel's RACSignal
         // Completed Signals
-        self.feedUpdateButton.rac_command.executionSignals.flatten().subscribeNext { [weak self] (next) -> Void in
-            self!.showAlertWithTitle("SUCCESS!", message: "feed update success!")
-        }
-        self.textFieldView?.tweetButton.rac_command.executionSignals.flatten().subscribeNext({ [weak self] (next) -> Void in
-            self?.hideTextFieldView()
-            
-            self?.showAlertWithTitle("SUCCESS!", message: "tweet success!")
-            
-            // if tweet update success, feed update.
-            self!.model.feedUpdateButtonSignal().subscribeNext({ (next) -> Void in
-                
-            }, error: { (error) -> Void in
-                self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
-            })
-            
-        })
-        
-        // Error Signals
-        self.feedUpdateButton.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
-            print("feed update error:\(error)")
-            if error != nil {
-                self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-            }
-        }
-        self.textFieldView?.tweetButton.rac_command.errors.subscribeNext({ [weak self] (error) -> Void in
-            self?.hideTextFieldView()
-            print("tweet error:\(error)")
-            if error != nil {
-                self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-            }
-        })
-        
+        self.feedUpdateButton.reactive.pressed = CocoaAction(model.feedUpdateButtonAction)
 
+        self.tweetButton.reactive.pressed = CocoaAction(model.tweetButtonAction)
 
-        // bind ViewModel's parameter
-        self.model.rac_valuesForKeyPath("tapCount", observer: self).subscribeNext { (tapCount) -> Void in
-            print(tapCount)
-        }
-        // TODO: 後で消す
-        self.model.rac_valuesForKeyPath("tweets", observer: self).subscribeNext { [weak self] (tweets) -> Void in
-            self!.tableView.reloadData()
-        }
     }
     
     // MARK: - Actions
-    func tableViewButtonsTouch(sender: UIButton, event: UIEvent) {
+    @objc private func tableViewButtonsTouch(sender: UIButton, event: UIEvent) {
         // get indexpath from touch point
-        var touch: UITouch = event.allTouches()?.first as! UITouch
-        var point = touch.locationInView(self.tableView)
-        var indexPath = self.tableView.indexPathForRowAtPoint(point)
+        let touch = event.allTouches!.first!
+        let point = touch.location(in: tableView)
+        let indexPath = tableView.indexPathForRow(at: point)!
         
         // set selecting Index to ViewModel
-        self.model.selectingIndex = indexPath!.row
+        model.selectingIndex = indexPath.row
         
-        var type: TWPMainTableViewButtonType = TWPMainTableViewButtonType(rawValue: sender.tag)!
+        let type = TWPMainTableViewButtonType(rawValue: sender.tag)!
         switch type {
         case .reply:
-            print("reply button tapped index:\(indexPath!.row)")
+            print("reply button tapped index:\(indexPath.row)")
             self.showTextFieldView(screenName: self.model.selectingTweetScreenName())
-            
-            break
+
         case .retweet:
-            self.model.postStatusRetweetSignalWithIndex(indexPath!.row).subscribeError({ [weak self] (error) -> Void in
-                print("retweet error:\(error)")
-                self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
-                self!.model.selectingIndex = kNotSelectIndex
-                }, completed: { [weak self] () -> Void in
-                    print("retweet success!")
-                    self!.tableView.reloadData()
-                    self!.model.selectingIndex = kNotSelectIndex
-            })
-            break
+            model.postRetweet(with: indexPath.row).startWithResult{ result in
+                switch result {
+                case .success:
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    self.showAlert(with: "ERROR", message: "\(error)")
+                }
+            }
+
         case .favorite:
-            self.model.postFavoriteSignalWithIndex(indexPath!.row).subscribeError({ [weak self] (error) -> Void in
-                print("favorite error:\(error)")
-                self!.showAlertWithTitle("ERROR", message: error.localizedDescription)
-                self!.model.selectingIndex = kNotSelectIndex
-                }, completed: { [weak self] () -> Void in
-                    print("favorite success!")
-                    self!.tableView.reloadData()
-                    self!.model.selectingIndex = kNotSelectIndex
-            })
-            break
+            model.postFavorite(with: indexPath.row).startWithResult { result in
+                switch result {
+                case .success:
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    self.showAlert(with: "ERROR", message: "\(error)")
+                }
+            }
+
         }
     }
     
     // MARK: - UITableViewDataSource
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return self.model.tweets.count;
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return model.tweets.count
     }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell:TWPMainViewControllerTableViewCell! = tableView.dequeueReusableCellWithIdentifier(kTWPMainTableViewCellIdentifier) as? TWPMainViewControllerTableViewCell
-        
-        // create Tweet Object
-        var tweet:TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: kTWPMainTableViewCellIdentifier) as! TWPMainViewControllerTableViewCell
+
+        let tweet = self.model.tweets[indexPath.row]
         
         // set Cell Items
-        cell.iconImageView.sd_setImageWithURL(tweet.user?.profileImageUrl,
-                                              placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
-                                              options: SDWebImageOptions.CacheMemoryOnly)
+        cell.iconImageView.sd_setImage(
+            with: tweet.user!.profileImageUrl,
+            placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
+            options: .fromCacheOnly)
+
         cell.tweetTextLabel.text = tweet.text
-        cell.tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        cell.tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
         cell.userNameLabel.text = tweet.user?.name
         cell.screenNameLabel.text = tweet.user?.screenNameWithAt
         cell.retweetCountLabel.text = String(tweet.retweetCount!)
         cell.favoriteCountLabel.text = String(tweet.favoriteCount!)
         
-        cell.retweetButton.selected = tweet.retweeted!
-        cell.favoriteButton.selected = tweet.favorited!
+        cell.retweetButton.isSelected = tweet.retweeted!
+        cell.favoriteButton.isSelected = tweet.favorited!
         
         cell.timeLabel.text = tweet.createdAt?.stringForTimeIntervalSinceCreated()
         
         // set Cell Actions
         cell.replyButton.tag = TWPMainTableViewButtonType.reply.rawValue
-        cell.replyButton.addTarget(self, action: "tableViewButtonsTouch:event:", forControlEvents: .TouchUpInside)
-        
+        cell.replyButton.addTarget(self, action: #selector(tableViewButtonsTouch(sender:event:)), for: .touchUpInside)
+
         cell.retweetButton.tag = TWPMainTableViewButtonType.retweet.rawValue
-        cell.retweetButton.addTarget(self, action: "tableViewButtonsTouch:event:", forControlEvents: .TouchUpInside)
+        cell.retweetButton.addTarget(self, action: #selector(tableViewButtonsTouch(sender:event:)), for: .touchUpInside)
         
         cell.favoriteButton.tag = TWPMainTableViewButtonType.favorite.rawValue
-        cell.favoriteButton.addTarget(self, action: "tableViewButtonsTouch:event:", forControlEvents: .TouchUpInside)
+        cell.favoriteButton.addTarget(self, action: #selector(tableViewButtonsTouch(sender:event:)), for: .touchUpInside)
         
         return cell
     }
-    
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 130.0
     }
     
     // MARK: - UITableViewDelegate
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        var selectedTweet: TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet;
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedTweet = self.model.tweets[indexPath.row]
         self.selectedTweetID = selectedTweet.tweetID
         
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
         
-        performSegueWithIdentifier("fromMainToTweetDetail", sender: nil)
-        
+        performSegue(withIdentifier: "fromMainToTweetDetail", sender: nil)
     }
     
     // MARK: - UIScrollViewDelegate
 
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         scrollBeginingPoint = scrollView.contentOffset
     }
-    
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        var currentPoint = scrollView.contentOffset
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let currentPoint = scrollView.contentOffset
         if (scrollBeginingPoint.y < currentPoint.y) {
             scrollDown()
-        }
-        else {
+        } else {
             scrollUp()
         }
     }
-    
-    func scrollDown() {
-        if footerViewHidden != true {
-            self.footerViewHidden = true
-            UIView.animateWithDuration(0.5,
-                                       animations: { () -> Void in
-                                        self.tweetButton.hidden = true
-                                        self.footerViewHeightConstraint.constant = 0.0
-                                        self.view.layoutIfNeeded()
 
-            })
+    private func scrollDown() {
+        guard !footerViewHidden else { return }
+
+        footerViewHidden = true
+        UIView.animate(withDuration: 0.5) {
+            self.tweetButton.isHidden = true
+            self.footerViewHeightConstraint.constant = 0.0
+            self.view.layoutIfNeeded()
         }
     }
 
     func scrollUp() {
-        if self.footerViewHidden == true {
-            self.footerViewHidden = false
-            UIView.animateWithDuration(0.5,
-                                       animations: { () -> Void in
-                                        self.footerViewHeightConstraint.constant = 70.0
-                                        self.tweetButton.hidden = false
-                                        self.view.layoutIfNeeded()
-            })
-        }
-    }
-
-    // MARK: - UIAlertViewDelegate
-    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
-        if buttonIndex == alertView.cancelButtonIndex {
-            print("AlertView cancel button tapped.")
-        }
-        else {
-            
+        guard footerViewHidden else { return }
+        footerViewHidden = false
+        UIView.animate(withDuration: 0.5) {
+            self.footerViewHeightConstraint.constant = 70.0
+            self.tweetButton.isHidden = false
+            self.view.layoutIfNeeded()
         }
     }
     
     // MARK: - TTTAttributedLabelDelegate
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-        UIApplication.sharedApplication().openURL(url)
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        UIApplication.shared.open(url)
     }
 
 }
-

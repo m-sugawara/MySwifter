@@ -9,12 +9,12 @@
 import UIKit
 import SwifteriOS
 
-class TWPUser:NSObject {
+class TWPUser: NSObject {
     var userID: String?
     var name: String?
     var screenName: String?
     var screenNameWithAt: String?
-    var profileImageUrl: NSURL?
+    var profileImageUrl: URL?
     var following:Bool?
     var friendsCount: Int?
     var followersCount: Int?
@@ -28,7 +28,7 @@ class TWPUser:NSObject {
         self.name = name
         self.screenName = screenName
         self.screenNameWithAt = "@" + screenName!
-        self.profileImageUrl = NSURL(string: profileImageUrl!)
+        self.profileImageUrl = URL(string: profileImageUrl!)
         self.following = following
         self.friendsCount = friendsCount
         self.followersCount = followersCount
@@ -40,7 +40,7 @@ class TWPUser:NSObject {
             name:            dictionary["name"]?.string,
             screenName:      dictionary["screen_name"]?.string,
             profileImageUrl: dictionary["profile_image_url"]?.string,
-            following:       dictionary["following"]?.boolValue,
+            following:       dictionary["following"]?.bool,
             friendsCount:    dictionary["friends_count"]?.integer,
             followersCount:  dictionary["followers_count"]?.integer
         )

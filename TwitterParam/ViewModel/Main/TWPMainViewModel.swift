@@ -38,21 +38,21 @@ class TWPMainViewModel {
     }
     
     // MARK: - RACCommands
-    // oauth
+    // MARK: - OAuth
     var oauthButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> { _ -> SignalProducer<Void, Error> in
             return self.twitterAPI.twitterAuthorizeWithOAuth()
         }
     }
 
-    // account
+    // MARK: - Account
     var accountButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
             return self.twitterAPI.twitterAuthorizeWithAccount()
         }
     }
     
-    // feed update
+    // MARK: - Feed update
     var feedUpdateButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
             return SignalProducer<Void, Error> { [weak self] observer, lifetime in
@@ -72,7 +72,7 @@ class TWPMainViewModel {
         }
     }
     
-    // logout
+    // MARK: - Logout
     var logoutButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
             return SignalProducer<Void, Error> { [weak self] observer, lifetime in
@@ -85,7 +85,7 @@ class TWPMainViewModel {
         }
     }
 
-    // tweet
+    // MARK: - Tweet
     var tweetButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
             return SignalProducer<Void, Error> { [weak self] observer, lifetime in
@@ -110,7 +110,7 @@ class TWPMainViewModel {
         }
     }
     
-    // retweet
+    // MARK: - Retweet
     func postStatusRetweetAction(with index: Int) -> Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
             return SignalProducer<Void, Error> { [weak self] observer, lifetime in
@@ -169,42 +169,52 @@ class TWPMainViewModel {
         tweets[index] = newTweet
     }
     
-    // favorite
-    func postFavoriteSignalWithIndex(index: Int) -> RACSignal {
-        var tweet = self.tweets[index]
-        
-        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-            
-            // if haven't favorited yet, try to favorite
-            if (tweet.favorited != true) {
-                self!.twitterAPI.postCreateFavoriteWithID(tweet.tweetID!,
-                    includeEntities: false)?.subscribeError({ (error) -> Void in
-                        subscriber.sendError(error)
-                        }, completed: { () -> Void in
-                            (self!.tweets[index] as! TWPTweet).favorited = true
-                            (self!.tweets[index] as! TWPTweet).favoriteCount = (self!.tweets[index] as! TWPTweet).favoriteCount! + 1
-                            
-                            subscriber.sendNext(nil)
-                            subscriber.sendCompleted()
-                    })
+    // MARK: - Favorite
+    func postFavoriteAction(with index: Int) -> Action<Void, Void, Error> {
+        return Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self, !lifetime.hasEnded,
+                    self.tweets.count > index else {
+                        observer.sendInterrupted()
+                        return
+                }
+                let tweet = self.tweets[index]
+
+                if tweet.favorited != true {
+                    self.twitterAPI.postCreateFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
+                        switch result {
+                        case .success:
+                            self.markAsFavorited(true, at: index)
+                            observer.sendCompleted()
+                        case .failure(let error):
+                            observer.send(error: error)
+                        }
+                    }
+                } else {
+                    self.twitterAPI.postDestroyFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
+                        switch result {
+                        case .success:
+                            self.markAsFavorited(false, at: index)
+                            observer.sendCompleted()
+                        case .failure(let error):
+                            observer.send(error: error)
+                        }
+                    }
+                }
             }
-            // if already have favorited, destroy favorite
-            else {
-                self!.twitterAPI.postDestroyFavoriteWithID(tweet.tweetID!,
-                    includeEntities: false)?.subscribeError({ (error) -> Void in
-                        subscriber.sendError(error)
-                        }, completed: { () -> Void in
-                            (self!.tweets[index] as! TWPTweet).favorited = false
-                            (self!.tweets[index] as! TWPTweet).favoriteCount = (self!.tweets[index] as! TWPTweet).favoriteCount! - 1
-                            
-                            subscriber.sendNext(nil)
-                            subscriber.sendCompleted()
-                    })
-            }
-            
-            return RACDisposable(block: { () -> Void in
-            })
-        })
-        
+        }
+    }
+
+    private func markAsFavorited(_ favorited: Bool, at index: Int) {
+        guard tweets.count > index else { return }
+        let newTweet = tweets[index]
+        if favorited {
+            newTweet.favorited = true
+            newTweet.favoriteCount = newTweet.favoriteCount! + 1
+        } else {
+            newTweet.favorited = false
+            newTweet.favoriteCount = newTweet.favoriteCount! - 1
+        }
+        tweets[index] = newTweet
     }
 }

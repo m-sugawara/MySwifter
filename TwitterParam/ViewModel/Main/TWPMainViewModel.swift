@@ -55,18 +55,22 @@ class TWPMainViewModel {
     // MARK: - Feed update
     var feedUpdateButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-                guard let self = self, !lifetime.hasEnded else {
-                    observer.sendInterrupted()
-                    return
-                }
-                self.twitterAPI.getStatusesHomeTimeline().startWithResult { result in
-                    switch result {
-                    case .success(let tweets):
-                        self.tweets = tweets
-                    case .failure(let error):
-                        observer.send(error: error)
-                    }
+            return self.feedUpdate
+        }
+    }
+
+    var feedUpdate: SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+            guard let self = self, !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            self.twitterAPI.getStatusesHomeTimeline().startWithResult { result in
+                switch result {
+                case .success(let tweets):
+                    self.tweets = tweets
+                case .failure(let error):
+                    observer.send(error: error)
                 }
             }
         }
@@ -111,48 +115,52 @@ class TWPMainViewModel {
     }
     
     // MARK: - Retweet
-    func postStatusRetweetAction(with index: Int) -> Action<Void, Void, Error> {
+    func postRetweetAction(with index: Int) -> Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-                guard let self = self, !lifetime.hasEnded,
-                    self.tweets.count > index else {
-                        observer.sendInterrupted()
-                        return
+            return self.postRetweet(with: index)
+        }
+    }
+
+    func postRetweet(with index: Int) -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+            guard let self = self, !lifetime.hasEnded,
+                self.tweets.count > index else {
+                    observer.sendInterrupted()
+                    return
+            }
+            let tweet = self.tweets[index]
+
+            // if selected tweet hasn't been retweeted yet, try to retweet
+            if tweet.retweeted != true {
+                self.twitterAPI.postStatusRetweet(with: tweet.tweetID!, trimUser: false).startWithResult { result in
+                    switch result {
+                    case .success:
+                        self.markAsRetweeted(true, at: index)
+                        observer.sendCompleted()
+                    case .failure(let error):
+                        observer.send(error: error)
+                    }
                 }
-                let tweet = self.tweets[index]
-
-                // if selected tweet hasn't been retweeted yet, try to retweet
-                if tweet.retweeted != true {
-                    self.twitterAPI.postStatusRetweet(with: tweet.tweetID!, trimUser: false).startWithResult { result in
-                        switch result {
-                        case .success:
-                            self.markAsRetweeted(true, at: index)
-                            observer.sendCompleted()
-                        case .failure(let error):
-                            observer.send(error: error)
-                        }
-                    }
-                } else {
-                    self.twitterAPI.getCurrentUserRetweetID(with: tweet.tweetID!).startWithResult { result in
-                        switch result {
-                        case .success(let retweetId):
-                            self.twitterAPI.postStatusesDestroy(with: retweetId, trimUser: false).startWithResult { result in
-                                switch result {
-                                case .success:
-                                    self.markAsRetweeted(false, at: index)
-                                    observer.sendCompleted()
-                                case .failure(let error):
-                                    observer.send(error: error)
-                                }
+            } else {
+                self.twitterAPI.getCurrentUserRetweetID(with: tweet.tweetID!).startWithResult { result in
+                    switch result {
+                    case .success(let retweetId):
+                        self.twitterAPI.postStatusesDestroy(with: retweetId, trimUser: false).startWithResult { result in
+                            switch result {
+                            case .success:
+                                self.markAsRetweeted(false, at: index)
+                                observer.sendCompleted()
+                            case .failure(let error):
+                                observer.send(error: error)
                             }
-                        case .failure(let error):
-                            observer.send(error: error)
                         }
+                    case .failure(let error):
+                        observer.send(error: error)
                     }
-
                 }
 
             }
+
         }
     }
 
@@ -172,33 +180,38 @@ class TWPMainViewModel {
     // MARK: - Favorite
     func postFavoriteAction(with index: Int) -> Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-                guard let self = self, !lifetime.hasEnded,
-                    self.tweets.count > index else {
-                        observer.sendInterrupted()
-                        return
-                }
-                let tweet = self.tweets[index]
+            return self.postFavorite(with: index)
+        }
+    }
 
-                if tweet.favorited != true {
-                    self.twitterAPI.postCreateFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
-                        switch result {
-                        case .success:
-                            self.markAsFavorited(true, at: index)
-                            observer.sendCompleted()
-                        case .failure(let error):
-                            observer.send(error: error)
-                        }
+    func postFavorite(with index: Int) -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+            guard let self = self, !lifetime.hasEnded,
+                self.tweets.count > index else {
+                    observer.sendInterrupted()
+                    return
+            }
+            let tweet = self.tweets[index]
+
+            if tweet.favorited != true {
+                self.twitterAPI.postCreateFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
+                    switch result {
+                    case .success:
+                        self.markAsFavorited(true, at: index)
+                        observer.sendCompleted()
+                    case .failure(let error):
+                        observer.send(error: error)
                     }
-                } else {
-                    self.twitterAPI.postDestroyFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
-                        switch result {
-                        case .success:
-                            self.markAsFavorited(false, at: index)
-                            observer.sendCompleted()
-                        case .failure(let error):
-                            observer.send(error: error)
-                        }
+                }
+            } else {
+                self.twitterAPI.postDestroyFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
+                    switch result {
+                    case .success:
+                        self.markAsFavorited(false, at: index)
+                        observer.sendCompleted()
+                    case .failure(let error):
+                        self.selectingIndex = nil
+                        observer.send(error: error)
                     }
                 }
             }

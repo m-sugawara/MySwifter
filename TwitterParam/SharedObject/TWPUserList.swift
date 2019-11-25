@@ -13,7 +13,7 @@ final class TWPUserList:NSObject {
     var users: Array<TWPUser> = []
     
     // MARK: - Singleton
-    static let sharedInstance = TWPUserList()
+    static let shared = TWPUserList()
     
     // MARK: - Initializer
     private override init() {
@@ -22,7 +22,7 @@ final class TWPUserList:NSObject {
     
     // MARK: - Public Methods
     func appendUser(_ user:TWPUser) {
-        if self.findUserByUserID(userID: user.userID!) != nil {
+        if self.findUser(by: user.userID!) != nil {
             self.updateUser(user)
         }
         else {
@@ -41,7 +41,7 @@ final class TWPUserList:NSObject {
         }
     }
     
-    func findUserByUserID(userID:String) -> TWPUser? {
+    func findUser(by userID:String) -> TWPUser? {
         for user in self.users {
             if (user.userID == userID) {
                 return user

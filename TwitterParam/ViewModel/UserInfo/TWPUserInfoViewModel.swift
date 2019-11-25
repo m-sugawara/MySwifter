@@ -12,10 +12,10 @@ import ReactiveCocoa
 import ReactiveSwift
 
 class TWPUserInfoViewModel: NSObject {
-    let twitterAPI = TWPTwitterAPI.sharedInstance
+    let twitterAPI = TWPTwitterAPI.shared
     
     var userID: String = ""
-    var user: TWPUser = TWPUser()
+    var user: TWPUser?
     
     var favoriteList: Array<TWPTweet>?
     
@@ -27,63 +27,66 @@ class TWPUserInfoViewModel: NSObject {
     }
     
     // MARK: - Signals
-    func getUserInfoSignal() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { innerObserver, _ in
-            self.twitterAPI.getUsersShowWithUserID(self.userID)?.subscribeError({ (error) -> Void in
-                innerObserver.sendError(error)
-            }, completed: { [weak self] () -> Void in
-                guard let self = self else { return }
-                self.user = TWPUserList.sharedInstance.findUserByUserID(self.userID)
-
-                innerObserver.sendCompleted()
-            })
+    func getUserInfoSignalProducer() -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, _ in
+            self.twitterAPI.getUsersShow(with: .id(self.userID)).startWithResult{ result in
+                switch result {
+                case .success:
+                    self.user = TWPUserList.shared.findUser(by: self.userID)
+                    observer.sendCompleted()
+                case .failure(let error):
+                    observer.send(error: error)
+                }
+            }
         }
     }
     
-    func getUserTimelineSignal() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { innerObserver, _ in
-            self.twitterAPI.getStatusesUserTimelineWithUserID(self.userID, count: 20)?.subscribeNext({ [weak self] (next) -> Void in
-                self?.tweets = next as! NSArray
-            }, error: { (error) -> Void in
-                innerObserver.sendError(error)
-            }, completed: { () -> Void in
-                innerObserver.send(value: ())
-                innerObserver.sendCompleted()
-            })
+    func getUserTimelineSignalProducer() -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, _ in
+            self.twitterAPI.getStatusesHomeTimeline(count: 20).startWithResult { result in
+                switch result {
+                case .success(let tweets):
+                    self.tweets = tweets
+                    observer.sendCompleted()
+                case .failure(let error):
+                    observer.send(error: error)
+                }
+            }
         }
     }
     
     // FIXME: - dummy method
-    func getUserImageList() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { innerObserver, _ in
+    func getUserImageListSignalProducer() -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, _ in
             Thread.sleep(forTimeInterval: 0.5)
             let dummy = TWPTweet(tweetID: "", text: "not implemented", user: self.user, retweeted: false, favorited: false)
             self.tweets = [dummy]
 
-            innerObserver.send(value: ())
-            innerObserver.sendCompleted()
+            observer.send(value: ())
+            observer.sendCompleted()
         }
     }
     
-    func getUserFavoritesList() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { innerObserver, _ in
-            // if already have got list, return it.
+    func getUserFavoritesListSignalProducer() -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, _ in
+            // if already have list, return it.
             if let favoriteList = self.favoriteList {
                 self.tweets = favoriteList
-                innerObserver.send(value: ())
-                innerObserver.sendCompleted()
-            }
-                // if not, try to get favorites list
-            else {
-                self.twitterAPI.getFavoritesListWithUserID(self.userID, count: 20)?.subscribeNext({ (next) -> Void in
-                    self.favoriteList = next as? Array
-                    self.tweets = self.favoriteList!
-                }, error: { (error) -> Void in
-                    innerObserver.sendError(error)
-                }, completed: { () -> Void in
-                    innerObserver.send(value: ())
-                    innerObserver.sendCompleted()
-                })
+                observer.sendCompleted()
+            } else {
+                self.twitterAPI.getFavoritesList(
+                    with: self.userID,
+                    count: 20
+                ).startWithResult{ result in
+                    switch result {
+                    case .success(let tweets):
+                        self.favoriteList = tweets
+                        self.tweets = tweets
+                        observer.sendCompleted()
+                    case .failure(let error):
+                        observer.send(error: error)
+                    }
+                }
             }
         }
     }
@@ -96,32 +99,44 @@ class TWPUserInfoViewModel: NSObject {
     }
     
     func followButtonSignal() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { innerObserver, _ in
-            if self.user.following == false {
-                self.twitterAPI.postCreateFriendshipWithID(self.userID)?.subscribeNext({ (user) -> Void in
-                }, error: { (error) -> Void in
-                    innerObserver.sendError(error)
-                }, completed: { [weak self] () -> Void in
-                    guard let self = self else { return }
-                    self.user.following = TWPUserList.sharedInstance.findUserByUserID(self.userID)?.following
+        return (self.user?.following == true) ? unfollowSignal() : followSignal()
+    }
 
-                    innerObserver.send(value: ())
-                    innerObserver.sendCompleted()
-                })
+    private func followSignal() -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
             }
-                // user.following = true
-            else {
-                self.twitterAPI.postDestroyFriendshipWithID(self.userID)?.subscribeNext({ (user) -> Void in
-                }, error: { (error) -> Void in
-                    innerObserver.sendError(error)
-                }, completed: { () -> Void in
-                    print("unfollow success")
-                    self!.user.following = TWPUserList.sharedInstance.findUserByUserID(self.userID)?.following
+            self.twitterAPI.postCreateFriendship(with: self.userID).startWithResult { result in
+                switch result {
+                case .success:
+                self.user?.following = TWPUserList.shared.findUser(by: self.userID)?.following
+                    observer.sendCompleted()
+                case .failure(let error):
+                    observer.send(error: error)
+                }
+            }
+        }
+    }
 
-                    innerObserver.send(value: ())
-                    innerObserver.sendCompleted()
-                })
+    private func unfollowSignal() -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
             }
+
+            self.twitterAPI.postDestroyFavorite(with: self.userID).startWithResult { result in
+                switch result {
+                case .success:
+                self.user?.following = TWPUserList.shared.findUser(by: self.userID)?.following
+                    observer.sendCompleted()
+                case .failure(let error):
+                    observer.send(error: error)
+                }
+            }
+
         }
     }
 }

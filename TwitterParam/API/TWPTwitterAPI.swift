@@ -19,7 +19,7 @@ final class TWPTwitterAPI: NSObject {
     private var swifter: Swifter
     
     // MARK: - Singleton
-    static let sharedInstance = TWPTwitterAPI()
+    static let shared = TWPTwitterAPI()
     
     // MARK: - Initializer
     private override init() {
@@ -144,7 +144,7 @@ final class TWPTwitterAPI: NSObject {
                 includeEntities: includeEntities,
                 success: { json in
                     let user = TWPUser(dictionary: json.object!)
-                    TWPUserList.sharedInstance.appendUser(user)
+                    TWPUserList.shared.appendUser(user)
 
                     observer.sendCompleted()
                 }, failure: { (error) -> Void in
@@ -202,7 +202,7 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Method(Timeline)
-    func getStatusesHomeTimeline(with count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
+    func getStatusesHomeTimeline(count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
 
         return SignalProducer<[TWPTweet], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -487,7 +487,7 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Methods(follow)
-    func postCreateFriendshipWithID(id: String, follow: Bool? = nil) -> SignalProducer<Void, Error> {
+    func postCreateFriendship(with id: String, follow: Bool? = nil) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
@@ -497,7 +497,7 @@ final class TWPTwitterAPI: NSObject {
                 .id(id),
                 follow: follow,
                 success: { json in
-                    TWPUserList.sharedInstance.findUserByUserID(userID: id)?.following = true
+                    TWPUserList.shared.findUser(by: id)?.following = true
                     observer.send(value: ())
                     observer.sendCompleted()
             }) { error in
@@ -506,7 +506,7 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     
-    func postDestroyFriendshipWithID(id: String) -> SignalProducer<Void, Error> {
+    func postDestroyFriendship(with id: String) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
@@ -515,7 +515,7 @@ final class TWPTwitterAPI: NSObject {
             self.swifter.unfollowUser(
                 .id(id),
                 success: { json in
-                    TWPUserList.sharedInstance.findUserByUserID(userID: id)?.following = false
+                    TWPUserList.shared.findUser(by: id)?.following = false
                     observer.send(value: ())
                     observer.sendCompleted()
             }) { error in

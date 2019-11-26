@@ -9,6 +9,7 @@
 import UIKit
 
 import ReactiveCocoa
+import ReactiveSwift
 import TTTAttributedLabel
 import SDWebImage
 
@@ -19,29 +20,29 @@ enum TWPUserListType {
     case followerList
 }
 
-class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedLabelDelegate {
+class TWPUserInfoViewController: UIViewController {
     let model = TWPUserInfoViewModel()
     
     var selectingUserList: TWPUserListType?
     var tempUserID: String!
-    var backButtonCommand: RACCommand!
+    var backButtonAction: CocoaAction<UIButton>!
     
     var selectedTweetID: String!
     
-    @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet weak var screenNameLabel: UILabel!
-    @IBOutlet weak var userIconImageView: UIImageView!
-    @IBOutlet weak var userTweetsTableView: UITableView!
-    @IBOutlet weak var backButton: UIButton!
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var followListButton: UIButton!
-    @IBOutlet weak var followerListButton: UIButton!
-    @IBOutlet weak var followButton: UIButton!
-    @IBOutlet weak var tweetListButton: UIButton!
-    @IBOutlet weak var imageListButton: UIButton!
-    @IBOutlet weak var favoriteListButton: UIButton!
-    @IBOutlet weak var loadingView: UIView!
-    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    @IBOutlet private weak var userNameLabel: UILabel!
+    @IBOutlet private weak var screenNameLabel: UILabel!
+    @IBOutlet private weak var userIconImageView: UIImageView!
+    @IBOutlet private weak var userTweetsTableView: UITableView!
+    @IBOutlet private weak var backButton: UIButton!
+    @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var followListButton: UIButton!
+    @IBOutlet private weak var followerListButton: UIButton!
+    @IBOutlet private weak var followButton: UIButton!
+    @IBOutlet private weak var tweetListButton: UIButton!
+    @IBOutlet private weak var imageListButton: UIButton!
+    @IBOutlet private weak var favoriteListButton: UIButton!
+    @IBOutlet private weak var loadingView: UIView!
+    @IBOutlet private weak var activityIndicatorView: UIActivityIndicatorView!
     
     deinit {
         print("userInfo deinit")
@@ -66,219 +67,205 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
             
             // get user info
             self.startLoading()
-            self.model.getUserInfoSignal().start({ (user) -> Void in
-                }, error: { (error) -> Void in
-                }) { [weak self] () -> Void in
-                    self!.setUserProfile()
-                    self!.model.getUserTimelineSignal().startWithFailed({ error in
-                        print("getUserTimeline.error:\(error)")
-                        self!.stopLoading()
-                        }, completed: { () -> Void in
-                            self!.tableView.reloadData()
-                            self!.stopLoading()
-                            print("getUserTimeline completed!")
-                    })
+            self.model.getUserInfoSignalProducer().startWithResult { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case .success:
+                    self.setUserProfile()
+                    self.model.getUserTimelineSignalProducer().startWithResult { [weak self] result in
+                        guard let self = self else { return }
+                        switch result {
+                        case .success:
+                            self.tableView.reloadData()
+                            self.stopLoading()
+                        case .failure:
+                            self.showAlert(with: "ERROR", message: "failed to get timeline")
+                        }
+                    }
+                case .failure:
+                    self.showAlert(with: "ERROR", message: "failed to get userInfo")
+                }
             }
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // this method doesn't work, viewWillLoad:, therefore alert show here.
-        if self.tempUserID == nil {
-            self.showAlertWithTitle(title: "ERROR!", message: "user not found!", cancelButtonTitle: "Back", cancelTappedAction: { () -> Void in
-                self.dismiss(animated: true, completion: nil)
-            })
-        }
 
+        guard tempUserID != nil else {
+            self.showAlert(with: "ERROR!", message: "user not found!", cancelButtonTitle: "Back", cancelTappedAction: { [weak self] in
+                self?.dismiss(animated: true, completion: nil)
+            })
+            return
+        }
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-    }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        super.prepareForSegue(segue, sender: sender)
-        
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+
+        let action = Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { observer, lifetime in
+                self.dismiss(animated: true, completion: nil)
+                observer.sendCompleted()
+            }
+        }
         if segue.identifier == "fromUserInfoToTweetDetail" {
-            var tweetDetailViewController: TWPTweetDetailViewController = segue.destinationViewController as! TWPTweetDetailViewController
+            let tweetDetailViewController = segue.destination as! TWPTweetDetailViewController
             
             tweetDetailViewController.tempTweetID = self.selectedTweetID
-            
-            tweetDetailViewController.backButtonCommand = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-                    // send completed for button status to acitive
-                    subscriber.sendCompleted()
-                    
-                    return RACDisposable(block: { () -> Void in
-                        self!.dismissViewControllerAnimated(true, completion: nil)
-                    })
-                })
-            })
-        
+            tweetDetailViewController.backButtonCommand = CocoaAction(action)
         }
         else if segue.identifier == "fromUserInfoToUserList" {
-            var userListViewController: TWPUserListViewController = segue.destinationViewController as! TWPUserListViewController
+            let userListViewController = segue.destination as! TWPUserListViewController
             userListViewController.tempUserID = self.tempUserID
-            
-            userListViewController.backButtonCommand = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-                    // send completed for button status to acitive
-                    subscriber.sendCompleted()
-                    
-                    return RACDisposable(block: { () -> Void in
-                        self!.dismissViewControllerAnimated(true, completion: nil)
-                    })
-                })
-                })
+            userListViewController.backButtonCommand = CocoaAction(action)
         }
     }
     
     // MARK: - Binding
     
     func bindCommands() {
-        self.backButton.rac_command = self.backButtonCommand
+        self.backButton.reactive.pressed = self.backButtonAction
         
         // follow list button
-        self.followListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
-            return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-                self!.selectingUserList = TWPUserListType.followList
-                
-                self!.performSegueWithIdentifier("fromUserInfoToUserList", sender: nil)
-                
-                subscriber.sendCompleted()
-                
-                return RACDisposable()
-            })
+        followListButton.reactive.pressed = CocoaAction<UIButton>(Action<Void, Void, Error>{
+            return SignalProducer<Void, Error> { observer, lifetime in
+                guard !lifetime.hasEnded else {
+                    observer.sendInterrupted()
+                    return
+                }
+                self.selectingUserList = TWPUserListType.followList
+                self.performSegue(withIdentifier: "fromUserInfoToUserList", sender: nil)
+                observer.sendCompleted()
+            }
         })
-        // follower list button
-        self.followerListButton.rac_command = RACCommand(signalBlock: { (input) -> RACSignal! in
-            return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-                self!.selectingUserList = TWPUserListType.followerList
 
-                self!.performSegueWithIdentifier("fromUserInfoToUserList", sender: nil)
-                
-                subscriber.sendCompleted()
-                
-                return RACDisposable()
-                })
+        // follower list button
+        followerListButton.reactive.pressed = CocoaAction<UIButton>(Action<Void, Void, Error>{
+            return SignalProducer<Void, Error> { observer, lifetime in
+                guard !lifetime.hasEnded else {
+                    observer.sendInterrupted()
+                    return
+                }
+                self.selectingUserList = TWPUserListType.followerList
+                self.performSegue(withIdentifier: "fromUserInfoToUserList", sender: nil)
+                observer.sendCompleted()
+            }
         })
         
         // follow button
-        self.followButton.rac_command = self.model.followButtonCommand
-        self.followButton.rac_command.executionSignals.flatten().subscribeNext { [weak self] (next) -> Void in
-            self!.followButton.selected = self!.model.user.following!
-        }
-        self.followButton.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
-            print("user follow error:\(error)")
-            self!.showAlertWithTitle("ERROR", message:error.localizedDescription)
-        }
+        followButton.reactive.pressed = model.followButtonCommand
+//        followButton.isSelected <~ model.user!.following
+        // TODO: handling error
+//        self.followButton.rac_command.errors.subscribeNext { [weak self] (error) -> Void in
+//            print("user follow error:\(error)")
+//            self!.showAlertWithTitle("ERROR", message:error.localizedDescription)
+//        }
         
         // SelectListButtons
-        self.tweetListButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-
+        tweetListButton.reactive.pressed = CocoaAction(Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self else { return }
                 // get users timeline
-                self!.startLoading()
-                self!.model.getUserTimelineSignal().subscribeError({ (error) -> Void in
-                    print("getUserTimeline.error:\(error)")
-                    self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-                    self!.stopLoading()
-                    subscriber.sendCompleted()
-                    }, completed: { () -> Void in
-                        self!.tableView.reloadData()
-                        
-                        self!.stopLoading()
-                        self!.changeListButtonsStatusWithTappedButton(input as! UIButton)
-                        
-                        subscriber.sendCompleted()
-                        print("getUserTimeline completed!")
-                })
+                self.startLoading()
+                self.model.getUserTimelineSignalProducer().startWithResult { [weak self] result in
+                    guard let self = self else { return }
 
-                return RACDisposable()
-            })
+                    self.stopLoading()
+
+                    switch result {
+                    case .success:
+                        self.tableView.reloadData()
+//                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
+
+                    case .failure:
+                        self.showAlert(with: "ERROR!", message: "failed to get user timeline.")
+                    }
+                    observer.sendCompleted()
+                }
+            }
         })
-        self.imageListButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
 
-                // get users imagelist
-                self!.startLoading()
-                self!.model.getUserImageList().subscribeError({ (error) -> Void in
-                    print("getUserTimeline.error:\(error)")
-                    self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-                    self!.stopLoading()
-                    subscriber.sendCompleted()
-                    }, completed: { () -> Void in
-                        self!.tableView.reloadData()
-                        
-                        self!.changeListButtonsStatusWithTappedButton(input as! UIButton)
-                        self!.stopLoading()
-                        
-                        subscriber.sendCompleted()
-                        print("getUserTimeline completed!")
-                })
-                
-                return RACDisposable()
-            })
+        // ImageListButton
+        imageListButton.reactive.pressed = CocoaAction(Action {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self else { return }
+                self.startLoading()
+                self.model.getUserImageListSignalProducer().startWithResult { [weak self] result in
+                    guard let self = self else { return }
+
+                    self.stopLoading()
+
+                    switch result {
+                    case .success:
+                        self.tableView.reloadData()
+                        //                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
+
+                    case .failure:
+                        self.showAlert(with: "ERROR!", message: "failed to get user image list.")
+                    }
+                    observer.sendCompleted()
+                }
+            }
         })
-        self.favoriteListButton.rac_command = RACCommand(signalBlock: { [weak self] (input) -> RACSignal! in
-            return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-                // get users favoritelist
-                self!.startLoading()
-                self!.model.getUserFavoritesList().subscribeError({ (error) -> Void in
-                    print("getUserTimeline.error:\(error)")
-                    self!.showAlertWithTitle("ERROR!", message: error.localizedDescription)
-                    self!.stopLoading()
-                    subscriber.sendCompleted()
-                    }, completed: { () -> Void in
-                        self!.tableView.reloadData()
-                        
-                        self!.changeListButtonsStatusWithTappedButton(input as! UIButton)
-                        self!.stopLoading()
-                        
-                        subscriber.sendCompleted()
-                        print("getUserTimeline completed!")
-                })
 
-                return RACDisposable()
-            })
+        // FavoriteListButton
+        favoriteListButton.reactive.pressed = CocoaAction(Action {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self else { return }
+                self.startLoading()
+                self.model.getUserFavoritesListSignalProducer().startWithResult { [weak self] result in
+                    guard let self = self else { return }
+
+                    self.stopLoading()
+
+                    switch result {
+                    case .success:
+                        self.tableView.reloadData()
+                        //                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
+
+                    case .failure:
+                        self.showAlert(with: "ERROR!", message: "failed to get user image list.")
+                    }
+                    observer.sendCompleted()
+                }
+            }
         })
     }
+
     
     // MARK: - Private Methods
     func startLoading() {
-        self.loadingView.hidden = false
+        self.loadingView.isHidden = false
         self.activityIndicatorView.startAnimating()
     }
     
     func stopLoading() {
-        self.loadingView.hidden = true
+        self.loadingView.isHidden = true
         self.activityIndicatorView.stopAnimating()
     }
     
     func setUserProfile() {
-        self.userNameLabel.text = self.model.user.name
+        self.userNameLabel.text = self.model.user?.name
         
-        self.followListButton.setTitle(String(self.model.user.friendsCount!) + " follows",
-            forState: UIControlState.Normal)
-        self.followerListButton.setTitle(String(self.model.user.followersCount!) + " followers",
-            forState: UIControlState.Normal)
+        self.followListButton.setTitle(String(self.model.user!.friendsCount!) + " follows",
+                                       for: .normal)
+        self.followerListButton.setTitle(String(self.model.user!.followersCount!) + " followers",
+            for: .normal)
         
         
-        if self.model.user.screenName != nil {
-            self.screenNameLabel.text = self.model.user.screenNameWithAt!
+        if self.model.user?.screenName != nil {
+            self.screenNameLabel.text = self.model.user?.screenNameWithAt
         }
         else {
             self.screenNameLabel.text = "no data"
         }
         
-        self.userIconImageView.sd_setImageWithURL(self.model.user.profileImageUrl,
+        self.userIconImageView.sd_setImage(with: self.model.user?.profileImageUrl,
             placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
-            options: SDWebImageOptions.CacheMemoryOnly)
+            options: .fromCacheOnly)
         
-        self.followButton.selected = self.model.user.following!
+        self.followButton.isSelected = self.model.user?.following ?? false
     }
     
     func changeListButtonsStatusWithTappedButton(tappedButton: UIButton) {
@@ -286,53 +273,57 @@ class TWPUserInfoViewController: UIViewController, UITableViewDelegate, UITableV
         
         for listButton in listButtons {
             if listButton == tappedButton {
-                listButton.selected = true
-                listButton.backgroundColor = UIColor.lightGrayColor()
+                listButton.isSelected = true
+                listButton.backgroundColor = .lightGray
             }
             else {
-                listButton.selected = false
-                listButton.backgroundColor = UIColor.clearColor()
+                listButton.isSelected = false
+                listButton.backgroundColor = .clear
             }
         }
     }
-    
+
+}
+
+extension TWPUserInfoViewController: UITableViewDataSource {
     // MARK: - UITableViewDataSource
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return self.model.tweets.count;
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.model.tweets.count
     }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell:TWPUserInfoViewControllerTableViewCell! = tableView.dequeueReusableCellWithIdentifier(kTWPUserInfoTableViewCellIdentifier) as? TWPUserInfoViewControllerTableViewCell
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: kTWPUserInfoTableViewCellIdentifier) as! TWPUserInfoViewControllerTableViewCell
+        let tweet = self.model.tweets[indexPath.row]
         
-        // create Tweet Object
-        var tweet:TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet
-        
-        cell.iconImageView.sd_setImageWithURL(tweet.user?.profileImageUrl,
+        cell.iconImageView.sd_setImage(with: tweet.user?.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
-            options: SDWebImageOptions.CacheMemoryOnly)
+            options: .fromCacheOnly)
         cell.tweetTextLabel.text = tweet.text
-        cell.tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        cell.tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
         
         return cell
     }
-    
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60.0
     }
-    
+}
+
+extension TWPUserInfoViewController: UITableViewDelegate {
     // MARK: - UITableViewDelegate
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        var selectedTweet: TWPTweet = self.model.tweets[indexPath.row] as! TWPTweet;
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedTweet = self.model.tweets[indexPath.row]
         self.selectedTweetID = selectedTweet.tweetID
-        
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        
-        performSegueWithIdentifier("fromUserInfoToTweetDetail", sender: nil)
+
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        performSegue(withIdentifier: "fromUserInfoToTweetDetail", sender: nil)
     }
-    
+}
+
+extension TWPUserInfoViewController: TTTAttributedLabelDelegate {
     // MARK: - TTTAttributedLabelDelegate
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-        UIApplication.sharedApplication().openURL(url)
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        UIApplication.shared.open(url)
     }
 }

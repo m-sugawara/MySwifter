@@ -9,19 +9,15 @@
 import UIKit
 import SwifteriOS
 
-class TWPUser: NSObject {
-    var userID: String?
-    var name: String?
-    var screenName: String?
-    var screenNameWithAt: String?
-    var profileImageUrl: URL?
-    var following:Bool?
-    var friendsCount: Int?
-    var followersCount: Int?
-    
-    override init() {
-        super.init()
-    }
+struct TWPUser {
+    let userID: String?
+    let name: String?
+    let screenName: String?
+    let screenNameWithAt: String?
+    let profileImageUrl: URL?
+    var following: Bool
+    let friendsCount: Int?
+    let followersCount: Int?
     
     init(userID: String?, name: String?, screenName: String?, profileImageUrl: String?, following: Bool?, friendsCount: Int?, followersCount: Int?) {
         self.userID = userID
@@ -29,12 +25,12 @@ class TWPUser: NSObject {
         self.screenName = screenName
         self.screenNameWithAt = "@" + screenName!
         self.profileImageUrl = URL(string: profileImageUrl!)
-        self.following = following
+        self.following = following ?? false
         self.friendsCount = friendsCount
         self.followersCount = followersCount
     }
     
-    convenience init(dictionary: Dictionary<String, JSON>) {
+    init(dictionary: Dictionary<String, JSON>) {
         self.init(
             userID:          dictionary["id_str"]?.string,
             name:            dictionary["name"]?.string,

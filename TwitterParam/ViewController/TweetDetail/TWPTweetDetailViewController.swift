@@ -10,6 +10,7 @@ import UIKit
 
 import TTTAttributedLabel
 import ReactiveCocoa
+import ReactiveSwift
 import SDWebImage
 
 class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate {
@@ -34,45 +35,40 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
         self.configureViews()
         
         // TODO: Bad Solution
-        self.model.tweetID = self.tempTweetID
-        self.model.getTweetSignal()?.subscribeError({ (error) -> Void in
-            print("error:\(error)")
-        }, completed: { [weak self] () -> Void in
-            self!.tweetLabel.text = self!.model.tweet?.text
-            self!.userIconImageView.sd_setImageWithURL(self!.model.tweet?.user?.profileImageUrl,
-                placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
-                options: SDWebImageOptions.CacheMemoryOnly)
-            self!.screenNameLabel.text = self!.model.tweet?.user?.screenNameWithAt
-            self!.userNameLabel.text = self!.model.tweet?.user?.name
-        })
+        self.model.tweetId = self.tempTweetID
+        self.model.getTweetSignalProducer().startWithResult { result in
+            switch result {
+            case .success:
+                let tweet = self.model.tweet!
+                self.tweetLabel.text = tweet.text
+                self.userIconImageView.sd_setImage(
+                    with: tweet.user?.profileImageUrl,
+                    placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
+                    options: .fromCacheOnly,
+                    completed: nil
+                )
+            case .failure(let error):
+                print("error: \(error)")
+                self.showAlert(with: "ERROR", message: "failed to get tweet")
+            }
+        }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         
         if segue.identifier == "fromTweetDetailToUserInfo" {
-            var userInfoViewController: TWPUserInfoViewController = segue.destination as! TWPUserInfoViewController
+            let userInfoViewController = segue.destination as! TWPUserInfoViewController
             userInfoViewController.tempUserID = self.model.tweet?.user?.userID
             
             // regist backbutton command
-            userInfoViewController.backButtonCommand = CocoaAction(didTapBackbutton)
-
-//                CocoaAction(signalBlock: { [weak self] (input) -> RACSignal! in
-//                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-//                    subscriber.sendCompleted()
-//
-//                    return RACDisposable(block: { () -> Void in
-//                        self!.dismissViewControllerAnimated(true, completion: nil)
-//                    })
-//                })
-//            })
-
-            
+            userInfoViewController.backButtonAction = CocoaAction(Action<Void, Void, Error> { _ in
+                return SignalProducer<Void, Error> { observer, _ in
+                    self.dismiss(animated: true, completion: nil)
+                    observer.sendCompleted()
+                }
+            })
         }
-    }
-
-    func didTapBackbutton() {
-        self.dismiss(animated: true, completion: nil)
     }
 
     // MARK: - Memory Management

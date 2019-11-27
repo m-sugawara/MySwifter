@@ -12,9 +12,8 @@ import ReactiveCocoa
 import ReactiveSwift
 
 class TWPLoginViewController: UIViewController {
-    let model = TWPLoginViewModel()
+    private let model = TWPLoginViewModel()
 
-    
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var loginButon: UIButton!
     
@@ -53,7 +52,7 @@ class TWPLoginViewController: UIViewController {
                     }
                     let yesAction: (UIAlertAction?) -> Void = { [weak mainViewController] action in
                         // if selected YES, try to logout and dismissViewController
-                        TWPTwitterAPI.sharedInstance.logout()
+                        TWPTwitterAPI.shared.logout()
                         observer.sendCompleted()
                         mainViewController?.dismiss(animated: true, completion: nil)
                     }

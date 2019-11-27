@@ -35,8 +35,6 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     var scrollBeginingPoint: CGPoint!
     var footerViewHidden: Bool!
     
-    var logoutButtonAction: Action<Void, Void, Error>
-    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tweetButton: UIButton!
     @IBOutlet weak var feedUpdateButton: UIButton!
@@ -88,8 +86,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        
-        // UserInfoViewController
+
         if segue.identifier == "fromMainToUserInfo" {
             let userInfoViewController:TWPUserInfoViewController = segue.destination as! TWPUserInfoViewController
             
@@ -97,17 +94,9 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             userInfoViewController.tempUserID = TWPUserHelper.currentUserID()
             
             // bind Next ViewController's Commands
-            //            let action = Action<(), Void?, Error> {
-            //                return SignalProducer {
-            //                    self.dismiss(animated: true, completion: nil)
-            //                }
-            //            }
-            //            userInfoViewController.backButton.reactive.pressed = CocoaAction(action)
-            _ = userInfoViewController.backButton.reactive.trigger(for: #selector(UIViewController.dismiss(animated:completion:)))
+            _ = userInfoViewController.backButtonAction.reactive.trigger(for: #selector(UIViewController.dismiss(animated:completion:)))
             
-        }
-            // TweetDetailViewController
-        else if segue.identifier == "fromMainToTweetDetail" {
+        } else if segue.identifier == "fromMainToTweetDetail" {
             let tweetDetailViewController = segue.destination as! TWPTweetDetailViewController
             
             // TODO: bad solution

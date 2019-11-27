@@ -16,7 +16,7 @@ class TWPUserListViewController: UIViewController, UITableViewDataSource, UITabl
 
     // use move from userInfo etc
     var tempUserID: String?
-    var backButtonCommand: CocoaAction?
+    var backButtonCommand: CocoaAction<Void, Void, Error>?
     // use move to userInfo
     var selectedUserID: String?
     
@@ -123,9 +123,9 @@ class TWPUserListViewController: UIViewController, UITableViewDataSource, UITabl
         var selectedUser: TWPUser = self.model.userList[indexPath.row] as TWPUser;
         self.selectedUserID = selectedUser.userID
         
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
         
-        self.performSegueWithIdentifier("fromUserListToUserInfo", sender: nil)
+        self.performSegue(withIdentifier: "fromUserListToUserInfo", sender: nil)
     }
 
 

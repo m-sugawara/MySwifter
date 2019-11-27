@@ -79,7 +79,7 @@ class TWPUserHelper {
             return nil
         }
         
-        let currentUser = TWPUserList.sharedInstance.findUserByUserID(userID: currentUserID)
+        let currentUser = TWPUserList.shared.findUser(by: currentUserID)
         return currentUser
     }
 }

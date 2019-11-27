@@ -10,22 +10,25 @@ import UIKit
 import ReactiveSwift
 
 class TWPUserListViewModel: NSObject {
-    let twitterAPI = TWPTwitterAPI.sharedInstance
+
     var selectingUserID: String?
-    var userList:Array<TWPUser> = []
+    var userList: [TWPUser] = []
    
     // MARK: - Signals
     func getUserList() -> SignalProducer<Void, Error>? {
-        return SignalProducer<Void, Error> { [weak self] innerObserver, _ in
-            guard let self = self else { return }
-            self.twitterAPI.getFriendListWithID(self.selectingUserID!,count: 20)?.subscribeNext({ (resultUsers) -> Void in
-                self!.userList = resultUsers as! Array<TWPUser>
-            }, error: { (error) -> Void in
-                innerObserver.sendError(error)
-            }, completed: { () -> Void in
-                innerObserver.send(value: ())
-                innerObserver.sendCompleted()
-            })
+        return SignalProducer<Void, Error> { observer, _ in
+            TWPTwitterAPI.shared.getFriendList(
+                with: self.selectingUserID!,
+                count: 20
+            ).startWithResult{ result in
+                switch result {
+                case .success(let users):
+                    self.userList = users
+                    observer.sendCompleted()
+                case .failure(let error):
+                    observer.send(error: error)
+                }
+            }
         }
     }
 }

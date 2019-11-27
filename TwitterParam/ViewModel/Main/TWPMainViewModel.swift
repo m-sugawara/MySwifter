@@ -12,7 +12,6 @@ import ReactiveCocoa
 import ReactiveSwift
 
 class TWPMainViewModel {
-    let twitterAPI = TWPTwitterAPI.sharedInstance
     
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: [TWPTweet] = [TWPTweet]()
@@ -41,14 +40,14 @@ class TWPMainViewModel {
     // MARK: - OAuth
     var oauthButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> { _ -> SignalProducer<Void, Error> in
-            return self.twitterAPI.twitterAuthorizeWithOAuth()
+            return TWPTwitterAPI.shared.twitterAuthorizeWithOAuth()
         }
     }
 
     // MARK: - Account
     var accountButtonAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> {
-            return self.twitterAPI.twitterAuthorizeWithAccount()
+        return Action<Void, Void, Error> { _ in
+            return TWPTwitterAPI.shared.twitterAuthorizeWithAccount()
         }
     }
     
@@ -65,7 +64,7 @@ class TWPMainViewModel {
                 observer.sendInterrupted()
                 return
             }
-            self.twitterAPI.getStatusesHomeTimeline().startWithResult { result in
+            TWPTwitterAPI.shared.getStatusesHomeTimeline().startWithResult { result in
                 switch result {
                 case .success(let tweets):
                     self.tweets = tweets
@@ -79,12 +78,12 @@ class TWPMainViewModel {
     // MARK: - Logout
     var logoutButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-                guard let self = self, !lifetime.hasEnded else {
+            return SignalProducer<Void, Error> { observer, lifetime in
+                guard !lifetime.hasEnded else {
                     observer.sendInterrupted()
                     return
                 }
-                self.twitterAPI.logout()
+                TWPTwitterAPI.shared.logout()
             }
         }
     }
@@ -102,7 +101,7 @@ class TWPMainViewModel {
                 if let index = self.selectingIndex, index < self.tweets.count {
                     isReplyToStatusID = self.tweets[index].tweetID
                 }
-                self.twitterAPI.postStatusUpdate(status: self.inputtingTweet.value, inReplyToStatusID: isReplyToStatusID).startWithResult { result in
+                TWPTwitterAPI.shared.postStatusUpdate(status: self.inputtingTweet.value, inReplyToStatusID: isReplyToStatusID).startWithResult { result in
                     switch result {
                     case .success:
                         observer.sendCompleted()
@@ -132,7 +131,7 @@ class TWPMainViewModel {
 
             // if selected tweet hasn't been retweeted yet, try to retweet
             if tweet.retweeted != true {
-                self.twitterAPI.postStatusRetweet(with: tweet.tweetID!, trimUser: false).startWithResult { result in
+                TWPTwitterAPI.shared.postStatusRetweet(with: tweet.tweetID!, trimUser: false).startWithResult { result in
                     switch result {
                     case .success:
                         self.markAsRetweeted(true, at: index)
@@ -142,10 +141,10 @@ class TWPMainViewModel {
                     }
                 }
             } else {
-                self.twitterAPI.getCurrentUserRetweetID(with: tweet.tweetID!).startWithResult { result in
+                TWPTwitterAPI.shared.getCurrentUserRetweetID(with: tweet.tweetID!).startWithResult { result in
                     switch result {
                     case .success(let retweetId):
-                        self.twitterAPI.postStatusesDestroy(with: retweetId, trimUser: false).startWithResult { result in
+                        TWPTwitterAPI.shared.postStatusesDestroy(with: retweetId, trimUser: false).startWithResult { result in
                             switch result {
                             case .success:
                                 self.markAsRetweeted(false, at: index)
@@ -194,7 +193,7 @@ class TWPMainViewModel {
             let tweet = self.tweets[index]
 
             if tweet.favorited != true {
-                self.twitterAPI.postCreateFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
+                TWPTwitterAPI.shared.postCreateFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
                     switch result {
                     case .success:
                         self.markAsFavorited(true, at: index)
@@ -204,7 +203,7 @@ class TWPMainViewModel {
                     }
                 }
             } else {
-                self.twitterAPI.postDestroyFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
+                TWPTwitterAPI.shared.postDestroyFavorite(with: tweet.tweetID!, includeEntities: false).startWithResult { result in
                     switch result {
                     case .success:
                         self.markAsFavorited(false, at: index)

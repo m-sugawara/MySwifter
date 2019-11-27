@@ -6,36 +6,34 @@
 //  Copyright (c) 2015年 sugawar. All rights reserved.
 //
 
-import UIKit
+import ReactiveSwift
 
-import ReactiveCocoa
-
-class TWPTweetDetailViewModel: NSObject {
-    let twitterAPI = TWPTwitterAPI.sharedInstance
+class TWPTweetDetailViewModel {
     
-    var tweetID = ""
-    var tweet:TWPTweet?
+    var tweetId = ""
+    var tweet: TWPTweet?
     
     // MARK: - Deinit
     deinit {
         print("TweetDetailViewModel deinit")
     }
     
-    func getTweetSignal() -> RACSignal? {
-        
-        return RACSignal.createSignal({ [weak self] (subscriber) -> RACDisposable! in
-            self!.twitterAPI.getStatuesShowWithID(self!.tweetID)?.subscribeNext({ (next) -> Void in
-                self!.tweet = (next as? TWPTweet?)!
-            }, error: { (error) -> Void in
-                subscriber.sendError(error)
-            }, completed: { () -> Void in
-                subscriber.sendNext(nil)
-                subscriber.sendCompleted()
-            })
-            
-            return RACDisposable(block: { () -> Void in
-            })
-        })
+    func getTweetSignalProducer() -> SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, lifetime in
+            guard !lifetime.hasEnded else {
+                observer.sendInterrupted()
+                return
+            }
+            TWPTwitterAPI.shared.getStatuesShow(with: self.tweetId).startWithResult { result in
+                switch result {
+                case .success(let tweet):
+                    self.tweet = tweet
+                    observer.sendCompleted()
+                case .failure(let error):
+                    observer.send(error: error)
+                }
+            }
+        }
     }
     
     

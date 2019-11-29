@@ -115,7 +115,7 @@ extension TWPUserListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedUser = self.model.userList[indexPath.row]
-        selectedUserID = selectedUser.userID
+        selectedUserID = selectedUser.userId
 
         tableView.deselectRow(at: indexPath, animated: true)
 

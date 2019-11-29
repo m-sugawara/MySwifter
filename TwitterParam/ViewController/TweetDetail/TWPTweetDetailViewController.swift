@@ -59,7 +59,7 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
         
         if segue.identifier == "fromTweetDetailToUserInfo" {
             let userInfoViewController = segue.destination as! TWPUserInfoViewController
-            userInfoViewController.tempUserID = self.model.tweet?.user?.userID
+            userInfoViewController.tempUserID = self.model.tweet?.user?.userId
             
             // regist backbutton command
             userInfoViewController.backButtonAction = CocoaAction(Action<Void, Void, Error> { _ in

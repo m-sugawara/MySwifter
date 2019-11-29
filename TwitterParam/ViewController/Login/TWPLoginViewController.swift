@@ -14,8 +14,8 @@ import ReactiveSwift
 class TWPLoginViewController: UIViewController {
     private let model = TWPLoginViewModel()
 
-    @IBOutlet weak var contentView: UIView!
-    @IBOutlet weak var loginButon: UIButton!
+    @IBOutlet private weak var contentView: UIView!
+    @IBOutlet private weak var loginButon: UIButton!
     
     // MARK: - Deinit
     deinit {
@@ -26,35 +26,52 @@ class TWPLoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
-        
-        // Set background color
-        let backgroundColor = UIColor(patternImage: UIImage(named: "Background_Pattern")!)
-        self.contentView.backgroundColor = backgroundColor
-        
-        self.bindSignals()
+        initializeUI()
+        bindSignals()
+    }
+
+    private func initializeUI() {
+        contentView.backgroundColor = UIColor(patternImage: UIImage(named: "Background_Pattern")!)
+    }
+
+    private func showAlertWithSuccess() {
+        showAlert(
+            with: "SUCCESS",
+            message: "LOGIN SUCCESS",
+            cancelButtonTitle: "OK",
+            cancelTappedAction: { [weak self] () -> Void in
+                self?.performSegue(withIdentifier: "fromLoginToMain", sender: nil)
+            }
+        )
+    }
+
+    private func showAlertWithFailure(with error: NSError) {
+        showAlert(
+            with: "ERROR!",
+            message: "\(error.localizedDescription)"
+        )
     }
 
     // MARK: - Binding
-    func bindSignals() {
-        
-        self.loginButon.reactive.pressed = CocoaAction(self.model.loginButtonAction)
+    private func bindSignals() {
+        loginButon.reactive.pressed = CocoaAction(Action<Void, Void, Error> { _ in
+            return SignalProducer<Void, Error> { observer, _ in
+                TWPTwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
+                    switch result {
+                    case .success:
+                        DispatchQueue.main.async {
+                            self?.showAlertWithSuccess()
+                        }
 
-        // Handling Value
-        self.model.loginButtonAction.events.observeValues { [weak self] event in
-            switch event {
-            case .value:
-                fallthrough
-            case .completed:
-                self?.showAlert(with: "SUCCESS", message: "LOGIN SUCCESS", cancelButtonTitle: "OK", cancelTappedAction: { [weak self] () -> Void in
-                    self?.performSegue(withIdentifier: "fromLoginToMain", sender: nil)
-                })
-            case .failed(let error):
-                self?.showAlert(with: "ERROR!", message: "\(error.localizedDescription)")
-            case .interrupted:
-                break
+                    case .failure(let error):
+                        DispatchQueue.main.async {
+                            self?.showAlertWithFailure(with: error as NSError)
+                        }
+                    }
+                    observer.sendCompleted()
+                }
             }
-        }
+        })
     }
 
 }

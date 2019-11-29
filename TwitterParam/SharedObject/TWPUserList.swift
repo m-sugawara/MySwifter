@@ -22,7 +22,7 @@ final class TWPUserList:NSObject {
     
     // MARK: - Public Methods
     func appendUser(_ user:TWPUser) {
-        if self.findUser(by: user.userID!) != nil {
+        if self.findUser(by: user.userId!) != nil {
             self.updateUser(user)
         }
         else {
@@ -31,24 +31,23 @@ final class TWPUserList:NSObject {
     }
     
     func updateUser(_ target: TWPUser) {
-        var i = 0
-        for user in self.users {
-            if (target.userID == user.userID) {
-                self.users[i] = target
-                return
-            }
-            i += 1
+        self.users = users.map { user in
+            guard user == target else { return user }
+            return target
         }
     }
     
-    func findUser(by userID:String) -> TWPUser? {
-        for user in self.users {
-            if (user.userID == userID) {
-                return user
-            }
-        }
-        return nil
+    func findUser(by userId:String) -> TWPUser? {
+        return users.filter { $0.userId == userId }.first
     }
-    
+
+    func setFollowing(_ following: Bool, toUserId: String) {
+        self.users = users.map { user in
+            guard user.userId == toUserId else { return user }
+            var mutableUser = user
+            mutableUser.following = following
+            return mutableUser
+        }
+    }
     
 }

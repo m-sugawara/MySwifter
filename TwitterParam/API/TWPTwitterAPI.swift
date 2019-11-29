@@ -234,7 +234,7 @@ final class TWPTwitterAPI: NSObject {
         }
     }
     
-    func getUserTimeline(with userID: String, customParam: [String: Any] = [:], count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, excludeReplies: Bool? = nil, includeRetweets: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
+    func getUserTimeline(with userId: String, customParam: [String: Any] = [:], count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, excludeReplies: Bool? = nil, includeRetweets: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
 
         return SignalProducer<[TWPTweet], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -242,7 +242,7 @@ final class TWPTwitterAPI: NSObject {
                 return
             }
             self.swifter.getTimeline(
-                for: .id(userID),
+                for: .id(userId),
                 customParam: customParam,
                 count: count,
                 sinceID: sinceID,
@@ -416,7 +416,7 @@ final class TWPTwitterAPI: NSObject {
     }
     
     // MARK: - Wrapper Methods(favorite)
-    func getFavoritesList(with userID: String, count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
+    func getFavoritesList(with userId: String, count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
 
         return SignalProducer<[TWPTweet], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -424,7 +424,7 @@ final class TWPTwitterAPI: NSObject {
                 return
             }
             self.swifter.getRecentlyFavoritedTweets(
-                for: .id(userID),
+                for: .id(userId),
                 count: count,
                 sinceID: sinceID,
                 maxID: maxID,
@@ -497,7 +497,7 @@ final class TWPTwitterAPI: NSObject {
                 .id(id),
                 follow: follow,
                 success: { json in
-                    TWPUserList.shared.findUser(by: id)?.following = true
+                    TWPUserList.shared.setFollowing(true, toUserId: id)
                     observer.send(value: ())
                     observer.sendCompleted()
             }) { error in
@@ -515,7 +515,7 @@ final class TWPTwitterAPI: NSObject {
             self.swifter.unfollowUser(
                 .id(id),
                 success: { json in
-                    TWPUserList.shared.findUser(by: id)?.following = false
+                    TWPUserList.shared.setFollowing(false, toUserId: id)
                     observer.send(value: ())
                     observer.sendCompleted()
             }) { error in

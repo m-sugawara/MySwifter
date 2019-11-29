@@ -10,7 +10,7 @@ import UIKit
 import SwifteriOS
 
 struct TWPUser {
-    let userID: String?
+    let userId: String?
     let name: String?
     let screenName: String?
     let screenNameWithAt: String?
@@ -19,8 +19,8 @@ struct TWPUser {
     let friendsCount: Int?
     let followersCount: Int?
     
-    init(userID: String?, name: String?, screenName: String?, profileImageUrl: String?, following: Bool?, friendsCount: Int?, followersCount: Int?) {
-        self.userID = userID
+    init(userId: String?, name: String?, screenName: String?, profileImageUrl: String?, following: Bool?, friendsCount: Int?, followersCount: Int?) {
+        self.userId = userId
         self.name = name
         self.screenName = screenName
         self.screenNameWithAt = "@" + screenName!
@@ -32,7 +32,7 @@ struct TWPUser {
     
     init(dictionary: Dictionary<String, JSON>) {
         self.init(
-            userID:          dictionary["id_str"]?.string,
+            userId:          dictionary["id_str"]?.string,
             name:            dictionary["name"]?.string,
             screenName:      dictionary["screen_name"]?.string,
             profileImageUrl: dictionary["profile_image_url"]?.string,
@@ -47,3 +47,5 @@ struct TWPUser {
     }
     
 }
+
+extension TWPUser: Equatable {}

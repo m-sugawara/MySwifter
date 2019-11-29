@@ -9,21 +9,23 @@
 import UIKit
 
 import ReactiveCocoa
+import ReactiveSwift
 import SDWebImage
 
-class TWPUserListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    let model = TWPUserListViewModel()
+class TWPUserListViewController: UIViewController {
+
+    private let model = TWPUserListViewModel()
 
     // use move from userInfo etc
     var tempUserID: String?
-    var backButtonCommand: CocoaAction<Void, Void, Error>?
+    var backButtonAction: CocoaAction<UIButton>?
     // use move to userInfo
     var selectedUserID: String?
     
-    @IBOutlet weak var userListTableView: UITableView!
-    @IBOutlet weak var backButton: UIButton!
-    @IBOutlet weak var loadingView: UIView!
-    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    @IBOutlet private weak var userListTableView: UITableView!
+    @IBOutlet private weak var backButton: UIButton!
+    @IBOutlet private weak var loadingView: UIView!
+    @IBOutlet private weak var activityIndicatorView: UIActivityIndicatorView!
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -36,97 +38,87 @@ class TWPUserListViewController: UIViewController, UITableViewDataSource, UITabl
         
         // first, get follow/follower list
         self.startLoading()
-        self.model.getUserList()?.subscribeNext({ [weak self] (next) -> Void in
-            
-        }, error: { (error) -> Void in
-            print("\(error)")
-        }, completed: { () -> Void in
-            self.userListTableView.reloadData()
-            self.stopLoading()
-            self.showAlertWithTitle("SUCCESS", message: "success")
-        })
-        
+        self.model.getUserList().startWithResult { [weak self] result in
+            switch result {
+            case .success:
+                self?.stopLoading()
+                self?.userListTableView.reloadData()
+            case .failure(let error):
+                print("error: \(error)")
+                self?.showAlert(with: "ERROR", message: "failed to get user list")
+            }
+        }
     }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        super.prepareForSegue(segue, sender: sender)
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
         
         // UserInfoViewController
         if segue.identifier == "fromUserListToUserInfo" {
-            var userInfoViewController:TWPUserInfoViewController = segue.destinationViewController as! TWPUserInfoViewController
-            
-            // TODO: bad solution
+            let userInfoViewController = segue.destination as! TWPUserInfoViewController
             userInfoViewController.tempUserID = self.selectedUserID
             
             // bind Next ViewController's Commands
-            userInfoViewController.backButtonCommand = RACCommand(signalBlock: { (input) -> RACSignal! in
-                return RACSignal.createSignal({ (subscriber) -> RACDisposable! in
-                    subscriber.sendCompleted()
-                    
-                    return RACDisposable(block: { () -> Void in
-                        self.dismissViewControllerAnimated(true, completion: nil)
-                    })
-                })
+            userInfoViewController.backButtonAction = CocoaAction(Action<Void, Void, Error> {
+                return SignalProducer<Void, Error> { [weak self] observer, _ in
+                    self?.dismiss(animated: true, completion: nil)
+                    observer.sendCompleted()
+                }
             })
-            
         }
     }
 
     // MARK: - Private Methods
     func startLoading() {
-        self.loadingView.hidden = false
+        self.loadingView.isHidden = false
         self.activityIndicatorView.startAnimating()
     }
     
     func stopLoading() {
-        self.loadingView.hidden = true
+        self.loadingView.isHidden = true
         self.activityIndicatorView.stopAnimating()
     }
-    
-    // MARK: - MemoryManagement
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
+
     // MARK: - Binding
     func bindCommands() {
-        self.backButton.rac_command = backButtonCommand
+        self.backButton.reactive.pressed = backButtonAction
     }
-    
-    // MARK: - UITableViewDataSource
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("Cell") as! TWPUserListTableViewCell
-        
-        var user = self.model.userList[indexPath.row]
+}
+
+extension TWPUserListViewController: UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! TWPUserListTableViewCell
+
+        let user = self.model.userList[indexPath.row]
         cell.nameLabel.text = user.name
         cell.screenNameLabel.text = user.screenNameWithAt
-        
-        cell.userImageView.sd_setImageWithURL(user.profileImageUrl,
+        cell.userImageView.sd_setImage(
+            with: user.profileImageUrl,
             placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
-            options: SDWebImageOptions.CacheMemoryOnly)
-        
+            options: .fromCacheOnly
+        )
+
         return cell
-        
     }
-    
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.model.userList.count
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return model.userList.count
     }
-    
-    // MARK: - UITableViewDelegate
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+}
+
+extension TWPUserListViewController: UITableViewDelegate {
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70.0
     }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        var selectedUser: TWPUser = self.model.userList[indexPath.row] as TWPUser;
-        self.selectedUserID = selectedUser.userID
-        
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedUser = self.model.userList[indexPath.row]
+        selectedUserID = selectedUser.userID
+
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        self.performSegue(withIdentifier: "fromUserListToUserInfo", sender: nil)
+
+        performSegue(withIdentifier: "fromUserListToUserInfo", sender: nil)
     }
-
-
 }

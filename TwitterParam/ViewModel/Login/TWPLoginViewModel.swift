@@ -8,19 +8,9 @@
 
 import UIKit
 
-import ReactiveSwift
-
 class TWPLoginViewModel: NSObject {
-    
     // MARK: - Deinit
     deinit {
         print("LoginViewModel deinit")
-    }
-    
-    // MARK: - RACCommands
-    var loginButtonAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> { _ in
-            return TWPTwitterAPI.shared.tryToLogin()
-        }
     }
 }

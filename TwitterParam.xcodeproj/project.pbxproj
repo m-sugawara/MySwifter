@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		47F1231EBE2BD6001425519F /* Pods_TwitterParam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 556E0362FA0F545BE5F9885A /* Pods_TwitterParam.framework */; };
-		5905DEA21B418D1E00D1BE9B /* SwifteriOS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59AE827D1B353E180083F5FF /* SwifteriOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5912996E1B37E79E0011EA85 /* String+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5912996D1B37E79E0011EA85 /* String+TWPHelper.swift */; };
 		591299711B37E8390011EA85 /* NSDate+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591299701B37E8390011EA85 /* NSDate+TWPHelper.swift */; };
 		591299741B37F6BC0011EA85 /* TWPTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591299731B37F6BC0011EA85 /* TWPTextFieldView.swift */; };
@@ -35,7 +34,6 @@
 		59CD8BBA1B3FBAC9000B2E93 /* TWPUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BB91B3FBAC8000B2E93 /* TWPUserListViewController.swift */; };
 		59CD8BBD1B3FEB8E000B2E93 /* TWPUserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BBC1B3FEB8E000B2E93 /* TWPUserListViewModel.swift */; };
 		59CD8BC11B401A32000B2E93 /* TWPUserListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BC01B401A32000B2E93 /* TWPUserListTableViewCell.swift */; };
-		59DD48501B418E38007B5CD8 /* SwifteriOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AE827D1B353E180083F5FF /* SwifteriOS.framework */; };
 		59DDB8DE1B3666B400C89F46 /* TWPLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */; };
 		59DDB8E01B367A0E00C89F46 /* TWPLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DF1B367A0E00C89F46 /* TWPLoginViewModel.swift */; };
 		59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */; };
@@ -60,7 +58,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5905DEA21B418D1E00D1BE9B /* SwifteriOS.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,7 +92,6 @@
 		59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewController.swift; path = TweetDetail/TWPTweetDetailViewController.swift; sourceTree = "<group>"; };
 		59898DBB1B34014600273760 /* TWPTweetDetailViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewModel.swift; path = TweetDetail/TWPTweetDetailViewModel.swift; sourceTree = "<group>"; };
 		59AE82731B3537250083F5FF /* TWPUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUser.swift; sourceTree = "<group>"; };
-		59AE827D1B353E180083F5FF /* SwifteriOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwifteriOS.framework; path = "Swifter/build/Debug-iphoneos/SwifteriOS.framework"; sourceTree = "<group>"; };
 		59B578A71B1ED17700E3D801 /* TWPUserInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewController.swift; sourceTree = "<group>"; };
 		59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewModel.swift; sourceTree = "<group>"; };
 		59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTweet.swift; sourceTree = "<group>"; };
@@ -116,7 +112,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59DD48501B418E38007B5CD8 /* SwifteriOS.framework in Frameworks */,
 				47F1231EBE2BD6001425519F /* Pods_TwitterParam.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -429,7 +424,6 @@
 		E271F7FE9339B364CFDA305A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				59AE827D1B353E180083F5FF /* SwifteriOS.framework */,
 				556E0362FA0F545BE5F9885A /* Pods_TwitterParam.framework */,
 				5266D82DB7424FDA0CFE9983 /* Pods_TwitterParamTests.framework */,
 			);

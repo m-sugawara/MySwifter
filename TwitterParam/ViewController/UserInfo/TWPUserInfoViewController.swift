@@ -118,7 +118,7 @@ class TWPUserInfoViewController: UIViewController {
         else if segue.identifier == "fromUserInfoToUserList" {
             let userListViewController = segue.destination as! TWPUserListViewController
             userListViewController.tempUserID = self.tempUserID
-            userListViewController.backButtonCommand = CocoaAction(action)
+            userListViewController.backButtonAction = CocoaAction(action)
         }
     }
     

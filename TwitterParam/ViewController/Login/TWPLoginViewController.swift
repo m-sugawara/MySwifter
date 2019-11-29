@@ -35,45 +35,6 @@ class TWPLoginViewController: UIViewController {
         self.bindSignals()
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-        
-        if segue.identifier == "fromLoginToMain" {
-            let mainViewController = segue.destination as! TWPMainViewController
-            mainViewController.logoutButtonAction = Action<Void, Void, Error> {
-                return SignalProducer<Void, Error> { [weak mainViewController] observer, lifetime in
-                    guard let mainViewController = mainViewController, !lifetime.hasEnded else {
-                        observer.sendInterrupted()
-                        return
-                    }
-
-                    let cancelAction = { () -> Void in
-                        observer.sendCompleted()
-                    }
-                    let yesAction: (UIAlertAction?) -> Void = { [weak mainViewController] action in
-                        // if selected YES, try to logout and dismissViewController
-                        TWPTwitterAPI.shared.logout()
-                        observer.sendCompleted()
-                        mainViewController?.dismiss(animated: true, completion: nil)
-                    }
-                    mainViewController.showAlert(
-                        with: "ALERT",
-                        message: "LOGOUT?",
-                        cancelButtonTitle: "NO",
-                        cancelTappedAction: cancelAction,
-                        otherButtonTitles: ["YES"],
-                        otherButtonTappedActions: yesAction)
-                }
-            }
-        }
-    }
-
-    // MARK: - Memory Management
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     // MARK: - Binding
     func bindSignals() {
         

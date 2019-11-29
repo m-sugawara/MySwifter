@@ -236,7 +236,32 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         _ = tweetButton.reactive.trigger(for: #selector(showTextFieldView(screenName:)))
 
         feedUpdateButton.reactive.pressed = CocoaAction(model.feedUpdateButtonAction)
-        logoutButton.reactive.pressed = CocoaAction(model.logoutButtonAction)
+        logoutButton.reactive.pressed = CocoaAction(Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self, !lifetime.hasEnded else {
+                    observer.sendInterrupted()
+                    return
+                }
+
+                let cancelAction = { () -> Void in
+                    observer.sendCompleted()
+                }
+                let yesAction: (UIAlertAction?) -> Void = { [weak self] action in
+                    // if selected YES, try to logout and dismissViewController
+                    TWPTwitterAPI.shared.logout()
+                    observer.sendCompleted()
+                    self?.dismiss(animated: true, completion: nil)
+                }
+                self.showAlert(
+                    with: "ALERT",
+                    message: "LOGOUT?",
+                    cancelButtonTitle: "NO",
+                    cancelTappedAction: cancelAction,
+                    otherButtonTitles: ["YES"],
+                    otherButtonTappedActions: yesAction
+                )
+            }
+        })
         
         // TWPTextFieldView Commands
         self.textFieldView?.cancelButton.reactive.pressed = CocoaAction(Action(execute: { _ -> SignalProducer<Void, Error> in

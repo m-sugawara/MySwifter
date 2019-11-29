@@ -15,7 +15,7 @@ class TWPUserListViewModel: NSObject {
     var userList: [TWPUser] = []
    
     // MARK: - Signals
-    func getUserList() -> SignalProducer<Void, Error>? {
+    func getUserList() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             TWPTwitterAPI.shared.getFriendList(
                 with: self.selectingUserID!,

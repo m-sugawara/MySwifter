@@ -74,19 +74,6 @@ class TWPMainViewModel {
             }
         }
     }
-    
-    // MARK: - Logout
-    var logoutButtonAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { observer, lifetime in
-                guard !lifetime.hasEnded else {
-                    observer.sendInterrupted()
-                    return
-                }
-                TWPTwitterAPI.shared.logout()
-            }
-        }
-    }
 
     // MARK: - Tweet
     var tweetButtonAction: Action<Void, Void, Error> {

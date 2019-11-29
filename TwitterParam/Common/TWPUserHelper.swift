@@ -40,12 +40,12 @@ class TWPUserHelper {
     }
     
     class func saveUserAccount(account: ACAccount) -> Bool {
-        guard let userID = account.value(forKeyPath: "properties.user_id") as? String else { return false }
+        guard let userId = account.value(forKeyPath: "properties.user_id") as? String else { return false }
 
         userDefaults.set(TWPUserAccountType.acAccount.hashValue, forKey: kKeyForUserAccountType)
         userDefaults.set(nil, forKey: kKeyForUserTokenKey)
         userDefaults.set(nil, forKey: kKeyForUserTokenSecret)
-        userDefaults.set(userID, forKey: kKeyForUserTokenUserID)
+        userDefaults.set(userId, forKey: kKeyForUserTokenUserID)
         userDefaults.set(account.username, forKey: kKeyForUserTokenScreenName)
         userDefaults.set(nil, forKey: kKeyForUserTokenVerifier)
         
@@ -70,8 +70,8 @@ class TWPUserHelper {
     }
     
     class func currentUserID() -> String? {
-        guard let userID = userDefaults.object(forKey: kKeyForUserTokenUserID) as? String else { return nil }
-        return userID
+        guard let userId = userDefaults.object(forKey: kKeyForUserTokenUserID) as? String else { return nil }
+        return userId
     }
     
     class func currentUser() -> TWPUser? {

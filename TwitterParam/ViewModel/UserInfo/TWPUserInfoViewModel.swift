@@ -14,7 +14,7 @@ import ReactiveSwift
 class TWPUserInfoViewModel: NSObject {
     let twitterAPI = TWPTwitterAPI.shared
     
-    var userID: String = ""
+    var userId: String = ""
     var user: TWPUser?
     
     var favoriteList: Array<TWPTweet>?
@@ -29,10 +29,10 @@ class TWPUserInfoViewModel: NSObject {
     // MARK: - Signals
     func getUserInfoSignalProducer() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            self.twitterAPI.getUsersShow(with: .id(self.userID)).startWithResult{ result in
+            self.twitterAPI.getUsersShow(with: .id(self.userId)).startWithResult{ result in
                 switch result {
                 case .success:
-                    self.user = TWPUserList.shared.findUser(by: self.userID)
+                    self.user = TWPUserList.shared.findUser(by: self.userId)
                     observer.sendCompleted()
                 case .failure(let error):
                     observer.send(error: error)
@@ -75,7 +75,7 @@ class TWPUserInfoViewModel: NSObject {
                 observer.sendCompleted()
             } else {
                 self.twitterAPI.getFavoritesList(
-                    with: self.userID,
+                    with: self.userId,
                     count: 20
                 ).startWithResult{ result in
                     switch result {
@@ -108,10 +108,12 @@ class TWPUserInfoViewModel: NSObject {
                 observer.sendInterrupted()
                 return
             }
-            self.twitterAPI.postCreateFriendship(with: self.userID).startWithResult { result in
+            self.twitterAPI.postCreateFriendship(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
-                self.user?.following = TWPUserList.shared.findUser(by: self.userID)?.following
+                    if let user = TWPUserList.shared.findUser(by: self.userId) {
+                        self.user?.following = user.following
+                    }
                     observer.sendCompleted()
                 case .failure(let error):
                     observer.send(error: error)
@@ -127,10 +129,12 @@ class TWPUserInfoViewModel: NSObject {
                 return
             }
 
-            self.twitterAPI.postDestroyFavorite(with: self.userID).startWithResult { result in
+            self.twitterAPI.postDestroyFavorite(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
-                self.user?.following = TWPUserList.shared.findUser(by: self.userID)?.following
+                    if let user = TWPUserList.shared.findUser(by: self.userId) {
+                        self.user?.following = user.following
+                    }
                     observer.sendCompleted()
                 case .failure(let error):
                     observer.send(error: error)

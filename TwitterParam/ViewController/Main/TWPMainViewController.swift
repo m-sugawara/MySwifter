@@ -29,7 +29,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     let model = TWPMainViewModel()
     var textFieldView: TWPTextFieldView?
-    var userID: String!
+    var userId: String!
     var selectedTweetID: String!
     
     var scrollBeginingPoint: CGPoint!

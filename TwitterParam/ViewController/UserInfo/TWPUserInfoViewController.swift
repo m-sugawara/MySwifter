@@ -58,10 +58,10 @@ class TWPUserInfoViewController: UIViewController {
         // view did show for the firsttime, load user's timeline
         if self.tempUserID != nil {
             // TODO: bad solution
-            self.model.userID = self.tempUserID
+            self.model.userId = self.tempUserID
             
             // set default status
-            if self.model.userID == TWPUserHelper.currentUserID() {
+            if self.model.userId == TWPUserHelper.currentUserID() {
                 self.followButton.isHidden = true
             }
             

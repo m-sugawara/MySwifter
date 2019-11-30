@@ -31,6 +31,8 @@
 		59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */; };
 		59B578AD1B1EFA6E00E3D801 /* TWPTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */; };
 		59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578B01B1F07BF00E3D801 /* TWPUserList.swift */; };
+		59C0C6C323919F1200C60DAC /* SwifteriOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C0C6C223919F1200C60DAC /* SwifteriOS.framework */; };
+		59C0C6C423919F1200C60DAC /* SwifteriOS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59C0C6C223919F1200C60DAC /* SwifteriOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59CD8BBA1B3FBAC9000B2E93 /* TWPUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BB91B3FBAC8000B2E93 /* TWPUserListViewController.swift */; };
 		59CD8BBD1B3FEB8E000B2E93 /* TWPUserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BBC1B3FEB8E000B2E93 /* TWPUserListViewModel.swift */; };
 		59CD8BC11B401A32000B2E93 /* TWPUserListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BC01B401A32000B2E93 /* TWPUserListTableViewCell.swift */; };
@@ -58,6 +60,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				59C0C6C423919F1200C60DAC /* SwifteriOS.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,6 +99,7 @@
 		59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewModel.swift; sourceTree = "<group>"; };
 		59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTweet.swift; sourceTree = "<group>"; };
 		59B578B01B1F07BF00E3D801 /* TWPUserList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserList.swift; sourceTree = "<group>"; };
+		59C0C6C223919F1200C60DAC /* SwifteriOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwifteriOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59CD8BB91B3FBAC8000B2E93 /* TWPUserListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserListViewController.swift; path = UserList/TWPUserListViewController.swift; sourceTree = "<group>"; };
 		59CD8BBC1B3FEB8E000B2E93 /* TWPUserListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserListViewModel.swift; path = UserList/TWPUserListViewModel.swift; sourceTree = "<group>"; };
 		59CD8BC01B401A32000B2E93 /* TWPUserListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserListTableViewCell.swift; path = UserList/CustomSubviews/TWPUserListTableViewCell.swift; sourceTree = "<group>"; };
@@ -113,6 +117,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				47F1231EBE2BD6001425519F /* Pods_TwitterParam.framework in Frameworks */,
+				59C0C6C323919F1200C60DAC /* SwifteriOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,6 +429,7 @@
 		E271F7FE9339B364CFDA305A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59C0C6C223919F1200C60DAC /* SwifteriOS.framework */,
 				556E0362FA0F545BE5F9885A /* Pods_TwitterParam.framework */,
 				5266D82DB7424FDA0CFE9983 /* Pods_TwitterParamTests.framework */,
 			);

@@ -13,14 +13,14 @@ extension Date {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: localeIdentifier)
         formatter.dateFormat = format
-        
+
         return formatter.string(from: self)
     }
-    
+
     func stringForTimeIntervalSinceCreated() -> String {
         return stringForTimeIntervalSinceCreated(nowDate: Date())
     }
-    
+
     func stringForTimeIntervalSinceCreated(nowDate: Date) -> String {
         var minInterval = 0
         var hourInterval = 0
@@ -34,31 +34,25 @@ extension Date {
                 if (dayModules >= 3600) {
                     // HourInterval=DayModules/3660;
                     return String(dayInterval) + " days"
-                }
-                else {
+                } else {
                     if (dayModules >= 60) {
                         // MinInterval=DayModules/60;
                         return String(dayInterval) + " days"
-                    }
-                    else {
+                    } else {
                         return String(dayInterval) + " days"
                     }
                 }
-            }
-            else {
+            } else {
                 return String(dayInterval) + " days"
             }
-        }
-        else {
+        } else {
             if (interval >= 3600) {
                 hourInterval = interval / 3600
                 return String(hourInterval) + " hours"
-            }
-            else if (interval >= 60) {
+            } else if (interval >= 60) {
                 minInterval = interval / 60
                 return String(minInterval) + " minutes"
-            }
-            else {
+            } else {
                 return String(interval) + " sec"
             }
         }

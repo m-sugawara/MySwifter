@@ -13,23 +13,23 @@ import ReactiveSwift
 
 class TWPUserInfoViewModel: NSObject {
     let twitterAPI = TWPTwitterAPI.shared
-    
+
     var userId: String = ""
     var user: TWPUser?
-    
+
     var favoriteList: Array<TWPTweet>?
-    
+
     dynamic var tweets: Array<TWPTweet> = []
 
     // MARK: - Initializer
     override init() {
         super.init()
     }
-    
+
     // MARK: - Signals
     func getUserInfoSignalProducer() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            self.twitterAPI.getUsersShow(with: .id(self.userId)).startWithResult{ result in
+            self.twitterAPI.getUsersShow(with: .id(self.userId)).startWithResult { result in
                 switch result {
                 case .success:
                     self.user = TWPUserList.shared.findUser(by: self.userId)
@@ -40,7 +40,7 @@ class TWPUserInfoViewModel: NSObject {
             }
         }
     }
-    
+
     func getUserTimelineSignalProducer() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             self.twitterAPI.getStatusesHomeTimeline(count: 20).startWithResult { result in
@@ -54,7 +54,7 @@ class TWPUserInfoViewModel: NSObject {
             }
         }
     }
-    
+
     // FIXME: - dummy method
     func getUserImageListSignalProducer() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
@@ -66,7 +66,7 @@ class TWPUserInfoViewModel: NSObject {
             observer.sendCompleted()
         }
     }
-    
+
     func getUserFavoritesListSignalProducer() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             // if already have list, return it.
@@ -77,7 +77,7 @@ class TWPUserInfoViewModel: NSObject {
                 self.twitterAPI.getFavoritesList(
                     with: self.userId,
                     count: 20
-                ).startWithResult{ result in
+                ).startWithResult { result in
                     switch result {
                     case .success(let tweets):
                         self.favoriteList = tweets
@@ -90,14 +90,14 @@ class TWPUserInfoViewModel: NSObject {
             }
         }
     }
-    
+
     // MARK: - RACCommands
     var followButtonCommand: CocoaAction<UIButton> {
         return CocoaAction(Action { _ in
             return self.followButtonSignal()
         }, input: "")
     }
-    
+
     func followButtonSignal() -> SignalProducer<Void, Error> {
         return (self.user?.following == true) ? unfollowSignal() : followSignal()
     }

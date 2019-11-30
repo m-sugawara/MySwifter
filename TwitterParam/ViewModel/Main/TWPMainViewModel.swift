@@ -12,21 +12,21 @@ import ReactiveCocoa
 import ReactiveSwift
 
 class TWPMainViewModel {
-    
+
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: [TWPTweet] = [TWPTweet]()
-    
+
     var inputtingTweet: MutableProperty<String> = MutableProperty<String>("")
     var selectingIndex: Int?
-    
+
     // because to feed update singal called many times, signal set a variable.
     private var _feedUpdateButtonSignal: Action<Void, Void, Error>?
-    
+
     // MARK: - Deinit
     deinit {
         print("MainViewModel deinit")
     }
-    
+
     // MARK: - Public Methods
     func selectingTweetScreenName() -> String? {
         guard let selectingIndex = selectingIndex else {
@@ -35,7 +35,7 @@ class TWPMainViewModel {
         let selectingTweet = self.tweets[selectingIndex]
         return selectingTweet.user?.screenName
     }
-    
+
     // MARK: - RACCommands
     // MARK: - OAuth
     var oauthButtonAction: Action<Void, Void, Error> {
@@ -50,7 +50,7 @@ class TWPMainViewModel {
             return TWPTwitterAPI.shared.twitterAuthorizeWithAccount()
         }
     }
-    
+
     // MARK: - Feed update
     var feedUpdateButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
@@ -99,7 +99,7 @@ class TWPMainViewModel {
             }
         }
     }
-    
+
     // MARK: - Retweet
     func postRetweetAction(with index: Int) -> Action<Void, Void, Error> {
         return Action<Void, Void, Error> {
@@ -162,7 +162,7 @@ class TWPMainViewModel {
         }
         tweets[index] = newTweet
     }
-    
+
     // MARK: - Favorite
     func postFavoriteAction(with index: Int) -> Action<Void, Void, Error> {
         return Action<Void, Void, Error> {

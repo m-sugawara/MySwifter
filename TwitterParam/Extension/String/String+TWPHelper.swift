@@ -13,7 +13,7 @@ extension String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: localeIdentifier!)
         formatter.dateFormat = format
-        
+
         return formatter.date(from: self)!
     }
 }

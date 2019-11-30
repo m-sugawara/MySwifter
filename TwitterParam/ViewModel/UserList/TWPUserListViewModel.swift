@@ -13,14 +13,14 @@ class TWPUserListViewModel: NSObject {
 
     var selectingUserID: String?
     var userList: [TWPUser] = []
-   
+
     // MARK: - Signals
     func getUserList() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             TWPTwitterAPI.shared.getFriendList(
                 with: self.selectingUserID!,
                 count: 20
-            ).startWithResult{ result in
+            ).startWithResult { result in
                 switch result {
                 case .success(let users):
                     self.userList = users

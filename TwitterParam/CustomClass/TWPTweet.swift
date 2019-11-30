@@ -18,7 +18,7 @@ class TWPTweet: NSObject {
     var favorited: Bool?
     var favoriteCount: Int?
     var createdAt: Date?
-    
+
     init(tweetID: String?, text: String?, user: TWPUser?, retweeted: Bool? = nil, retweetCount: Int? = nil, favorited: Bool? = nil, favoriteCount: Int? = nil, createdAt: Date? = nil) {
         self.tweetID = tweetID
         self.text = text
@@ -29,7 +29,7 @@ class TWPTweet: NSObject {
         self.favoriteCount = favoriteCount
         self.createdAt = createdAt
     }
-    
+
     convenience init(status: JSON, user: TWPUser?) {
         self.init(tweetID: status["id_str"].string,
             text: status["text"].string,
@@ -41,7 +41,7 @@ class TWPTweet: NSObject {
             createdAt: status["created_at"].string?.date(with: "EEE MMM dd HH:mm:ss Z yyyy", localeIdentifier: "en_US")
         )
     }
-    
+
     convenience init(dictionary: Dictionary<String, JSON>, user: TWPUser?) {
         self.init(tweetID: dictionary["id_str"]!.string,
             text: dictionary["text"]!.string,
@@ -53,5 +53,5 @@ class TWPTweet: NSObject {
             createdAt: dictionary["created_at"]!.string?.date(with: "EEE MMM dd HH:mm:ss Z yyyy", localeIdentifier: "en_US")
         )
     }
-    
+
 }

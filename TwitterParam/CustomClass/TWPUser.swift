@@ -18,7 +18,7 @@ struct TWPUser {
     var following: Bool
     let friendsCount: Int?
     let followersCount: Int?
-    
+
     init(userId: String?, name: String?, screenName: String?, profileImageUrl: String?, following: Bool?, friendsCount: Int?, followersCount: Int?) {
         self.userId = userId
         self.name = name
@@ -29,7 +29,7 @@ struct TWPUser {
         self.friendsCount = friendsCount
         self.followersCount = followersCount
     }
-    
+
     init(dictionary: Dictionary<String, JSON>) {
         self.init(
             userId:          dictionary["id_str"]?.string,
@@ -41,11 +41,11 @@ struct TWPUser {
             followersCount:  dictionary["followers_count"]?.integer
         )
     }
-    
+
     var profileImageUrlString : String? {
         return profileImageUrl?.absoluteString
     }
-    
+
 }
 
 extension TWPUser: Equatable {}

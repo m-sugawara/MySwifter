@@ -19,7 +19,7 @@ class TWPAppDelegate: UIResponder, UIApplicationDelegate {
         // TODO: Not use. Only sample code.
 //        let storyboard = UIStoryboard(name: "Main", bundle:nil)
 //        let mainViewController = storyboard.instantiateViewControllerWithIdentifier("mainViewController") as! UIViewController
-        
+
         return true
     }
 
@@ -44,13 +44,11 @@ class TWPAppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-    
+
     private func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
         Swifter.handleOpenURL(url as URL, callbackURL: url as URL)
-        
+
         return true
     }
 
-
 }
-

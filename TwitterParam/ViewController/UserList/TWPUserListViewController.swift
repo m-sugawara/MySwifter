@@ -21,21 +21,21 @@ class TWPUserListViewController: UIViewController {
     var backButtonAction: CocoaAction<UIButton>?
     // use move to userInfo
     var selectedUserID: String?
-    
+
     @IBOutlet private weak var userListTableView: UITableView!
     @IBOutlet private weak var backButton: UIButton!
     @IBOutlet private weak var loadingView: UIView!
     @IBOutlet private weak var activityIndicatorView: UIActivityIndicatorView!
-    
+
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.model.selectingUserID = self.tempUserID
 
         // Do any additional setup after loading the view.
         self.bindCommands()
-        
+
         // first, get follow/follower list
         self.startLoading()
         self.model.getUserList().startWithResult { [weak self] result in
@@ -52,12 +52,12 @@ class TWPUserListViewController: UIViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        
+
         // UserInfoViewController
         if segue.identifier == "fromUserListToUserInfo" {
             let userInfoViewController = segue.destination as! TWPUserInfoViewController
             userInfoViewController.tempUserID = self.selectedUserID
-            
+
             // bind Next ViewController's Commands
             userInfoViewController.backButtonAction = CocoaAction(Action<Void, Void, Error> {
                 return SignalProducer<Void, Error> { [weak self] observer, _ in
@@ -73,7 +73,7 @@ class TWPUserListViewController: UIViewController {
         self.loadingView.isHidden = false
         self.activityIndicatorView.startAnimating()
     }
-    
+
     func stopLoading() {
         self.loadingView.isHidden = true
         self.activityIndicatorView.stopAnimating()

@@ -16,12 +16,12 @@ class TWPLoginViewController: UIViewController {
 
     @IBOutlet private weak var contentView: UIView!
     @IBOutlet private weak var loginButon: UIButton!
-    
+
     // MARK: - Deinit
     deinit {
         print("deinit login ViewController")
     }
-    
+
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()

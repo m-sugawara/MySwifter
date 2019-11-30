@@ -9,34 +9,33 @@
 import Foundation
 
 final class TWPUserList:NSObject {
-    
+
     var users: Array<TWPUser> = []
-    
+
     // MARK: - Singleton
     static let shared = TWPUserList()
-    
+
     // MARK: - Initializer
     private override init() {
         super.init()
     }
-    
+
     // MARK: - Public Methods
     func appendUser(_ user:TWPUser) {
         if self.findUser(by: user.userId!) != nil {
             self.updateUser(user)
-        }
-        else {
+        } else {
             self.users.append(user)
         }
     }
-    
+
     func updateUser(_ target: TWPUser) {
         self.users = users.map { user in
             guard user == target else { return user }
             return target
         }
     }
-    
+
     func findUser(by userId:String) -> TWPUser? {
         return users.filter { $0.userId == userId }.first
     }
@@ -49,5 +48,5 @@ final class TWPUserList:NSObject {
             return mutableUser
         }
     }
-    
+
 }

@@ -13,20 +13,20 @@ import SwifteriOS
 import ReactiveSwift
 
 final class TWPTwitterAPI: NSObject {
-    
+
     typealias FailureHandler = (_ error: Error) -> Void
 
     private var swifter: Swifter
-    
+
     // MARK: - Singleton
     static let shared = TWPTwitterAPI()
-    
+
     // MARK: - Initializer
     private override init() {
         self.swifter = Swifter(consumerKey: "5UwojnG3QBtSA3StY4JOvjVAK", consumerSecret: "XAKBmM3I4Mgt1lQtICLLKkuCWZzN0nXGe4sJ5qwDhqKK4PtCYd")
         super.init()
     }
-    
+
     // MARK: - ErrorHelper
     func errorWithCode(code :Int, message: String) -> NSError {
         return NSError(domain: NSURLErrorDomain, code: code, userInfo: [NSLocalizedDescriptionKey: message])
@@ -66,7 +66,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     // MARK: - OAuth
     func twitterAuthorizeWithOAuth() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { [weak self] observer, lifetime in
@@ -77,7 +77,7 @@ final class TWPTwitterAPI: NSObject {
             guard let userToken = TWPUserHelper.fetchUserToken() else {
                 // Nothing AccessToken
                 self.swifter.authorize(withCallback: URL(string: "tekitou://success")!, presentingFrom: nil,
-                    success: { accessToken, response -> Void in
+                    success: { accessToken, _ -> Void in
                         _ = TWPUserHelper.saveUserToken(data: accessToken!)
                         observer.sendCompleted()
                     },
@@ -92,15 +92,15 @@ final class TWPTwitterAPI: NSObject {
             observer.sendCompleted()
         }
     }
-    
+
     // MARK: - Logout
     func logout() {
         _ = TWPUserHelper.removeUserToken()
     }
-    
+
     // MARK: - Wrapper Method(Login)
     func tryToLogin() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+        return SignalProducer<Void, Error> { [weak self] observer, _ in
             self?.twitterAuthorizeWithAccount().start { event in
                 switch event {
                 case .failed(let error):
@@ -128,12 +128,12 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     // MARK: - Wrapper Method(User)
     func getMyUser() -> SignalProducer<Void, Error> {
         return self.getUsersShow(with: .id(TWPUserHelper.currentUserID()!))
     }
-    
+
     func getUsersShow(with userTag: UserTag, includeEntities: Bool? = nil) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { [weak self] observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -163,7 +163,7 @@ final class TWPTwitterAPI: NSObject {
                 for: .id(id),
                 cursor: cursor,
                 count: count,
-                success: { json, previousCursor, nextCursor in
+                success: { json, _, _ in
                     var resultUsers: [TWPUser] = []
                     for userJSON in json.array! {
                         let resultUser = TWPUser(dictionary: userJSON.object!)
@@ -187,7 +187,7 @@ final class TWPTwitterAPI: NSObject {
                 for: .id(id),
                 cursor: cursor,
                 count: count,
-                success: { json, previousCursor, nextCursor in
+                success: { json, _, _ in
                     var resultUsers: [TWPUser] = []
                     for userJSON in json.array! {
                         let resultUser = TWPUser(dictionary: userJSON.object!)
@@ -200,7 +200,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     // MARK: - Wrapper Method(Timeline)
     func getStatusesHomeTimeline(count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
 
@@ -233,7 +233,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     func getUserTimeline(with userId: String, customParam: [String: Any] = [:], count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, trimUser: Bool? = nil, excludeReplies: Bool? = nil, includeRetweets: Bool? = nil, contributorDetails: Bool? = nil, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
 
         return SignalProducer<[TWPTweet], Error> { observer, lifetime in
@@ -289,7 +289,7 @@ final class TWPTwitterAPI: NSObject {
         let user = TWPUser(dictionary: userDictionary)
         return TWPTweet(status: json, user: user)
     }
-    
+
     // MARK: - Wrapper Method(Tweet)
     func postStatusUpdate(status: String, inReplyToStatusID: String? = nil, coordinate: (lat: Double, long: Double)? = nil, autoPopulateReplyMetadata: Bool? = nil, excludeReplyUserIds: Bool? = nil, placeID: Double? = nil, displayCoordinates: Bool? = nil, trimUser: Bool? = nil, mediaIDs: [String] = [], attachmentURL: URL? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
 
@@ -310,15 +310,14 @@ final class TWPTwitterAPI: NSObject {
                 mediaIDs: mediaIDs,
                 attachmentURL: attachmentURL,
                 tweetMode: tweetMode,
-                success: { json in
+                success: { _ in
                     observer.sendCompleted()
             }) { error in
                 observer.send(error: error)
             }
         }
     }
-    
-    
+
     func getStatuesShow(with id: String, trimUser: Bool? = nil, includeMyRetweet: Bool? = nil, includeEntities: Bool? = nil, includeExtAltText: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<TWPTweet, Error> {
 
         return SignalProducer<TWPTweet, Error> { observer, lifetime in
@@ -347,7 +346,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     // MARK: - Wrapper Method(Retweet)
     func getCurrentUserRetweetID(with id: String) -> SignalProducer<String, Error> {
         return SignalProducer<String, Error> { observer, lifetime in
@@ -375,7 +374,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     func postStatusRetweet(with id: String, trimUser: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
 
         return SignalProducer<Void, Error> { observer, lifetime in
@@ -387,7 +386,7 @@ final class TWPTwitterAPI: NSObject {
                 forID: id,
                 trimUser: trimUser,
                 tweetMode: tweetMode,
-                success: { json in
+                success: { _ in
                     observer.send(value: ())
                     observer.sendCompleted()
             }) { error in
@@ -395,7 +394,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     func postStatusesDestroy(with id: String, trimUser: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -406,7 +405,7 @@ final class TWPTwitterAPI: NSObject {
                 forID: id,
                 trimUser: trimUser,
                 tweetMode: tweetMode,
-                success: { json in
+                success: { _ in
                     observer.send(value: ())
                     observer.sendCompleted()
             }) { error in
@@ -414,7 +413,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     // MARK: - Wrapper Methods(favorite)
     func getFavoritesList(with userId: String, count: Int? = nil, sinceID: String? = nil, maxID: String? = nil, tweetMode: TweetMode = .default) -> SignalProducer<[TWPTweet], Error> {
 
@@ -445,7 +444,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     func postCreateFavorite(with id: String, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
 
         return SignalProducer<Void, Error> { observer, lifetime in
@@ -457,7 +456,7 @@ final class TWPTwitterAPI: NSObject {
                 forID: id,
                 includeEntities: includeEntities,
                 tweetMode: tweetMode,
-                success: { json in
+                success: { _ in
                     observer.send(value: ())
                     observer.sendCompleted()
             }) { error in
@@ -465,7 +464,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     func postDestroyFavorite(with id: String, includeEntities: Bool? = nil, tweetMode: TweetMode = .default) -> SignalProducer<Void, Error> {
 
         return SignalProducer<Void, Error> { observer, lifetime in
@@ -477,7 +476,7 @@ final class TWPTwitterAPI: NSObject {
                 forID: id,
                 includeEntities: includeEntities,
                 tweetMode: tweetMode,
-                success: { json in
+                success: { _ in
                     observer.send(value: ())
                     observer.sendCompleted()
             }) { error in
@@ -485,7 +484,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     // MARK: - Wrapper Methods(follow)
     func postCreateFriendship(with id: String, follow: Bool? = nil) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, lifetime in
@@ -496,7 +495,7 @@ final class TWPTwitterAPI: NSObject {
             self.swifter.followUser(
                 .id(id),
                 follow: follow,
-                success: { json in
+                success: { _ in
                     TWPUserList.shared.setFollowing(true, toUserId: id)
                     observer.send(value: ())
                     observer.sendCompleted()
@@ -505,7 +504,7 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
+
     func postDestroyFriendship(with id: String) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -514,7 +513,7 @@ final class TWPTwitterAPI: NSObject {
             }
             self.swifter.unfollowUser(
                 .id(id),
-                success: { json in
+                success: { _ in
                     TWPUserList.shared.setFollowing(false, toUserId: id)
                     observer.send(value: ())
                     observer.sendCompleted()
@@ -523,6 +522,5 @@ final class TWPTwitterAPI: NSObject {
             }
         }
     }
-    
-}
 
+}

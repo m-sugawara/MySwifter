@@ -25,16 +25,16 @@ enum TWPMainTableViewButtonType: Int {
     case favorite
 }
 
-class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate, UITextFieldWithLimitDelegate, TTTAttributedLabelDelegate {
+class TWPMainViewController: UIViewController {
 
     let model = TWPMainViewModel()
     var textFieldView: TWPTextFieldView?
     var userId: String!
     var selectedTweetID: String!
-    
+
     var scrollBeginingPoint: CGPoint!
     var footerViewHidden: Bool!
-    
+
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tweetButton: UIButton!
     @IBOutlet weak var feedUpdateButton: UIButton!
@@ -42,14 +42,14 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var footerView: UIView!
     @IBOutlet weak var loadingView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
-    
+
     @IBOutlet weak var footerViewHeightConstraint: NSLayoutConstraint!
-    
+
     // MARK: - Deinit
     deinit {
         self.stopObserving()
     }
-    
+
     // MARK: - Disignated Initializer
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -61,16 +61,16 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Do any additional setup after loading the view, typically from a nib.
 
         self.startObserving()
-        
+
         self.configureViews()
-        
+
         self.bindParameters()
         self.bindCommands()
-        
+
         // bind tableView Delegate
         self.tableView.dataSource = self
         self.tableView.delegate = self
-        
+
         // first, load current user's home timeline
         self.startLoading()
         self.model.feedUpdate.startWithResult { [weak self] result in
@@ -87,23 +87,22 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
 
-        if segue.identifier == "fromMainToUserInfo" {
-            let userInfoViewController:TWPUserInfoViewController = segue.destination as! TWPUserInfoViewController
-            
-            // TODO: bad solution
+        if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
+            segue.identifier == "fromMainToUserInfo" {
+
             userInfoViewController.tempUserID = TWPUserHelper.currentUserID()
-            
+
             // bind Next ViewController's Commands
-            _ = userInfoViewController.backButtonAction.reactive.trigger(for: #selector(UIViewController.dismiss(animated:completion:)))
-            
-        } else if segue.identifier == "fromMainToTweetDetail" {
-            let tweetDetailViewController = segue.destination as! TWPTweetDetailViewController
-            
-            // TODO: bad solution
-            tweetDetailViewController.tempTweetID = self.selectedTweetID
-            
+            _ = userInfoViewController.backButtonAction.reactive.trigger(
+                for: #selector(UIViewController.dismiss(animated:completion:)))
+
+        } else if let tweetDetailViewController = segue.destination as? TWPTweetDetailViewController,
+            segue.identifier == "fromMainToTweetDetail" {
+            tweetDetailViewController.tempTweetID = selectedTweetID
+
             // bind Next ViewController's Commands
-            _ = tweetDetailViewController.backButton.reactive.trigger(for: #selector(UIViewController.dismiss(animated:completion:)))
+            _ = tweetDetailViewController.backButton.reactive.trigger(
+                for: #selector(UIViewController.dismiss(animated:completion:)))
         }
     }
 
@@ -112,7 +111,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     // MARK: - Private Methods
     func startObserving() {
         NotificationCenter.default.addObserver(
@@ -122,7 +121,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             object: nil
         )
     }
-    
+
     func stopObserving() {
         NotificationCenter.default.removeObserver(
             self,
@@ -130,24 +129,26 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             object: nil
         )
     }
-    
+
     func startLoading() {
         self.loadingView.isHidden = false
         self.activityIndicatorView.startAnimating()
     }
-    
+
     func stopLoading() {
         self.loadingView.isHidden = true
         self.activityIndicatorView.stopAnimating()
     }
-    
-    func configureViews() {
-        self.textFieldView = TWPTextFieldView.viewWithMaxLength(maxLength: kTextFieldMaxLength, delegate: self)
-        self.textFieldView?.alpha = 0.0
 
-        self.view.addSubview(self.textFieldView!)
+    func configureViews() {
+        textFieldView = TWPTextFieldView.view(
+            withMaxLength: kTextFieldMaxLength,
+            delegate: self
+        )
+        textFieldView?.alpha = 0.0
+        view.addSubview(textFieldView!)
     }
-    
+
     @objc func showTextFieldView(screenName:String? = "") {
         for view in view.subviews {
             if view is TWPTextFieldView {
@@ -155,18 +156,18 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
             view.isUserInteractionEnabled = false
         }
-        
+
         var defaultScreenName = ""
         if screenName != "" {
             defaultScreenName = "@" + screenName! + ": "
         }
-        
-        self.textFieldView?.alpha = 0.01;
+
+        self.textFieldView?.alpha = 0.01
         self.textFieldView?.textFieldWithLimit.becomeFirstResponder()
         self.textFieldView?.textFieldWithLimit.text = defaultScreenName
         self.textFieldView?.textFieldWithLimit.limitLabel.text = String(kTextFieldMaxLength)
     }
-    
+
     func hideTextFieldView() {
         for view in view.subviews {
             if view is TWPTextFieldView {
@@ -174,64 +175,63 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
             view.isUserInteractionEnabled = true
         }
-        
+
         // reset selecting Index, when hide textfield view.
         self.model.selectingIndex = nil
-        
+
         self.textFieldView?.alpha = 0.0
         self.textFieldView?.textFieldWithLimit.resignFirstResponder()
     }
-    
+
     @objc func keyboardWillShow(notification: Notification) {
         // get frame of keyboard from userinfo
         guard let userInfo = notification.userInfo,
             let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-            let keyboardAnimationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else {
+            let keyboardAnimationDuration = userInfo[
+                UIResponder.keyboardAnimationDurationUserInfoKey
+                ] as? Double else {
                 return
         }
-        
-        // update textfield view frame
+
         let textFieldViewOriginX = kTextFieldMarginWidth
-        let textFieldViewOriginY = keyboardFrame.origin.y - self.textFieldView!.frame.size.height - kTextFieldMarginHeight
+        let textFieldViewOriginY = keyboardFrame.origin.y
+            - textFieldView!.frame.size.height - kTextFieldMarginHeight
         let textFieldViewSizeWidth = self.view.frame.size.width - (kTextFieldMarginWidth * 2)
         let textFieldViewSizeHeight = self.textFieldView!.frame.size.height
-        
+
         self.textFieldView!.frame = CGRect(
             x: textFieldViewOriginX,
             y: textFieldViewOriginY,
             width: textFieldViewSizeWidth,
             height: textFieldViewSizeHeight)
-        
+
         // show textfield view with animation.
         UIView.animate(withDuration: keyboardAnimationDuration, animations: { () -> Void in
             self.textFieldView?.alpha = 1.0
         })
-        
+
     }
 
-    
     // MARK: - Common Handler
     let errorHandler: ((Error?) -> Void) = {
         error in
         if let error = error as NSError? {
             print("ViewController's error:\(error.localizedDescription)")
-        }
-        else {
+        } else {
             print("ViewController's error is nil")
         }
     }
     let completedHandler: (() -> Void) = {
         print("ViewController's completed!")
     }
-    
+
     // MARK: - Binding
     func bindParameters() {
-        // TODO: need to investigate
 //        textFieldView?.textFieldWithLimit.reactive.text <~ model.inputtingTweet
     }
-    
+
     func bindCommands() {
-        
+
         // bind Button to the RACCommand
         _ = tweetButton.reactive.trigger(for: #selector(showTextFieldView(screenName:)))
 
@@ -243,7 +243,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
                     return
                 }
 
-                let cancelAction = { () -> Void in
+                let cancelAction: (UIAlertAction?) -> Void = { _ in
                     observer.sendCompleted()
                 }
                 let yesAction: (UIAlertAction?) -> Void = { [weak self] action in
@@ -262,17 +262,18 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
                 )
             }
         })
-        
+
         // TWPTextFieldView Commands
-        self.textFieldView?.cancelButton.reactive.pressed = CocoaAction(Action(execute: { _ -> SignalProducer<Void, Error> in
-            return SignalProducer<Void, Error> { observer, lifetime in
+        textFieldView?.cancelButton.reactive.pressed = CocoaAction(
+            Action(execute: { _ -> SignalProducer<Void, Error> in
+            return SignalProducer<Void, Error> { observer, _ in
                 self.hideTextFieldView()
                 observer.sendCompleted()
             }
         }))
-        
+
         self.textFieldView?.tweetButton.reactive.pressed = CocoaAction(self.model.tweetButtonAction)
-        
+
         // subscribe ViewModel's RACSignal
         // Completed Signals
         self.feedUpdateButton.reactive.pressed = CocoaAction(model.feedUpdateButtonAction)
@@ -280,17 +281,17 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.tweetButton.reactive.pressed = CocoaAction(model.tweetButtonAction)
 
     }
-    
+
     // MARK: - Actions
     @objc private func tableViewButtonsTouch(sender: UIButton, event: UIEvent) {
         // get indexpath from touch point
         let touch = event.allTouches!.first!
         let point = touch.location(in: tableView)
         let indexPath = tableView.indexPathForRow(at: point)!
-        
+
         // set selecting Index to ViewModel
         model.selectingIndex = indexPath.row
-        
+
         let type = TWPMainTableViewButtonType(rawValue: sender.tag)!
         switch type {
         case .reply:
@@ -298,7 +299,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.showTextFieldView(screenName: self.model.selectingTweetScreenName())
 
         case .retweet:
-            model.postRetweet(with: indexPath.row).startWithResult{ result in
+            model.postRetweet(with: indexPath.row).startWithResult { result in
                 switch result {
                 case .success:
                     self.tableView.reloadData()
@@ -319,17 +320,22 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
 
         }
     }
-    
-    // MARK: - UITableViewDataSource
+}
+
+extension TWPMainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return model.tweets.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: kTWPMainTableViewCellIdentifier) as! TWPMainViewControllerTableViewCell
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: kTWPMainTableViewCellIdentifier
+            ) as? TWPMainViewControllerTableViewCell else {
+            fatalError()
+        }
 
         let tweet = self.model.tweets[indexPath.row]
-        
+
         // set Cell Items
         cell.iconImageView.sd_setImage(
             with: tweet.user!.profileImageUrl,
@@ -340,42 +346,60 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
         cell.userNameLabel.text = tweet.user?.name
         cell.screenNameLabel.text = tweet.user?.screenNameWithAt
-        cell.retweetCountLabel.text = String(tweet.retweetCount!)
-        cell.favoriteCountLabel.text = String(tweet.favoriteCount!)
-        
-        cell.retweetButton.isSelected = tweet.retweeted!
-        cell.favoriteButton.isSelected = tweet.favorited!
-        
+        cell.retweetCountLabel.text = String(tweet.retweetCount)
+        cell.favoriteCountLabel.text = String(tweet.favoriteCount)
+
+        cell.retweetButton.isSelected = tweet.retweeted
+        cell.favoriteButton.isSelected = tweet.favorited
+
         cell.timeLabel.text = tweet.createdAt?.stringForTimeIntervalSinceCreated()
-        
+
         // set Cell Actions
         cell.replyButton.tag = TWPMainTableViewButtonType.reply.rawValue
-        cell.replyButton.addTarget(self, action: #selector(tableViewButtonsTouch(sender:event:)), for: .touchUpInside)
+        cell.replyButton.addTarget(
+            self,
+            action: #selector(tableViewButtonsTouch(sender:event:)),
+            for: .touchUpInside
+        )
 
         cell.retweetButton.tag = TWPMainTableViewButtonType.retweet.rawValue
-        cell.retweetButton.addTarget(self, action: #selector(tableViewButtonsTouch(sender:event:)), for: .touchUpInside)
-        
+        cell.retweetButton.addTarget(
+            self,
+            action: #selector(tableViewButtonsTouch(sender:event:)),
+            for: .touchUpInside
+        )
+
         cell.favoriteButton.tag = TWPMainTableViewButtonType.favorite.rawValue
-        cell.favoriteButton.addTarget(self, action: #selector(tableViewButtonsTouch(sender:event:)), for: .touchUpInside)
-        
+        cell.favoriteButton.addTarget(
+            self,
+            action: #selector(tableViewButtonsTouch(sender:event:)),
+            for: .touchUpInside
+        )
+
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 130.0
     }
-    
-    // MARK: - UITableViewDelegate
+
+}
+
+extension TWPMainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedTweet = self.model.tweets[indexPath.row]
-        self.selectedTweetID = selectedTweet.tweetID
-        
+        self.selectedTweetID = selectedTweet.tweetId
+
         tableView.deselectRow(at: indexPath, animated: true)
-        
+
         performSegue(withIdentifier: "fromMainToTweetDetail", sender: nil)
     }
-    
-    // MARK: - UIScrollViewDelegate
+}
+
+extension TWPMainViewController: UIAlertViewDelegate {
+
+}
+extension TWPMainViewController: UIScrollViewDelegate {
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         scrollBeginingPoint = scrollView.contentOffset
@@ -401,7 +425,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
 
-    func scrollUp() {
+    private func scrollUp() {
         guard footerViewHidden else { return }
         footerViewHidden = false
         UIView.animate(withDuration: 0.5) {
@@ -410,10 +434,12 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.view.layoutIfNeeded()
         }
     }
-    
-    // MARK: - TTTAttributedLabelDelegate
+}
+extension TWPMainViewController: UITextFieldWithLimitDelegate {
+
+}
+extension TWPMainViewController: TTTAttributedLabelDelegate {
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         UIApplication.shared.open(url)
     }
-
 }

@@ -16,12 +16,12 @@ class TWPLoginViewController: UIViewController {
 
     @IBOutlet private weak var contentView: UIView!
     @IBOutlet private weak var loginButon: UIButton!
-    
+
     // MARK: - Deinit
     deinit {
         print("deinit login ViewController")
     }
-    
+
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +39,7 @@ class TWPLoginViewController: UIViewController {
             with: "SUCCESS",
             message: "LOGIN SUCCESS",
             cancelButtonTitle: "OK",
-            cancelTappedAction: { [weak self] () -> Void in
+            cancelTappedAction: { [weak self] _ in
                 self?.performSegue(withIdentifier: "fromLoginToMain", sender: nil)
             }
         )

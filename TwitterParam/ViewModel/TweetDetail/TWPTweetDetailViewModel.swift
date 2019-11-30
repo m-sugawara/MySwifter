@@ -9,15 +9,15 @@
 import ReactiveSwift
 
 class TWPTweetDetailViewModel {
-    
+
     var tweetId = ""
     var tweet: TWPTweet?
-    
+
     // MARK: - Deinit
     deinit {
         print("TweetDetailViewModel deinit")
     }
-    
+
     func getTweetSignalProducer() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
@@ -35,6 +35,5 @@ class TWPTweetDetailViewModel {
             }
         }
     }
-    
-    
+
 }

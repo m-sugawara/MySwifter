@@ -25,7 +25,7 @@ enum TWPMainTableViewButtonType: Int {
     case favorite
 }
 
-class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate, UIScrollViewDelegate, UITextFieldWithLimitDelegate, TTTAttributedLabelDelegate {
+class TWPMainViewController: UIViewController {
 
     let model = TWPMainViewModel()
     var textFieldView: TWPTextFieldView?
@@ -87,23 +87,22 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
 
-        if segue.identifier == "fromMainToUserInfo" {
-            let userInfoViewController:TWPUserInfoViewController = segue.destination as! TWPUserInfoViewController
+        if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
+            segue.identifier == "fromMainToUserInfo" {
 
-            // TODO: bad solution
             userInfoViewController.tempUserID = TWPUserHelper.currentUserID()
 
             // bind Next ViewController's Commands
-            _ = userInfoViewController.backButtonAction.reactive.trigger(for: #selector(UIViewController.dismiss(animated:completion:)))
+            _ = userInfoViewController.backButtonAction.reactive.trigger(
+                for: #selector(UIViewController.dismiss(animated:completion:)))
 
-        } else if segue.identifier == "fromMainToTweetDetail" {
-            let tweetDetailViewController = segue.destination as! TWPTweetDetailViewController
-
-            // TODO: bad solution
-            tweetDetailViewController.tempTweetID = self.selectedTweetID
+        } else if let tweetDetailViewController = segue.destination as? TWPTweetDetailViewController,
+            segue.identifier == "fromMainToTweetDetail" {
+            tweetDetailViewController.tempTweetID = selectedTweetID
 
             // bind Next ViewController's Commands
-            _ = tweetDetailViewController.backButton.reactive.trigger(for: #selector(UIViewController.dismiss(animated:completion:)))
+            _ = tweetDetailViewController.backButton.reactive.trigger(
+                for: #selector(UIViewController.dismiss(animated:completion:)))
         }
     }
 
@@ -142,10 +141,12 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
 
     func configureViews() {
-        self.textFieldView = TWPTextFieldView.viewWithMaxLength(maxLength: kTextFieldMaxLength, delegate: self)
-        self.textFieldView?.alpha = 0.0
-
-        self.view.addSubview(self.textFieldView!)
+        textFieldView = TWPTextFieldView.view(
+            withMaxLength: kTextFieldMaxLength,
+            delegate: self
+        )
+        textFieldView?.alpha = 0.0
+        view.addSubview(textFieldView!)
     }
 
     @objc func showTextFieldView(screenName:String? = "") {
@@ -186,13 +187,15 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         // get frame of keyboard from userinfo
         guard let userInfo = notification.userInfo,
             let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-            let keyboardAnimationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else {
+            let keyboardAnimationDuration = userInfo[
+                UIResponder.keyboardAnimationDurationUserInfoKey
+                ] as? Double else {
                 return
         }
 
-        // update textfield view frame
         let textFieldViewOriginX = kTextFieldMarginWidth
-        let textFieldViewOriginY = keyboardFrame.origin.y - self.textFieldView!.frame.size.height - kTextFieldMarginHeight
+        let textFieldViewOriginY = keyboardFrame.origin.y
+            - textFieldView!.frame.size.height - kTextFieldMarginHeight
         let textFieldViewSizeWidth = self.view.frame.size.width - (kTextFieldMarginWidth * 2)
         let textFieldViewSizeHeight = self.textFieldView!.frame.size.height
 
@@ -224,7 +227,6 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     // MARK: - Binding
     func bindParameters() {
-        // TODO: need to investigate
 //        textFieldView?.textFieldWithLimit.reactive.text <~ model.inputtingTweet
     }
 
@@ -262,7 +264,8 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         })
 
         // TWPTextFieldView Commands
-        self.textFieldView?.cancelButton.reactive.pressed = CocoaAction(Action(execute: { _ -> SignalProducer<Void, Error> in
+        textFieldView?.cancelButton.reactive.pressed = CocoaAction(
+            Action(execute: { _ -> SignalProducer<Void, Error> in
             return SignalProducer<Void, Error> { observer, _ in
                 self.hideTextFieldView()
                 observer.sendCompleted()
@@ -317,14 +320,19 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
 
         }
     }
+}
 
-    // MARK: - UITableViewDataSource
+extension TWPMainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return model.tweets.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: kTWPMainTableViewCellIdentifier) as! TWPMainViewControllerTableViewCell
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: kTWPMainTableViewCellIdentifier
+            ) as? TWPMainViewControllerTableViewCell else {
+            fatalError()
+        }
 
         let tweet = self.model.tweets[indexPath.row]
 
@@ -338,23 +346,35 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
         cell.userNameLabel.text = tweet.user?.name
         cell.screenNameLabel.text = tweet.user?.screenNameWithAt
-        cell.retweetCountLabel.text = String(tweet.retweetCount!)
-        cell.favoriteCountLabel.text = String(tweet.favoriteCount!)
+        cell.retweetCountLabel.text = String(tweet.retweetCount)
+        cell.favoriteCountLabel.text = String(tweet.favoriteCount)
 
-        cell.retweetButton.isSelected = tweet.retweeted!
-        cell.favoriteButton.isSelected = tweet.favorited!
+        cell.retweetButton.isSelected = tweet.retweeted
+        cell.favoriteButton.isSelected = tweet.favorited
 
         cell.timeLabel.text = tweet.createdAt?.stringForTimeIntervalSinceCreated()
 
         // set Cell Actions
         cell.replyButton.tag = TWPMainTableViewButtonType.reply.rawValue
-        cell.replyButton.addTarget(self, action: #selector(tableViewButtonsTouch(sender:event:)), for: .touchUpInside)
+        cell.replyButton.addTarget(
+            self,
+            action: #selector(tableViewButtonsTouch(sender:event:)),
+            for: .touchUpInside
+        )
 
         cell.retweetButton.tag = TWPMainTableViewButtonType.retweet.rawValue
-        cell.retweetButton.addTarget(self, action: #selector(tableViewButtonsTouch(sender:event:)), for: .touchUpInside)
+        cell.retweetButton.addTarget(
+            self,
+            action: #selector(tableViewButtonsTouch(sender:event:)),
+            for: .touchUpInside
+        )
 
         cell.favoriteButton.tag = TWPMainTableViewButtonType.favorite.rawValue
-        cell.favoriteButton.addTarget(self, action: #selector(tableViewButtonsTouch(sender:event:)), for: .touchUpInside)
+        cell.favoriteButton.addTarget(
+            self,
+            action: #selector(tableViewButtonsTouch(sender:event:)),
+            for: .touchUpInside
+        )
 
         return cell
     }
@@ -363,17 +383,23 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         return 130.0
     }
 
-    // MARK: - UITableViewDelegate
+}
+
+extension TWPMainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedTweet = self.model.tweets[indexPath.row]
-        self.selectedTweetID = selectedTweet.tweetID
+        self.selectedTweetID = selectedTweet.tweetId
 
         tableView.deselectRow(at: indexPath, animated: true)
 
         performSegue(withIdentifier: "fromMainToTweetDetail", sender: nil)
     }
+}
 
-    // MARK: - UIScrollViewDelegate
+extension TWPMainViewController: UIAlertViewDelegate {
+
+}
+extension TWPMainViewController: UIScrollViewDelegate {
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         scrollBeginingPoint = scrollView.contentOffset
@@ -399,7 +425,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
 
-    func scrollUp() {
+    private func scrollUp() {
         guard footerViewHidden else { return }
         footerViewHidden = false
         UIView.animate(withDuration: 0.5) {
@@ -408,10 +434,12 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.view.layoutIfNeeded()
         }
     }
+}
+extension TWPMainViewController: UITextFieldWithLimitDelegate {
 
-    // MARK: - TTTAttributedLabelDelegate
+}
+extension TWPMainViewController: TTTAttributedLabelDelegate {
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         UIApplication.shared.open(url)
     }
-
 }

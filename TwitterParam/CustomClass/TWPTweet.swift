@@ -9,18 +9,27 @@
 import UIKit
 import SwifteriOS
 
-class TWPTweet: NSObject {
-    var tweetID: String?
-    var text: String?
-    var user: TWPUser?
-    var retweeted: Bool?
-    var retweetCount: Int?
-    var favorited: Bool?
-    var favoriteCount: Int?
-    var createdAt: Date?
+struct TWPTweet {
+    let tweetId: String
+    let text: String?
+    let user: TWPUser?
+    var retweeted: Bool
+    var retweetCount: Int
+    var favorited: Bool
+    var favoriteCount: Int
+    let createdAt: Date?
 
-    init(tweetID: String?, text: String?, user: TWPUser?, retweeted: Bool? = nil, retweetCount: Int? = nil, favorited: Bool? = nil, favoriteCount: Int? = nil, createdAt: Date? = nil) {
-        self.tweetID = tweetID
+    init(
+        tweetId: String,
+        text: String?,
+        user: TWPUser?,
+        retweeted: Bool = false,
+        retweetCount: Int = 0,
+        favorited: Bool = false,
+        favoriteCount: Int = 0,
+        createdAt: Date? = nil
+    ) {
+        self.tweetId = tweetId
         self.text = text
         self.user = user
         self.retweeted = retweeted
@@ -30,28 +39,37 @@ class TWPTweet: NSObject {
         self.createdAt = createdAt
     }
 
-    convenience init(status: JSON, user: TWPUser?) {
-        self.init(tweetID: status["id_str"].string,
+    init(status: JSON, user: TWPUser?) {
+        self.init(
+            tweetId: status["id_str"].string ?? "",
             text: status["text"].string,
             user: user,
-            retweeted: status["retweeted"].bool,
-            retweetCount: status["retweet_count"].integer,
-            favorited: status["favorited"].bool,
-            favoriteCount: status["favorite_count"].integer,
-            createdAt: status["created_at"].string?.date(with: "EEE MMM dd HH:mm:ss Z yyyy", localeIdentifier: "en_US")
+            retweeted: status["retweeted"].bool ?? false,
+            retweetCount: status["retweet_count"].integer ?? 0,
+            favorited: status["favorited"].bool ?? false,
+            favoriteCount: status["favorite_count"].integer ?? 0,
+            createdAt: status["created_at"].string?.toSpecificFormatDate()
         )
     }
 
-    convenience init(dictionary: Dictionary<String, JSON>, user: TWPUser?) {
-        self.init(tweetID: dictionary["id_str"]!.string,
+    init(dictionary: [String: JSON], user: TWPUser?) {
+        self.init(
+            tweetId: dictionary["id_str"]!.string ?? "",
             text: dictionary["text"]!.string,
             user: user,
-            retweeted: dictionary["retweeted"]!.bool,
-            retweetCount: dictionary["retweet_count"]?.integer,
-            favorited: dictionary["favorited"]!.bool,
-            favoriteCount: dictionary["favorite_count"]?.integer,
-            createdAt: dictionary["created_at"]!.string?.date(with: "EEE MMM dd HH:mm:ss Z yyyy", localeIdentifier: "en_US")
+            retweeted: dictionary["retweeted"]!.bool ?? false,
+            retweetCount: dictionary["retweet_count"]?.integer ?? 0,
+            favorited: dictionary["favorited"]!.bool ?? false,
+            favoriteCount: dictionary["favorite_count"]?.integer ?? 0,
+            createdAt: dictionary["created_at"]?.string?.toSpecificFormatDate()
         )
     }
+}
 
+extension String {
+    fileprivate func toSpecificFormatDate() -> Date? {
+        let specificFormat = "EEE MMM dd HH:mm:ss Z yyyy"
+        let locale = "en_US"
+        return self.date(with: specificFormat, localeIdentifier: locale)
+    }
 }

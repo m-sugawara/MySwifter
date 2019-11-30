@@ -54,8 +54,9 @@ class TWPUserListViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
 
         // UserInfoViewController
-        if segue.identifier == "fromUserListToUserInfo" {
-            let userInfoViewController = segue.destination as! TWPUserInfoViewController
+        if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
+            segue.identifier == "fromUserListToUserInfo" {
+
             userInfoViewController.tempUserID = self.selectedUserID
 
             // bind Next ViewController's Commands
@@ -88,7 +89,10 @@ class TWPUserListViewController: UIViewController {
 extension TWPUserListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! TWPUserListTableViewCell
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: "Cell") as? TWPUserListTableViewCell else {
+            fatalError()
+        }
 
         let user = self.model.userList[indexPath.row]
         cell.nameLabel.text = user.name

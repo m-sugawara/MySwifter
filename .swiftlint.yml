@@ -23,11 +23,11 @@ force_try:
 line_length: 110
 # they can set both implicitly with an array
 type_body_length:
-  - 300 # warning
-  - 400 # error
+  - 500 # warning
+  - 700 # error
 # or they can set both explicitly
 file_length:
-  warning: 500
+  warning: 800
   error: 1200
 # naming rules can set warnings/errors for min_length and max_length
 # additionally they can set excluded names
@@ -43,6 +43,7 @@ identifier_name:
     error: 4 # only error
   excluded: # excluded via string array
     - id
+    - key
     - url
     - URL
     - GlobalAPIKey

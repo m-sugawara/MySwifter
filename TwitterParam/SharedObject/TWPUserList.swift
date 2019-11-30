@@ -10,7 +10,7 @@ import Foundation
 
 final class TWPUserList:NSObject {
 
-    var users: Array<TWPUser> = []
+    var users: [TWPUser] = []
 
     // MARK: - Singleton
     static let shared = TWPUserList()
@@ -22,7 +22,7 @@ final class TWPUserList:NSObject {
 
     // MARK: - Public Methods
     func appendUser(_ user:TWPUser) {
-        if self.findUser(by: user.userId!) != nil {
+        if self.findUser(by: user.userId) != nil {
             self.updateUser(user)
         } else {
             self.users.append(user)

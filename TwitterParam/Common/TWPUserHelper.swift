@@ -63,9 +63,10 @@ class TWPUserHelper {
     }
 
     class func fetchUserToken() -> Credential? {
-        guard let tokenKey = userDefaults.object(forKey: kKeyForUserTokenKey) as? String, let tokenSecret = userDefaults.object(forKey: kKeyForUserTokenSecret) as? String else { return nil }
+        guard let key = userDefaults.object(forKey: kKeyForUserTokenKey) as? String,
+            let secret = userDefaults.object(forKey: kKeyForUserTokenSecret) as? String else { return nil }
 
-        let access = Credential.OAuthAccessToken(key: tokenKey, secret: tokenSecret)
+        let access = Credential.OAuthAccessToken(key: key, secret: secret)
         return Credential(accessToken: access)
     }
 

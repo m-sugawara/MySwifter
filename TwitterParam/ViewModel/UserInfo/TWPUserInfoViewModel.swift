@@ -17,9 +17,9 @@ class TWPUserInfoViewModel: NSObject {
     var userId: String = ""
     var user: TWPUser?
 
-    var favoriteList: Array<TWPTweet>?
+    var favoriteList: [TWPTweet]?
 
-    dynamic var tweets: Array<TWPTweet> = []
+    dynamic var tweets: [TWPTweet] = []
 
     // MARK: - Initializer
     override init() {
@@ -55,11 +55,13 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
-    // FIXME: - dummy method
     func getUserImageListSignalProducer() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             Thread.sleep(forTimeInterval: 0.5)
-            let dummy = TWPTweet(tweetID: "", text: "not implemented", user: self.user, retweeted: false, favorited: false)
+            let dummy = TWPTweet(
+                tweetId: "",
+                text: "not implemented",
+                user: self.user)
             self.tweets = [dummy]
 
             observer.send(value: ())

@@ -29,27 +29,24 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
-        self.bindCommands()
+        bindCommands()
+        configureViews()
 
-        self.configureViews()
-
-        // TODO: Bad Solution
-        self.model.tweetId = self.tempTweetID
-        self.model.getTweetSignalProducer().startWithResult { result in
+        model.tweetId = tempTweetID
+        model.getTweetSignalProducer().startWithResult { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success:
-                let tweet = self.model.tweet!
-                self.tweetLabel.text = tweet.text
+                let tweet = self.model.tweet
+                self.tweetLabel.text = tweet?.text
                 self.userIconImageView.sd_setImage(
-                    with: tweet.user?.profileImageUrl,
+                    with: tweet?.user?.profileImageUrl,
                     placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
                     options: .fromCacheOnly,
                     completed: nil
                 )
             case .failure(let error):
-                print("error: \(error)")
-                self.showAlert(with: "ERROR", message: "failed to get tweet")
+                self.showAlert(with: "ERROR", message: "failed to get tweet. \(error)")
             }
         }
     }
@@ -57,8 +54,8 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
 
-        if segue.identifier == "fromTweetDetailToUserInfo" {
-            let userInfoViewController = segue.destination as! TWPUserInfoViewController
+        if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
+            segue.identifier == "fromTweetDetailToUserInfo" {
             userInfoViewController.tempUserID = self.model.tweet?.user?.userId
 
             // regist backbutton command

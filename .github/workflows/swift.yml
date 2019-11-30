@@ -1,0 +1,16 @@
+name: Swift
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macOS-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Pods
+      run: pod install
+    - name: Run tests
+      run: xcodebuild clean test -workspace TwitterParam.xcworkspace -scheme TwitterParam -destination "platform=iOS Simulator,OS=13.1,name=iPhone 11" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
+

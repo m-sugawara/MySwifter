@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/m-sugawara/MySwifter/branch/master/graph/badge.svg)](https://codecov.io/gh/m-sugawara/MySwifter)
+
 # Twitter Client for practice
 
 ## What is this?

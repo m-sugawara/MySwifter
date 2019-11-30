@@ -13,6 +13,8 @@ jobs:
       run: pod install
     - name: Run tests
       run: xcodebuild clean test -workspace TwitterParam.xcworkspace -scheme TwitterParam -destination "platform=iOS Simulator,OS=13.1,name=iPhone 11" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
-
-    after_success:
-      - bash <(curl -s https://codecov.io/bash)
+    - name: Send results to codecov
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      if: success()
+      run: bash <(curl -s https://codecov.io/bash)

@@ -449,6 +449,7 @@
 				595FC1041B1BE8400088A2EB /* Resources */,
 				59AE827A1B353BAC0083F5FF /* CopyFiles */,
 				1A3AF003092DE86CE9D72E8B /* [CP] Embed Pods Frameworks */,
+				59C0C6C52392C56800C60DAC /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -564,6 +565,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TwitterParam/Pods-TwitterParam-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		59C0C6C52392C56800C60DAC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which \"${PODS_ROOT}/SwiftLint/swiftlint\" >/dev/null; then\n  ${PODS_ROOT}/SwiftLint/swiftlint\nelse\n  echo \"warning: SwiftLint not installe, run `pod install`\"\nfi\n";
 		};
 		6C3BA98E3B0554192DE9A2A0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

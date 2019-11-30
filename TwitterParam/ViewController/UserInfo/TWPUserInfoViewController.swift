@@ -93,8 +93,12 @@ class TWPUserInfoViewController: UIViewController {
         super.viewWillAppear(animated)
 
         guard tempUserID != nil else {
-            self.showAlert(with: "ERROR!", message: "user not found!", cancelButtonTitle: "Back", cancelTappedAction: { [weak self] in
-                self?.dismiss(animated: true, completion: nil)
+            self.showAlert(
+                with: "ERROR!",
+                message: "user not found!",
+                cancelButtonTitle: "Back",
+                cancelTappedAction: { [weak self] _ in
+                    self?.dismiss(animated: true, completion: nil)
             })
             return
         }

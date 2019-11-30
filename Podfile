@@ -11,6 +11,8 @@ target 'TwitterParam' do
   pod 'UITextFieldWithLimit'
   pod 'TTTAttributedLabel'
 
+  pod 'SwiftLint'
+
   target 'TwitterParamTests' do
     inherit! :search_paths
     # Pods for testing

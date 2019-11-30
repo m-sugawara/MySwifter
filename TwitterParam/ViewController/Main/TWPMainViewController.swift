@@ -243,7 +243,7 @@ class TWPMainViewController: UIViewController, UITableViewDelegate, UITableViewD
                     return
                 }
 
-                let cancelAction = { () -> Void in
+                let cancelAction: (UIAlertAction?) -> Void = { _ in
                     observer.sendCompleted()
                 }
                 let yesAction: (UIAlertAction?) -> Void = { [weak self] action in

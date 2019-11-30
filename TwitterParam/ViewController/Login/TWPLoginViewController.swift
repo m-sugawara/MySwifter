@@ -39,7 +39,7 @@ class TWPLoginViewController: UIViewController {
             with: "SUCCESS",
             message: "LOGIN SUCCESS",
             cancelButtonTitle: "OK",
-            cancelTappedAction: { [weak self] () -> Void in
+            cancelTappedAction: { [weak self] _ in
                 self?.performSegue(withIdentifier: "fromLoginToMain", sender: nil)
             }
         )

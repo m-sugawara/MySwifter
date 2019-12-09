@@ -7,10 +7,49 @@
 //
 
 import UIKit
+import ReactiveSwift
 
 class TWPLoginViewModel: NSObject {
+
+    private weak var viewController: TWPLoginViewController!
+
     // MARK: - Deinit
+
     deinit {
         print("LoginViewModel deinit")
     }
+
+    // MARK: - Initializer
+
+    init(viewController: TWPLoginViewController) {
+        self.viewController = viewController
+    }
+
+    // MARK: - Action
+
+    var loginAction: Action<Void, Void, Error> {
+        return Action<Void, Void, Error> { _ in
+            return self.tryToLogin
+        }
+    }
+
+    var tryToLogin: SignalProducer<Void, Error> {
+        return SignalProducer<Void, Error> { observer, _ in
+            TWPTwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
+                switch result {
+                case .success:
+                    DispatchQueue.main.async {
+                        self?.viewController.showAlert()
+                    }
+
+                case .failure(let error):
+                    DispatchQueue.main.async {
+                        self?.viewController.showAlert(withError: error as NSError)
+                    }
+                }
+                observer.sendCompleted()
+            }
+        }
+    }
+
 }

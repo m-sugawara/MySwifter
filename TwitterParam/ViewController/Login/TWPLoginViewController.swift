@@ -7,12 +7,11 @@
 //
 
 import UIKit
-
 import ReactiveCocoa
-import ReactiveSwift
 
 class TWPLoginViewController: UIViewController {
-    private let model = TWPLoginViewModel()
+
+    private lazy var model = TWPLoginViewModel(viewController: self)
 
     @IBOutlet private weak var contentView: UIView!
     @IBOutlet private weak var loginButon: UIButton!
@@ -34,7 +33,7 @@ class TWPLoginViewController: UIViewController {
         contentView.backgroundColor = UIColor(patternImage: UIImage(named: "Background_Pattern")!)
     }
 
-    private func showAlertWithSuccess() {
+    func showAlert() {
         showAlert(
             with: "SUCCESS",
             message: "LOGIN SUCCESS",
@@ -45,7 +44,7 @@ class TWPLoginViewController: UIViewController {
         )
     }
 
-    private func showAlertWithFailure(with error: NSError) {
+    func showAlert(withError error: NSError) {
         showAlert(
             with: "ERROR!",
             message: "\(error.localizedDescription)"
@@ -54,24 +53,7 @@ class TWPLoginViewController: UIViewController {
 
     // MARK: - Binding
     private func bindSignals() {
-        loginButon.reactive.pressed = CocoaAction(Action<Void, Void, Error> { _ in
-            return SignalProducer<Void, Error> { observer, _ in
-                TWPTwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
-                    switch result {
-                    case .success:
-                        DispatchQueue.main.async {
-                            self?.showAlertWithSuccess()
-                        }
-
-                    case .failure(let error):
-                        DispatchQueue.main.async {
-                            self?.showAlertWithFailure(with: error as NSError)
-                        }
-                    }
-                    observer.sendCompleted()
-                }
-            }
-        })
+        loginButon.reactive.pressed = CocoaAction(model.loginAction)
     }
 
 }

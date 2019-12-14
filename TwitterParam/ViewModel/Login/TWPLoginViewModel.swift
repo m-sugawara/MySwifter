@@ -28,26 +28,26 @@ class TWPLoginViewModel: NSObject {
     // MARK: - Action
 
     var loginAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> { _ in
-            return self.tryToLogin
-        }
+        return Action<Void, Void, Error>(execute: tryToLogin)
     }
 
-    var tryToLogin: SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { observer, _ in
-            TWPTwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
-                switch result {
-                case .success:
-                    DispatchQueue.main.async {
-                        self?.viewController.showAlert()
-                    }
+    var tryToLogin: () -> SignalProducer<Void, Error> {
+        return {
+            return SignalProducer { observer, _ in
+                TWPTwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
+                    switch result {
+                    case .success:
+                        DispatchQueue.main.async {
+                            self?.viewController.showAlert()
+                        }
 
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        self?.viewController.showAlert(withError: error as NSError)
+                    case .failure(let error):
+                        DispatchQueue.main.async {
+                            self?.viewController.showAlert(withError: error as NSError)
+                        }
                     }
+                    observer.sendCompleted()
                 }
-                observer.sendCompleted()
             }
         }
     }

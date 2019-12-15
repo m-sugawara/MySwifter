@@ -13,6 +13,17 @@ import ReactiveSwift
 
 class TWPMainViewModel {
 
+    enum MainViewModelError: Error {
+        case interrupted
+
+        var message: String {
+            switch self {
+            case .interrupted:
+                return "Action has interupted"
+            }
+        }
+    }
+
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: [TWPTweet] = [TWPTweet]()
 
@@ -54,6 +65,7 @@ class TWPMainViewModel {
     var feedUpdate: SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { [weak self] observer, lifetime in
             guard let self = self, !lifetime.hasEnded else {
+                observer.send(error: MainViewModelError.interrupted)
                 observer.sendInterrupted()
                 return
             }
@@ -74,8 +86,9 @@ class TWPMainViewModel {
             return SignalProducer<Void, Error> { [weak self] observer, lifetime in
                 guard let self = self, !lifetime.hasEnded,
                     !self.inputtingTweet.value.isEmpty else {
-                    observer.sendInterrupted()
-                    return
+                        observer.send(error: MainViewModelError.interrupted)
+                        observer.sendInterrupted()
+                        return
                 }
                 var isReplyToStatusID: String?
                 if let index = self.selectingIndex, index < self.tweets.count {
@@ -107,6 +120,7 @@ class TWPMainViewModel {
         return SignalProducer<Void, Error> { [weak self] observer, lifetime in
             guard let self = self, !lifetime.hasEnded,
                 self.tweets.count > index else {
+                    observer.send(error: MainViewModelError.interrupted)
                     observer.sendInterrupted()
                     return
             }
@@ -175,6 +189,7 @@ class TWPMainViewModel {
         return SignalProducer<Void, Error> { [weak self] observer, lifetime in
             guard let self = self, !lifetime.hasEnded,
                 self.tweets.count > index else {
+                    observer.send(error: MainViewModelError.interrupted)
                     observer.sendInterrupted()
                     return
             }

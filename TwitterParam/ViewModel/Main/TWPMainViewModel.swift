@@ -16,24 +16,17 @@ class TWPMainViewModel {
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: [TWPTweet] = [TWPTweet]()
 
-    var inputtingTweet: MutableProperty<String> = MutableProperty<String>("")
+    var inputtingTweet = MutableProperty<String>("")
     var selectingIndex: Int?
-
-    // because to feed update singal called many times, signal set a variable.
-    private var _feedUpdateButtonSignal: Action<Void, Void, Error>?
+    var selectingTweet: TWPTweet? {
+        guard let index = selectingIndex,
+            tweets.count > index else { return nil }
+        return tweets[index]
+    }
 
     // MARK: - Deinit
     deinit {
         print("MainViewModel deinit")
-    }
-
-    // MARK: - Public Methods
-    func selectingTweetScreenName() -> String? {
-        guard let selectingIndex = selectingIndex else {
-            return nil
-        }
-        let selectingTweet = self.tweets[selectingIndex]
-        return selectingTweet.user?.screenName
     }
 
     // MARK: - RACCommands

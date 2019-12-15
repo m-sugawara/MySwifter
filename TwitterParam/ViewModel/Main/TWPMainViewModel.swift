@@ -13,27 +13,31 @@ import ReactiveSwift
 
 class TWPMainViewModel {
 
+    enum MainViewModelError: Error {
+        case interrupted
+
+        var message: String {
+            switch self {
+            case .interrupted:
+                return "Action has interupted"
+            }
+        }
+    }
+
     dynamic var tapCount: NSInteger = 0
     dynamic var tweets: [TWPTweet] = [TWPTweet]()
 
-    var inputtingTweet: MutableProperty<String> = MutableProperty<String>("")
+    var inputtingTweet = MutableProperty<String>("")
     var selectingIndex: Int?
-
-    // because to feed update singal called many times, signal set a variable.
-    private var _feedUpdateButtonSignal: Action<Void, Void, Error>?
+    var selectingTweet: TWPTweet? {
+        guard let index = selectingIndex,
+            tweets.count > index else { return nil }
+        return tweets[index]
+    }
 
     // MARK: - Deinit
     deinit {
         print("MainViewModel deinit")
-    }
-
-    // MARK: - Public Methods
-    func selectingTweetScreenName() -> String? {
-        guard let selectingIndex = selectingIndex else {
-            return nil
-        }
-        let selectingTweet = self.tweets[selectingIndex]
-        return selectingTweet.user?.screenName
     }
 
     // MARK: - RACCommands
@@ -61,6 +65,7 @@ class TWPMainViewModel {
     var feedUpdate: SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { [weak self] observer, lifetime in
             guard let self = self, !lifetime.hasEnded else {
+                observer.send(error: MainViewModelError.interrupted)
                 observer.sendInterrupted()
                 return
             }
@@ -81,8 +86,9 @@ class TWPMainViewModel {
             return SignalProducer<Void, Error> { [weak self] observer, lifetime in
                 guard let self = self, !lifetime.hasEnded,
                     !self.inputtingTweet.value.isEmpty else {
-                    observer.sendInterrupted()
-                    return
+                        observer.send(error: MainViewModelError.interrupted)
+                        observer.sendInterrupted()
+                        return
                 }
                 var isReplyToStatusID: String?
                 if let index = self.selectingIndex, index < self.tweets.count {
@@ -114,6 +120,7 @@ class TWPMainViewModel {
         return SignalProducer<Void, Error> { [weak self] observer, lifetime in
             guard let self = self, !lifetime.hasEnded,
                 self.tweets.count > index else {
+                    observer.send(error: MainViewModelError.interrupted)
                     observer.sendInterrupted()
                     return
             }
@@ -182,6 +189,7 @@ class TWPMainViewModel {
         return SignalProducer<Void, Error> { [weak self] observer, lifetime in
             guard let self = self, !lifetime.hasEnded,
                 self.tweets.count > index else {
+                    observer.send(error: MainViewModelError.interrupted)
                     observer.sendInterrupted()
                     return
             }

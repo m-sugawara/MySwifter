@@ -22,6 +22,7 @@
 		595FC1131B1BE8400088A2EB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 595FC1121B1BE8400088A2EB /* Images.xcassets */; };
 		595FC1161B1BE8400088A2EB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 595FC1141B1BE8400088A2EB /* LaunchScreen.xib */; };
 		595FC1221B1BE8400088A2EB /* TwitterParamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */; };
+		596E037023A674ED00A1CF75 /* TWPMainViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596E036F23A674ED00A1CF75 /* TWPMainViewModelTests.swift */; };
 		597526431B1EA7FD00419C19 /* TWPErrorCodeConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */; };
 		598911091B4180600039E3A2 /* TWPPushAnimationSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598911081B4180600039E3A2 /* TWPPushAnimationSegue.swift */; };
 		59898DB91B33FFB200273760 /* TWPTweetDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */; };
@@ -90,6 +91,7 @@
 		595FC11B1B1BE8400088A2EB /* TwitterParamTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TwitterParamTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		595FC1201B1BE8400088A2EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterParamTests.swift; sourceTree = "<group>"; };
+		596E036F23A674ED00A1CF75 /* TWPMainViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPMainViewModelTests.swift; sourceTree = "<group>"; };
 		597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPErrorCodeConst.swift; sourceTree = "<group>"; };
 		598911081B4180600039E3A2 /* TWPPushAnimationSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPPushAnimationSegue.swift; path = Segue/TWPPushAnimationSegue.swift; sourceTree = "<group>"; };
 		59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewController.swift; path = TweetDetail/TWPTweetDetailViewController.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 			isa = PBXGroup;
 			children = (
 				595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */,
+				596E036E23A674CE00A1CF75 /* ViewModel */,
 				595FC11F1B1BE8400088A2EB /* Supporting Files */,
 			);
 			path = TwitterParamTests;
@@ -297,6 +300,14 @@
 				5917020E1B1BEA5D008ADA01 /* TWPMainViewModel.swift */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		596E036E23A674CE00A1CF75 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				596E036F23A674ED00A1CF75 /* TWPMainViewModelTests.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		598911071B4180360039E3A2 /* Segue */ = {
@@ -667,6 +678,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				595FC1221B1BE8400088A2EB /* TwitterParamTests.swift in Sources */,
+				596E037023A674ED00A1CF75 /* TWPMainViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,15 +9,16 @@
 import UIKit
 
 import TTTAttributedLabel
+import SDWebImage
 
 class TWPMainViewControllerTableViewCell: UITableViewCell {
-    @IBOutlet weak var iconImageView: UIImageView!
-    @IBOutlet weak var tweetTextLabel: TTTAttributedLabel!
-    @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet weak var screenNameLabel: UILabel!
-    @IBOutlet weak var timeLabel: UILabel!
-    @IBOutlet weak var retweetCountLabel: UILabel!
-    @IBOutlet weak var favoriteCountLabel: UILabel!
+    @IBOutlet private weak var iconImageView: UIImageView!
+    @IBOutlet private weak var tweetTextLabel: TTTAttributedLabel!
+    @IBOutlet private weak var userNameLabel: UILabel!
+    @IBOutlet private weak var screenNameLabel: UILabel!
+    @IBOutlet private weak var timeLabel: UILabel!
+    @IBOutlet private weak var retweetCountLabel: UILabel!
+    @IBOutlet private weak var favoriteCountLabel: UILabel!
 
     @IBOutlet weak var replyButton: UIButton!
     @IBOutlet weak var retweetButton: UIButton!
@@ -26,11 +27,29 @@ class TWPMainViewControllerTableViewCell: UITableViewCell {
     // MARK: Designated Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+
+    func apply(withTweet tweet: TWPTweet) {
+        iconImageView.sd_setImage(
+            with: tweet.user!.profileImageUrl,
+            placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
+            options: .fromCacheOnly)
+
+        tweetTextLabel.text = tweet.text
+        tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
+        userNameLabel.text = tweet.user?.name
+        screenNameLabel.text = tweet.user?.screenNameWithAt
+        retweetCountLabel.text = String(tweet.retweetCount)
+        favoriteCountLabel.text = String(tweet.favoriteCount)
+
+        retweetButton.isSelected = tweet.retweeted
+        favoriteButton.isSelected = tweet.favorited
+
+        timeLabel.text = tweet.createdAt?.stringForTimeIntervalSinceCreated()
     }
 
 }

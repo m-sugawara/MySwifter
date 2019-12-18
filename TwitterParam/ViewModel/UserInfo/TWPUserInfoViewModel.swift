@@ -8,11 +8,22 @@
 
 import UIKit
 
-import ReactiveCocoa
 import ReactiveSwift
 
 class TWPUserInfoViewModel: NSObject {
-    let twitterAPI = TWPTwitterAPI.shared
+
+    enum UserInfoViewModelError: Error {
+        case interrupted
+
+        var message: String {
+            switch self {
+            case .interrupted:
+                return "Action has interupted"
+            }
+        }
+    }
+
+    private let twitterAPI = TWPTwitterAPI.shared
 
     var userId: String = ""
     var user: TWPUser?
@@ -26,8 +37,39 @@ class TWPUserInfoViewModel: NSObject {
         super.init()
     }
 
+    // MARK: - Actions
+    var getUserAction: Action<Void, Void, Error> {
+        return Action { _ in
+            return self.getUserInfo()
+        }
+    }
+
+    var getUserTimeLineAction: Action<Void, Void, Error> {
+        return Action { _ in
+            return self.getUserTimeline()
+        }
+    }
+
+    var getUserImageListAction: Action<Void, Void, Error> {
+        return Action { _ in
+            return self.getUserImageList()
+        }
+    }
+
+    var getUserFavoritesAction: Action<Void, Void, Error> {
+        return Action { _ in
+            return self.getUserFavorites()
+        }
+    }
+
+    var followAction: Action<Void, Void, Error> {
+        return Action { _ in
+            return self.postFollow()
+        }
+    }
+
     // MARK: - Signals
-    func getUserInfoSignalProducer() -> SignalProducer<Void, Error> {
+    func getUserInfo() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             self.twitterAPI.getUsersShow(with: .id(self.userId)).startWithResult { result in
                 switch result {
@@ -41,7 +83,7 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
-    func getUserTimelineSignalProducer() -> SignalProducer<Void, Error> {
+    func getUserTimeline() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             self.twitterAPI.getStatusesHomeTimeline(count: 20).startWithResult { result in
                 switch result {
@@ -55,7 +97,7 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
-    func getUserImageListSignalProducer() -> SignalProducer<Void, Error> {
+    func getUserImageList() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             Thread.sleep(forTimeInterval: 0.5)
             let dummy = TWPTweet(
@@ -69,7 +111,7 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
-    func getUserFavoritesListSignalProducer() -> SignalProducer<Void, Error> {
+    func getUserFavorites() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             // if already have list, return it.
             if let favoriteList = self.favoriteList {
@@ -93,20 +135,14 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
-    // MARK: - RACCommands
-    var followButtonCommand: CocoaAction<UIButton> {
-        return CocoaAction(Action { _ in
-            return self.followButtonSignal()
-        }, input: "")
-    }
-
-    func followButtonSignal() -> SignalProducer<Void, Error> {
-        return (self.user?.following == true) ? unfollowSignal() : followSignal()
+    func postFollow() -> SignalProducer<Void, Error> {
+        return (user?.following == true) ? unfollowSignal() : followSignal()
     }
 
     private func followSignal() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { observer, lifetime in
-            guard !lifetime.hasEnded else {
+        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+            guard !lifetime.hasEnded, let self = self else {
+                observer.send(error: UserInfoViewModelError.interrupted)
                 observer.sendInterrupted()
                 return
             }
@@ -125,8 +161,9 @@ class TWPUserInfoViewModel: NSObject {
     }
 
     private func unfollowSignal() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { observer, lifetime in
-            guard !lifetime.hasEnded else {
+        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+            guard !lifetime.hasEnded, let self = self else {
+                observer.send(error: UserInfoViewModelError.interrupted)
                 observer.sendInterrupted()
                 return
             }

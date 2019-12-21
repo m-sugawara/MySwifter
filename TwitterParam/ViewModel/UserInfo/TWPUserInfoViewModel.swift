@@ -69,6 +69,7 @@ class TWPUserInfoViewModel: NSObject {
     }
 
     // MARK: - Signals
+    // MARK: UserInfo
     func getUserInfo() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             self.twitterAPI.getUsersShow(with: .id(self.userId)).startWithResult { result in
@@ -83,6 +84,7 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
+    // MARK: Timeline
     func getUserTimeline() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             self.twitterAPI.getStatusesHomeTimeline(count: 20).startWithResult { result in
@@ -97,6 +99,7 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
+    // MARK: ImageList
     func getUserImageList() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             Thread.sleep(forTimeInterval: 0.5)
@@ -111,6 +114,7 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
+    // MARK: Favorites
     func getUserFavorites() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             // if already have list, return it.
@@ -135,6 +139,7 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
+    // MARK: Follow/Unfollow
     func postFollow() -> SignalProducer<Void, Error> {
         return (user?.following == true) ? unfollowSignal() : followSignal()
     }

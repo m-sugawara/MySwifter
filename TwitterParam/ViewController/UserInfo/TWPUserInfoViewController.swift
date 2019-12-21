@@ -127,7 +127,7 @@ class TWPUserInfoViewController: UIViewController {
 
     // MARK: - Binding
 
-    func bindCommands() {
+    private func bindCommands() {
         self.backButton.reactive.pressed = self.backButtonAction
 
         // follow list button
@@ -170,7 +170,7 @@ class TWPUserInfoViewController: UIViewController {
         favoriteListButton.reactive.pressed = CocoaAction(model.getUserFavoritesAction)
     }
 
-    func showAlert(with error: TWPUserInfoViewModel.UserInfoViewModelError) {
+    private func showAlert(with error: TWPUserInfoViewModel.UserInfoViewModelError) {
         showAlert(with: "ERROR", message: error.message)
     }
 
@@ -244,7 +244,8 @@ extension TWPUserInfoViewController: UITableViewDataSource {
         }
         let tweet = self.model.tweets[indexPath.row]
 
-        cell.iconImageView.sd_setImage(with: tweet.user?.profileImageUrl,
+        cell.iconImageView.sd_setImage(
+            with: tweet.user?.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: .fromCacheOnly)
         cell.tweetTextLabel.text = tweet.text

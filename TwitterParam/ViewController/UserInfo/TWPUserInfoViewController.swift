@@ -15,15 +15,16 @@ import SDWebImage
 
 let kTWPUserInfoTableViewCellIdentifier = "UserInfoTableViewCell"
 
-enum TWPUserListType {
-    case followList
-    case followerList
-}
-
 class TWPUserInfoViewController: UIViewController {
+
+    enum ListType {
+        case followList
+        case followerList
+    }
+
     let model = TWPUserInfoViewModel()
 
-    var selectingUserList: TWPUserListType?
+    var selectingUserList: ListType?
     var tempUserID: String!
     var backButtonAction: CocoaAction<UIButton>!
 
@@ -66,12 +67,12 @@ class TWPUserInfoViewController: UIViewController {
 
             // get user info
             startLoading()
-            model.getUserInfoSignalProducer().startWithResult { [weak self] result in
+            model.getUserInfo().startWithResult { [weak self] result in
                 guard let self = self else { return }
                 switch result {
                 case .success:
                     self.setUserProfile()
-                    self.model.getUserTimelineSignalProducer().startWithResult { [weak self] result in
+                    self.model.getUserTimeline().startWithResult { [weak self] result in
                         guard let self = self else { return }
                         switch result {
                         case .success:
@@ -126,7 +127,7 @@ class TWPUserInfoViewController: UIViewController {
 
     // MARK: - Binding
 
-    func bindCommands() {
+    private func bindCommands() {
         self.backButton.reactive.pressed = self.backButtonAction
 
         // follow list button
@@ -136,7 +137,7 @@ class TWPUserInfoViewController: UIViewController {
                     observer.sendInterrupted()
                     return
                 }
-                self.selectingUserList = TWPUserListType.followList
+                self.selectingUserList = .followList
                 self.performSegue(withIdentifier: "fromUserInfoToUserList", sender: nil)
                 observer.sendCompleted()
             }
@@ -149,89 +150,28 @@ class TWPUserInfoViewController: UIViewController {
                     observer.sendInterrupted()
                     return
                 }
-                self.selectingUserList = TWPUserListType.followerList
+                self.selectingUserList = .followerList
                 self.performSegue(withIdentifier: "fromUserInfoToUserList", sender: nil)
                 observer.sendCompleted()
             }
         })
 
         // follow button
-        followButton.reactive.pressed = model.followButtonCommand
+        followButton.reactive.pressed = CocoaAction(model.followAction)
 //        followButton.isSelected <~ model.user!.following
 
         // SelectListButtons
-        tweetListButton.reactive.pressed = CocoaAction(Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { [weak self] observer, _ in
-                guard let self = self else { return }
-                // get users timeline
-                self.startLoading()
-                self.model.getUserTimelineSignalProducer().startWithResult { [weak self] result in
-                    guard let self = self else { return }
-
-                    self.stopLoading()
-
-                    switch result {
-                    case .success:
-                        self.tableView.reloadData()
-//                        self.changeListButtonsStatusWithTappedButton(input as! UIButton)
-
-                    case .failure:
-                        self.showAlert(with: "ERROR!", message: "failed to get user timeline.")
-                    }
-                    observer.sendCompleted()
-                }
-            }
-        })
+        tweetListButton.reactive.pressed = CocoaAction(model.getUserTimeLineAction)
 
         // ImageListButton
-        imageListButton.reactive.pressed = CocoaAction(Action {
-            return SignalProducer<Void, Error> { [weak self] observer, _ in
-                guard let self = self else { return }
-                self.startLoading()
-                self.model.getUserImageListSignalProducer().startWithResult { [weak self] result in
-                    guard let self = self else { return }
-
-                    self.stopLoading()
-
-                    switch result {
-                    case .success:
-                        self.tableView.reloadData()
-
-                    case .failure:
-                        self.showAlert(
-                            with: "ERROR!",
-                            message: "failed to get user image list."
-                        )
-                    }
-                    observer.sendCompleted()
-                }
-            }
-        })
+        imageListButton.reactive.pressed = CocoaAction(model.getUserImageListAction)
 
         // FavoriteListButton
-        favoriteListButton.reactive.pressed = CocoaAction(Action {
-            return SignalProducer<Void, Error> { [weak self] observer, _ in
-                guard let self = self else { return }
-                self.startLoading()
-                self.model.getUserFavoritesListSignalProducer().startWithResult { [weak self] result in
-                    guard let self = self else { return }
+        favoriteListButton.reactive.pressed = CocoaAction(model.getUserFavoritesAction)
+    }
 
-                    self.stopLoading()
-
-                    switch result {
-                    case .success:
-                        self.tableView.reloadData()
-
-                    case .failure:
-                        self.showAlert(
-                            with: "ERROR!",
-                            message: "failed to get user image list."
-                        )
-                    }
-                    observer.sendCompleted()
-                }
-            }
-        })
+    private func showAlert(with error: TWPUserInfoViewModel.UserInfoViewModelError) {
+        showAlert(with: "ERROR", message: error.message)
     }
 
     // MARK: - Private Methods
@@ -270,7 +210,7 @@ class TWPUserInfoViewController: UIViewController {
         followButton.isSelected = model.user?.following ?? false
     }
 
-    func changeListButtonsStatusWithTappedButton(tappedButton: UIButton) {
+    func changeStatus(of tappedButton: UIButton) {
         let listButtons: [UIButton] = [
             tweetListButton,
             imageListButton,
@@ -304,7 +244,8 @@ extension TWPUserInfoViewController: UITableViewDataSource {
         }
         let tweet = self.model.tweets[indexPath.row]
 
-        cell.iconImageView.sd_setImage(with: tweet.user?.profileImageUrl,
+        cell.iconImageView.sd_setImage(
+            with: tweet.user?.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
             options: .fromCacheOnly)
         cell.tweetTextLabel.text = tweet.text

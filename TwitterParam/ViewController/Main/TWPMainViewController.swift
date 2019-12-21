@@ -55,7 +55,7 @@ class TWPMainViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         startObserving()
         configureViews()
         bindCommands()

@@ -24,6 +24,7 @@
 		595FC1221B1BE8400088A2EB /* TwitterParamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */; };
 		596E037023A674ED00A1CF75 /* TWPMainViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596E036F23A674ED00A1CF75 /* TWPMainViewModelTests.swift */; };
 		596E039323AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596E039223AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift */; };
+		596E039623AE851000A1CF75 /* TWPUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596E039523AE851000A1CF75 /* TWPUserTests.swift */; };
 		597526431B1EA7FD00419C19 /* TWPErrorCodeConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */; };
 		598911091B4180600039E3A2 /* TWPPushAnimationSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598911081B4180600039E3A2 /* TWPPushAnimationSegue.swift */; };
 		59898DB91B33FFB200273760 /* TWPTweetDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */; };
@@ -94,6 +95,7 @@
 		595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterParamTests.swift; sourceTree = "<group>"; };
 		596E036F23A674ED00A1CF75 /* TWPMainViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPMainViewModelTests.swift; sourceTree = "<group>"; };
 		596E039223AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewModelTests.swift; sourceTree = "<group>"; };
+		596E039523AE851000A1CF75 /* TWPUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPUserTests.swift; sourceTree = "<group>"; };
 		597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPErrorCodeConst.swift; sourceTree = "<group>"; };
 		598911081B4180600039E3A2 /* TWPPushAnimationSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPPushAnimationSegue.swift; path = Segue/TWPPushAnimationSegue.swift; sourceTree = "<group>"; };
 		59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewController.swift; path = TweetDetail/TWPTweetDetailViewController.swift; sourceTree = "<group>"; };
@@ -220,7 +222,7 @@
 			children = (
 				59F3D27D1B1D3F4B00B5235C /* API */,
 				59F3D2831B1D77A400B5235C /* Common */,
-				59F3D2801B1D53D900B5235C /* CustomClass */,
+				59F3D2801B1D53D900B5235C /* Entity */,
 				591299721B37F6840011EA85 /* CustomView */,
 				591ED1231B3640A200BAB592 /* Extension */,
 				598911071B4180360039E3A2 /* Segue */,
@@ -249,6 +251,7 @@
 			isa = PBXGroup;
 			children = (
 				595FC1211B1BE8400088A2EB /* TwitterParamTests.swift */,
+				596E039423AE84F800A1CF75 /* Entity */,
 				596E036E23A674CE00A1CF75 /* ViewModel */,
 				595FC11F1B1BE8400088A2EB /* Supporting Files */,
 			);
@@ -311,6 +314,14 @@
 				596E039223AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		596E039423AE84F800A1CF75 /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				596E039523AE851000A1CF75 /* TWPUserTests.swift */,
+			);
+			path = Entity;
 			sourceTree = "<group>";
 		};
 		598911071B4180360039E3A2 /* Segue */ = {
@@ -411,13 +422,13 @@
 			path = API;
 			sourceTree = "<group>";
 		};
-		59F3D2801B1D53D900B5235C /* CustomClass */ = {
+		59F3D2801B1D53D900B5235C /* Entity */ = {
 			isa = PBXGroup;
 			children = (
 				59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */,
 				59AE82731B3537250083F5FF /* TWPUser.swift */,
 			);
-			path = CustomClass;
+			path = Entity;
 			sourceTree = "<group>";
 		};
 		59F3D2831B1D77A400B5235C /* Common */ = {
@@ -681,6 +692,7 @@
 			files = (
 				595FC1221B1BE8400088A2EB /* TwitterParamTests.swift in Sources */,
 				596E039323AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift in Sources */,
+				596E039623AE851000A1CF75 /* TWPUserTests.swift in Sources */,
 				596E037023A674ED00A1CF75 /* TWPMainViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -91,4 +91,11 @@ class TWPUserTests: XCTestCase {
         XCTAssertEqual(user.followersCount, 100)
     }
 
+    func testIsSelfFalse() {
+        let user = TWPUser(userId: "1")
+        let expected = false
+
+        XCTAssertEqual(user.isSelf, expected)
+    }
+
 }

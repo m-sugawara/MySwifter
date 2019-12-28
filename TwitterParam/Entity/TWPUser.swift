@@ -51,8 +51,12 @@ struct TWPUser {
         return (screenName.isEmpty) ? "" : "@" + screenName
     }
 
-    var profileImageUrlString : String? {
+    var profileImageUrlString: String? {
         return profileImageUrl?.absoluteString
+    }
+
+    var isSelf: Bool {
+        return userId == TWPUserHelper.currentUserID()
     }
 
 }

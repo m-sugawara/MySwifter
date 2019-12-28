@@ -17,34 +17,26 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
     let model = TWPTweetDetailViewModel()
 
     var tempTweetID:String!
-    var backButtonCommand: CocoaAction<UIButton>?
+    var backButtonAction: Action<Void, Void, Error>?
 
-    @IBOutlet weak var backButton: UIButton!
-    @IBOutlet weak var tweetLabel: TTTAttributedLabel!
-    @IBOutlet weak var userIconImageView: UIImageView!
-    @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet weak var screenNameLabel: UILabel!
+    @IBOutlet private weak var backButton: UIButton!
+    @IBOutlet private weak var tweetLabel: TTTAttributedLabel!
+    @IBOutlet private weak var userIconImageView: UIImageView!
+    @IBOutlet private weak var userNameLabel: UILabel!
+    @IBOutlet private weak var screenNameLabel: UILabel!
 
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        bindCommands()
+        bindActions()
         configureViews()
 
-        model.tweetId = tempTweetID
-        model.getTweetSignalProducer().startWithResult { [weak self] result in
+        model.getTweet(with: tempTweetID).startWithResult { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success:
-                let tweet = self.model.tweet
-                self.tweetLabel.text = tweet?.text
-                self.userIconImageView.sd_setImage(
-                    with: tweet?.user?.profileImageUrl,
-                    placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
-                    options: .fromCacheOnly,
-                    completed: nil
-                )
+                self.updateSubviews()
             case .failure(let error):
                 self.showAlert(with: "ERROR", message: "failed to get tweet. \(error)")
             }
@@ -56,32 +48,38 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
 
         if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
             segue.identifier == "fromTweetDetailToUserInfo" {
-            userInfoViewController.tempUserID = self.model.tweet?.user?.userId
+            userInfoViewController.tempUserID = model.tweet?.user?.userId
 
             // regist backbutton command
-            userInfoViewController.backButtonAction = CocoaAction(Action<Void, Void, Error> { _ in
+            userInfoViewController.backButtonAction = Action<Void, Void, Error> { _ in
                 return SignalProducer<Void, Error> { observer, _ in
-                    self.dismiss(animated: true, completion: nil)
+                    userInfoViewController.dismiss(animated: true, completion: nil)
                     observer.sendCompleted()
                 }
-            })
+            }
         }
     }
 
-    // MARK: - Memory Management
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     // MARK: - Binding
-    func bindCommands() {
-        self.backButton.reactive.pressed = self.backButtonCommand
+    private func bindActions() {
+        if let backButtonAction = backButtonAction {
+            backButton.reactive.pressed = CocoaAction(backButtonAction)
+        }
     }
 
     // MARK: - Private Methods
-    func configureViews() {
-        self.tweetLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
+    private func configureViews() {
+        tweetLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
+    }
+
+    private func updateSubviews() {
+        tweetLabel.text = model.tweet?.text
+        userIconImageView.sd_setImage(
+            with: model.tweet?.user?.profileImageUrl,
+            placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
+            options: .fromCacheOnly,
+            completed: nil
+        )
     }
 
     // MARK: - TTTAttributedLabelDelegate

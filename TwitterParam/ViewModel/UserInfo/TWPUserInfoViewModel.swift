@@ -23,14 +23,12 @@ class TWPUserInfoViewModel: NSObject {
         }
     }
 
-    private let twitterAPI = TWPTwitterAPI.shared
-
     var userId: String = ""
     var user: TWPUser?
 
     var favoriteList: [TWPTweet]?
 
-    dynamic var tweets: [TWPTweet] = []
+    private(set) var tweets: [TWPTweet] = []
 
     // MARK: - Initializer
     override init() {
@@ -72,7 +70,7 @@ class TWPUserInfoViewModel: NSObject {
     // MARK: UserInfo
     func getUserInfo() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            self.twitterAPI.getUsersShow(with: .id(self.userId)).startWithResult { result in
+            TWPTwitterAPI.shared.getUsersShow(with: .id(self.userId)).startWithResult { result in
                 switch result {
                 case .success:
                     self.user = TWPUserList.shared.findUser(by: self.userId)
@@ -87,7 +85,7 @@ class TWPUserInfoViewModel: NSObject {
     // MARK: Timeline
     func getUserTimeline() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            self.twitterAPI.getStatusesHomeTimeline(count: 20).startWithResult { result in
+            TWPTwitterAPI.shared.getStatusesHomeTimeline(count: 20).startWithResult { result in
                 switch result {
                 case .success(let tweets):
                     self.tweets = tweets
@@ -122,7 +120,7 @@ class TWPUserInfoViewModel: NSObject {
                 self.tweets = favoriteList
                 observer.sendCompleted()
             } else {
-                self.twitterAPI.getFavoritesList(
+                TWPTwitterAPI.shared.getFavoritesList(
                     with: self.userId,
                     count: 20
                 ).startWithResult { result in
@@ -151,7 +149,7 @@ class TWPUserInfoViewModel: NSObject {
                 observer.sendInterrupted()
                 return
             }
-            self.twitterAPI.postCreateFriendship(with: self.userId).startWithResult { result in
+            TWPTwitterAPI.shared.postCreateFriendship(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
                     if let user = TWPUserList.shared.findUser(by: self.userId) {
@@ -173,7 +171,7 @@ class TWPUserInfoViewModel: NSObject {
                 return
             }
 
-            self.twitterAPI.postDestroyFavorite(with: self.userId).startWithResult { result in
+            TWPTwitterAPI.shared.postDestroyFavorite(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
                     if let user = TWPUserList.shared.findUser(by: self.userId) {

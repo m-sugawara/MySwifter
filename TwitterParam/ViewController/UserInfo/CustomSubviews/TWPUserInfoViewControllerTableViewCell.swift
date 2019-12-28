@@ -11,6 +11,19 @@ import UIKit
 import TTTAttributedLabel
 
 class TWPUserInfoViewControllerTableViewCell: UITableViewCell {
+
+    static let identifier = "UserInfoTableViewCell"
+    static let itemHeight: CGFloat = 60.0
+
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var tweetTextLabel: TTTAttributedLabel!
+
+    func apply(withTweet tweet: TWPTweet) {
+        iconImageView.sd_setImage(
+            with: tweet.user?.profileImageUrl,
+            placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
+            options: .fromCacheOnly)
+        tweetTextLabel.text = tweet.text
+        tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
+    }
 }

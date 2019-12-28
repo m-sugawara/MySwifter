@@ -31,14 +31,11 @@ class TWPUserListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.model.selectingUserID = self.tempUserID
-
-        // Do any additional setup after loading the view.
-        self.bindCommands()
+        bindCommands()
 
         // first, get follow/follower list
-        self.startLoading()
-        self.model.getUserList().startWithResult { [weak self] result in
+        startLoading()
+        model.getUserList(with: tempUserID!).startWithResult { [weak self] result in
             switch result {
             case .success:
                 self?.stopLoading()
@@ -94,14 +91,8 @@ extension TWPUserListViewController: UITableViewDataSource {
             fatalError()
         }
 
-        let user = self.model.userList[indexPath.row]
-        cell.nameLabel.text = user.name
-        cell.screenNameLabel.text = user.screenNameWithAt
-        cell.userImageView.sd_setImage(
-            with: user.profileImageUrl,
-            placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
-            options: .fromCacheOnly
-        )
+        let user = model.user(at: indexPath.row)
+        cell.apply(with: user)
 
         return cell
     }
@@ -114,11 +105,11 @@ extension TWPUserListViewController: UITableViewDataSource {
 extension TWPUserListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70.0
+        return TWPUserListTableViewCell.itemHeight
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedUser = self.model.userList[indexPath.row]
+        guard let selectedUser = model.user(at: indexPath.row) else { return }
         selectedUserID = selectedUser.userId
 
         tableView.deselectRow(at: indexPath, animated: true)

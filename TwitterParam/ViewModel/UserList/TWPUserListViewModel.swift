@@ -11,14 +11,18 @@ import ReactiveSwift
 
 class TWPUserListViewModel: NSObject {
 
-    var selectingUserID: String?
-    var userList: [TWPUser] = []
+    private(set) var userList: [TWPUser] = []
+
+    func user(at index: Int) -> TWPUser? {
+        guard index < userList.count else { return nil }
+        return userList[index]
+    }
 
     // MARK: - Signals
-    func getUserList() -> SignalProducer<Void, Error> {
+    func getUserList(with userId: String) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             TWPTwitterAPI.shared.getFriendList(
-                with: self.selectingUserID!,
+                with: userId,
                 count: 20
             ).startWithResult { result in
                 switch result {

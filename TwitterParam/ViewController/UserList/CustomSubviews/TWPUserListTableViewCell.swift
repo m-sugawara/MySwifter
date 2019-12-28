@@ -10,19 +10,27 @@ import UIKit
 
 class TWPUserListTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var screenNameLabel: UILabel!
-    @IBOutlet weak var userImageView: UIImageView!
+    static let itemHeight: CGFloat = 70
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    @IBOutlet private weak var nameLabel: UILabel!
+    @IBOutlet private weak var screenNameLabel: UILabel!
+    @IBOutlet private weak var userImageView: UIImageView!
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        nameLabel.text = nil
+        screenNameLabel.text = nil
+        userImageView.image = nil
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    func apply(with user: TWPUser?) {
+        guard let user = user else { return }
+        nameLabel.text = user.name
+        screenNameLabel.text = user.screenNameWithAt
+        userImageView.sd_setImage(
+            with: user.profileImageUrl,
+            placeholderImage: UIImage(named:"Main_TableViewCellIcon"),
+            options: .fromCacheOnly
+        )
     }
-
 }

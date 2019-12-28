@@ -16,6 +16,7 @@
 		591702131B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591702121B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift */; };
 		591ED1261B3645A300BAB592 /* UIViewController+TWPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591ED1251B3645A300BAB592 /* UIViewController+TWPHelper.swift */; };
 		593318971B33E34600110701 /* TWPUserInfoViewControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593318961B33E34600110701 /* TWPUserInfoViewControllerTableViewCell.swift */; };
+		595BC56D23B79D7300DB9AD8 /* TWPUserListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595BC56C23B79D7300DB9AD8 /* TWPUserListViewModelTests.swift */; };
 		595FC10C1B1BE8400088A2EB /* TWPAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC10B1B1BE8400088A2EB /* TWPAppDelegate.swift */; };
 		595FC10E1B1BE8400088A2EB /* TWPMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC10D1B1BE8400088A2EB /* TWPMainViewController.swift */; };
 		595FC1111B1BE8400088A2EB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 595FC10F1B1BE8400088A2EB /* Main.storyboard */; };
@@ -83,6 +84,7 @@
 		591702121B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPMainViewControllerTableViewCell.swift; sourceTree = "<group>"; };
 		591ED1251B3645A300BAB592 /* UIViewController+TWPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIViewController+TWPHelper.swift"; path = "Extension/UIViewController/UIViewController+TWPHelper.swift"; sourceTree = "<group>"; };
 		593318961B33E34600110701 /* TWPUserInfoViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserInfoViewControllerTableViewCell.swift; path = CustomSubviews/TWPUserInfoViewControllerTableViewCell.swift; sourceTree = "<group>"; };
+		595BC56C23B79D7300DB9AD8 /* TWPUserListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPUserListViewModelTests.swift; sourceTree = "<group>"; };
 		595FC1061B1BE8400088A2EB /* TwitterParam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwitterParam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		595FC10A1B1BE8400088A2EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		595FC10B1B1BE8400088A2EB /* TWPAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPAppDelegate.swift; sourceTree = "<group>"; };
@@ -312,6 +314,7 @@
 			children = (
 				596E036F23A674ED00A1CF75 /* TWPMainViewModelTests.swift */,
 				596E039223AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift */,
+				595BC56C23B79D7300DB9AD8 /* TWPUserListViewModelTests.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -692,6 +695,7 @@
 			files = (
 				595FC1221B1BE8400088A2EB /* TwitterParamTests.swift in Sources */,
 				596E039323AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift in Sources */,
+				595BC56D23B79D7300DB9AD8 /* TWPUserListViewModelTests.swift in Sources */,
 				596E039623AE851000A1CF75 /* TWPUserTests.swift in Sources */,
 				596E037023A674ED00A1CF75 /* TWPMainViewModelTests.swift in Sources */,
 			);

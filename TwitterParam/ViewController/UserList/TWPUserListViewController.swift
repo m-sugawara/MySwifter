@@ -31,13 +31,11 @@ class TWPUserListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        model.selectingUserID = tempUserID
-
         bindCommands()
 
         // first, get follow/follower list
         startLoading()
-        model.getUserList().startWithResult { [weak self] result in
+        model.getUserList(with: tempUserID!).startWithResult { [weak self] result in
             switch result {
             case .success:
                 self?.stopLoading()

@@ -12,7 +12,12 @@ import ReactiveSwift
 class TWPUserListViewModel: NSObject {
 
     var selectingUserID: String?
-    var userList: [TWPUser] = []
+    private(set) var userList: [TWPUser] = []
+
+    func user(at index: Int) -> TWPUser? {
+        guard index < userList.count else { return nil }
+        return userList[index]
+    }
 
     // MARK: - Signals
     func getUserList() -> SignalProducer<Void, Error> {

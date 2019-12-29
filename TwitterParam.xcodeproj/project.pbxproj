@@ -33,7 +33,6 @@
 		59B578A81B1ED17700E3D801 /* TWPUserInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578A71B1ED17700E3D801 /* TWPUserInfoViewController.swift */; };
 		59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */; };
 		59B578AD1B1EFA6E00E3D801 /* TWPTweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */; };
-		59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B578B01B1F07BF00E3D801 /* TWPUserList.swift */; };
 		59C0C6C323919F1200C60DAC /* SwifteriOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C0C6C223919F1200C60DAC /* SwifteriOS.framework */; };
 		59C0C6C423919F1200C60DAC /* SwifteriOS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59C0C6C223919F1200C60DAC /* SwifteriOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59CD8BBA1B3FBAC9000B2E93 /* TWPUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BB91B3FBAC8000B2E93 /* TWPUserListViewController.swift */; };
@@ -106,7 +105,6 @@
 		59B578A71B1ED17700E3D801 /* TWPUserInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewController.swift; sourceTree = "<group>"; };
 		59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewModel.swift; sourceTree = "<group>"; };
 		59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTweet.swift; sourceTree = "<group>"; };
-		59B578B01B1F07BF00E3D801 /* TWPUserList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserList.swift; sourceTree = "<group>"; };
 		59C0C6C223919F1200C60DAC /* SwifteriOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwifteriOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59CD8BB91B3FBAC8000B2E93 /* TWPUserListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserListViewController.swift; path = UserList/TWPUserListViewController.swift; sourceTree = "<group>"; };
 		59CD8BBC1B3FEB8E000B2E93 /* TWPUserListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserListViewModel.swift; path = UserList/TWPUserListViewModel.swift; sourceTree = "<group>"; };
@@ -206,7 +204,6 @@
 				591ED1231B3640A200BAB592 /* Extension */,
 				59E061A723B8E532001779DF /* Helper */,
 				598911071B4180360039E3A2 /* Segue */,
-				59B578B21B1F11DC00E3D801 /* SharedObject */,
 				595FC12B1B1BE89C0088A2EB /* ViewModel */,
 				595FC12C1B1BE8A60088A2EB /* ViewController */,
 				595FC10B1B1BE8400088A2EB /* TWPAppDelegate.swift */,
@@ -345,14 +342,6 @@
 				59B578AA1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift */,
 			);
 			path = UserInfo;
-			sourceTree = "<group>";
-		};
-		59B578B21B1F11DC00E3D801 /* SharedObject */ = {
-			isa = PBXGroup;
-			children = (
-				59B578B01B1F07BF00E3D801 /* TWPUserList.swift */,
-			);
-			path = SharedObject;
 			sourceTree = "<group>";
 		};
 		59CD8BB81B3FBA8C000B2E93 /* UserList */ = {
@@ -669,7 +658,6 @@
 				598911091B4180600039E3A2 /* TWPPushAnimationSegue.swift in Sources */,
 				59CD8BC11B401A32000B2E93 /* TWPUserListTableViewCell.swift in Sources */,
 				591ED1261B3645A300BAB592 /* UIViewController+Alert.swift in Sources */,
-				59B578B11B1F07BF00E3D801 /* TWPUserList.swift in Sources */,
 				5917020F1B1BEA5D008ADA01 /* TWPMainViewModel.swift in Sources */,
 				593318971B33E34600110701 /* TWPUserInfoViewControllerTableViewCell.swift in Sources */,
 				59DDB8DE1B3666B400C89F46 /* TWPLoginViewController.swift in Sources */,

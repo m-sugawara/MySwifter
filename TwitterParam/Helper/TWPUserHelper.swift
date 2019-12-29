@@ -67,14 +67,6 @@ class TWPUserHelper {
         return Keys.userId.storedValue()
     }
 
-    static func currentUser() -> TWPUser? {
-        guard let userId = currentUserId() else {
-            return nil
-        }
-
-        return TWPUserList.shared.findUser(by: userId)
-    }
-
     // MARK: - private
 
     private static func save(_ value: Any?, forKey key: Keys) {

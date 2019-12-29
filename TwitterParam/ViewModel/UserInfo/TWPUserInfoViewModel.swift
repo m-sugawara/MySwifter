@@ -72,8 +72,8 @@ class TWPUserInfoViewModel: NSObject {
         return SignalProducer<Void, Error> { observer, _ in
             TWPTwitterAPI.shared.getUsersShow(with: .id(self.userId)).startWithResult { result in
                 switch result {
-                case .success:
-                    self.user = TWPUserList.shared.findUser(by: self.userId)
+                case .success(let user):
+                    self.user = user
                     observer.sendCompleted()
                 case .failure(let error):
                     observer.send(error: error)
@@ -152,9 +152,7 @@ class TWPUserInfoViewModel: NSObject {
             TWPTwitterAPI.shared.postCreateFriendship(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
-                    if let user = TWPUserList.shared.findUser(by: self.userId) {
-                        self.user?.following = user.following
-                    }
+                    self.user?.following = true
                     observer.sendCompleted()
                 case .failure(let error):
                     observer.send(error: error)
@@ -171,12 +169,10 @@ class TWPUserInfoViewModel: NSObject {
                 return
             }
 
-            TWPTwitterAPI.shared.postDestroyFavorite(with: self.userId).startWithResult { result in
+            TWPTwitterAPI.shared.postDestroyFriendship(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
-                    if let user = TWPUserList.shared.findUser(by: self.userId) {
-                        self.user?.following = user.following
-                    }
+                    self.user?.following = false
                     observer.sendCompleted()
                 case .failure(let error):
                     observer.send(error: error)

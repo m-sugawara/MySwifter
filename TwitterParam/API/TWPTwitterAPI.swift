@@ -122,7 +122,6 @@ final class TWPTwitterAPI: NSObject {
                 })
                 return
             }
-            print("found valid user token")
             self.swifter.client.credential = userToken
             observer.sendCompleted()
         }

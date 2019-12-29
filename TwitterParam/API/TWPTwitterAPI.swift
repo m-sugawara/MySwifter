@@ -20,6 +20,10 @@ final class TWPTwitterAPI: NSObject {
         case failedToParseJSON = -102
         case failedToGetUserId = -103
 
+        var errorCode: Int {
+            return rawValue
+        }
+
         var message: String {
             switch self {
             case .noTwitterAccount:
@@ -135,8 +139,9 @@ final class TWPTwitterAPI: NSObject {
             self?.twitterAuthorizeWithAccount().start { event in
                 switch event {
                 case .failed(let error):
-                    if (error as NSError).code == kTWPErrorCodeNoTwitterAccount,
-                        (error as NSError).code == kTWPErrorCodeNotGrantedACAccount {
+                    let errorCode = (error as NSError).code
+                    if errorCode == APIError.noTwitterAccount.errorCode ||
+                        errorCode == APIError.notGrantedACAccount.errorCode {
                         // if try to login for using ACAccount failed, try to login with OAuth.
                         self?.twitterAuthorizeWithOAuth().start { event in
                             switch event {
@@ -162,7 +167,7 @@ final class TWPTwitterAPI: NSObject {
 
     // MARK: - Wrapper Method(User)
     func getMyUser() -> SignalProducer<Void, Error> {
-        return self.getUsersShow(with: .id(TWPUserHelper.currentUserID()!))
+        return getUsersShow(with: .id(TWPUserHelper.currentUserId()!))
     }
 
     func getUsersShow(with userTag: UserTag, includeEntities: Bool? = nil) -> SignalProducer<Void, Error> {

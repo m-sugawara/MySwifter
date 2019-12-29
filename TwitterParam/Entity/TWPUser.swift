@@ -56,7 +56,7 @@ struct TWPUser {
     }
 
     var isSelf: Bool {
-        return userId == TWPUserHelper.currentUserID()
+        return userId == TWPUserHelper.currentUserId()
     }
 
 }

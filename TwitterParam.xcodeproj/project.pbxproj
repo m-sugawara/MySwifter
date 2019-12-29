@@ -26,7 +26,6 @@
 		596E037023A674ED00A1CF75 /* TWPMainViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596E036F23A674ED00A1CF75 /* TWPMainViewModelTests.swift */; };
 		596E039323AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596E039223AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift */; };
 		596E039623AE851000A1CF75 /* TWPUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596E039523AE851000A1CF75 /* TWPUserTests.swift */; };
-		597526431B1EA7FD00419C19 /* TWPErrorCodeConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */; };
 		598911091B4180600039E3A2 /* TWPPushAnimationSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598911081B4180600039E3A2 /* TWPPushAnimationSegue.swift */; };
 		59898DB91B33FFB200273760 /* TWPTweetDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */; };
 		59898DBC1B34014600273760 /* TWPTweetDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59898DBB1B34014600273760 /* TWPTweetDetailViewModel.swift */; };
@@ -42,6 +41,7 @@
 		59CD8BC11B401A32000B2E93 /* TWPUserListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CD8BC01B401A32000B2E93 /* TWPUserListTableViewCell.swift */; };
 		59DDB8DE1B3666B400C89F46 /* TWPLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */; };
 		59DDB8E01B367A0E00C89F46 /* TWPLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB8DF1B367A0E00C89F46 /* TWPLoginViewModel.swift */; };
+		59E061A923B8E557001779DF /* TWPUserAccountType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E061A823B8E557001779DF /* TWPUserAccountType.swift */; };
 		59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */; };
 		59F3D2871B1D7F4E00B5235C /* TWPUserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */; };
 		ADE9567B114BF144825370AD /* Pods_TwitterParamTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5266D82DB7424FDA0CFE9983 /* Pods_TwitterParamTests.framework */; };
@@ -98,7 +98,6 @@
 		596E036F23A674ED00A1CF75 /* TWPMainViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPMainViewModelTests.swift; sourceTree = "<group>"; };
 		596E039223AE78F700A1CF75 /* TWPUserInfoViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPUserInfoViewModelTests.swift; sourceTree = "<group>"; };
 		596E039523AE851000A1CF75 /* TWPUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPUserTests.swift; sourceTree = "<group>"; };
-		597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPErrorCodeConst.swift; sourceTree = "<group>"; };
 		598911081B4180600039E3A2 /* TWPPushAnimationSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPPushAnimationSegue.swift; path = Segue/TWPPushAnimationSegue.swift; sourceTree = "<group>"; };
 		59898DB81B33FFB200273760 /* TWPTweetDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewController.swift; path = TweetDetail/TWPTweetDetailViewController.swift; sourceTree = "<group>"; };
 		59898DBB1B34014600273760 /* TWPTweetDetailViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPTweetDetailViewModel.swift; path = TweetDetail/TWPTweetDetailViewModel.swift; sourceTree = "<group>"; };
@@ -113,6 +112,7 @@
 		59CD8BC01B401A32000B2E93 /* TWPUserListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPUserListTableViewCell.swift; path = UserList/CustomSubviews/TWPUserListTableViewCell.swift; sourceTree = "<group>"; };
 		59DDB8DD1B3666B400C89F46 /* TWPLoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPLoginViewController.swift; path = Login/TWPLoginViewController.swift; sourceTree = "<group>"; };
 		59DDB8DF1B367A0E00C89F46 /* TWPLoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TWPLoginViewModel.swift; path = Login/TWPLoginViewModel.swift; sourceTree = "<group>"; };
+		59E061A823B8E557001779DF /* TWPUserAccountType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TWPUserAccountType.swift; sourceTree = "<group>"; };
 		59F3D27E1B1D3F6000B5235C /* TWPTwitterAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPTwitterAPI.swift; sourceTree = "<group>"; };
 		59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TWPUserHelper.swift; sourceTree = "<group>"; };
 		8CAB7C668A34CA5E3C6B9429 /* Pods-TwitterParamTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TwitterParamTests.debug.xcconfig"; path = "Target Support Files/Pods-TwitterParamTests/Pods-TwitterParamTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -199,10 +199,10 @@
 			isa = PBXGroup;
 			children = (
 				59F3D27D1B1D3F4B00B5235C /* API */,
-				59F3D2831B1D77A400B5235C /* Common */,
-				59F3D2801B1D53D900B5235C /* Entity */,
 				591299721B37F6840011EA85 /* CustomView */,
+				59F3D2801B1D53D900B5235C /* Entity */,
 				591ED1231B3640A200BAB592 /* Extension */,
+				59E061A723B8E532001779DF /* Helper */,
 				598911071B4180360039E3A2 /* Segue */,
 				59B578B21B1F11DC00E3D801 /* SharedObject */,
 				595FC12B1B1BE89C0088A2EB /* ViewModel */,
@@ -393,6 +393,14 @@
 			name = Login;
 			sourceTree = "<group>";
 		};
+		59E061A723B8E532001779DF /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
 		59F3D27D1B1D3F4B00B5235C /* API */ = {
 			isa = PBXGroup;
 			children = (
@@ -406,17 +414,9 @@
 			children = (
 				59B578AC1B1EFA6E00E3D801 /* TWPTweet.swift */,
 				59AE82731B3537250083F5FF /* TWPUser.swift */,
+				59E061A823B8E557001779DF /* TWPUserAccountType.swift */,
 			);
 			path = Entity;
-			sourceTree = "<group>";
-		};
-		59F3D2831B1D77A400B5235C /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				59F3D2861B1D7F4E00B5235C /* TWPUserHelper.swift */,
-				597526421B1EA7FD00419C19 /* TWPErrorCodeConst.swift */,
-			);
-			path = Common;
 			sourceTree = "<group>";
 		};
 		8CDC6C5FAB74826836F12A7E /* Pods */ = {
@@ -647,12 +647,12 @@
 				595FC10C1B1BE8400088A2EB /* TWPAppDelegate.swift in Sources */,
 				59B578AD1B1EFA6E00E3D801 /* TWPTweet.swift in Sources */,
 				5912996E1B37E79E0011EA85 /* String+DateHelper.swift in Sources */,
-				597526431B1EA7FD00419C19 /* TWPErrorCodeConst.swift in Sources */,
 				591702131B1C3EB0008ADA01 /* TWPMainViewControllerTableViewCell.swift in Sources */,
 				59B578AB1B1ED1FD00E3D801 /* TWPUserInfoViewModel.swift in Sources */,
 				59B578A81B1ED17700E3D801 /* TWPUserInfoViewController.swift in Sources */,
 				59CD8BBA1B3FBAC9000B2E93 /* TWPUserListViewController.swift in Sources */,
 				591299741B37F6BC0011EA85 /* TWPTextFieldView.swift in Sources */,
+				59E061A923B8E557001779DF /* TWPUserAccountType.swift in Sources */,
 				59F3D27F1B1D3F6000B5235C /* TWPTwitterAPI.swift in Sources */,
 				59DDB8E01B367A0E00C89F46 /* TWPLoginViewModel.swift in Sources */,
 				598911091B4180600039E3A2 /* TWPPushAnimationSegue.swift in Sources */,

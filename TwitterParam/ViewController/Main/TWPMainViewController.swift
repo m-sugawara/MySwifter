@@ -83,7 +83,7 @@ class TWPMainViewController: UIViewController {
         if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
             segue.identifier == "fromMainToUserInfo" {
 
-            userInfoViewController.tempUserID = TWPUserHelper.currentUserID()
+            userInfoViewController.tempUserID = TWPUserHelper.currentUserId()
 
             // bind Next ViewController's Commands
             userInfoViewController.backButtonAction = Action<Void, Void, Error> {

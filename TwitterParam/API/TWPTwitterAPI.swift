@@ -165,12 +165,12 @@ final class TWPTwitterAPI: NSObject {
     }
 
     // MARK: - Wrapper Method(User)
-    func getMyUser() -> SignalProducer<Void, Error> {
+    func getMyUser() -> SignalProducer<TWPUser, Error> {
         return getUsersShow(with: .id(TWPUserHelper.currentUserId()!))
     }
 
-    func getUsersShow(with userTag: UserTag, includeEntities: Bool? = nil) -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+    func getUsersShow(with userTag: UserTag, includeEntities: Bool? = nil) -> SignalProducer<TWPUser, Error> {
+        return SignalProducer<TWPUser, Error> { [weak self] observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
@@ -179,8 +179,8 @@ final class TWPTwitterAPI: NSObject {
                 includeEntities: includeEntities,
                 success: { json in
                     let user = TWPUser(dictionary: json.object!)
-                    TWPUserList.shared.appendUser(user)
 
+                    observer.send(value: user)
                     observer.sendCompleted()
                 }, failure: { (error) -> Void in
                     observer.send(error: error)
@@ -593,7 +593,6 @@ final class TWPTwitterAPI: NSObject {
                 .id(id),
                 follow: follow,
                 success: { _ in
-                    TWPUserList.shared.setFollowing(true, toUserId: id)
                     observer.send(value: ())
                     observer.sendCompleted()
             }, failure: { error in
@@ -611,7 +610,6 @@ final class TWPTwitterAPI: NSObject {
             self.swifter.unfollowUser(
                 .id(id),
                 success: { _ in
-                    TWPUserList.shared.setFollowing(false, toUserId: id)
                     observer.send(value: ())
                     observer.sendCompleted()
             }, failure: { error in

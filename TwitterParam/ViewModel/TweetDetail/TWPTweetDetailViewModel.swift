@@ -10,21 +10,20 @@ import ReactiveSwift
 
 class TWPTweetDetailViewModel {
 
-    var tweetId = ""
-    var tweet: TWPTweet?
+    private(set) var tweet: TWPTweet?
 
     // MARK: - Deinit
     deinit {
         print("TweetDetailViewModel deinit")
     }
 
-    func getTweetSignalProducer() -> SignalProducer<Void, Error> {
+    func getTweet(with tweetId: String) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
             }
-            TWPTwitterAPI.shared.getStatuesShow(with: self.tweetId).startWithResult { result in
+            TWPTwitterAPI.shared.getStatuesShow(with: tweetId).startWithResult { result in
                 switch result {
                 case .success(let tweet):
                     self.tweet = tweet
@@ -35,5 +34,4 @@ class TWPTweetDetailViewModel {
             }
         }
     }
-
 }

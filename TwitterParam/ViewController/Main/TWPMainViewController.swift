@@ -83,20 +83,27 @@ class TWPMainViewController: UIViewController {
         if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
             segue.identifier == "fromMainToUserInfo" {
 
-            userInfoViewController.tempUserID = TWPUserHelper.currentUserID()
+            userInfoViewController.tempUserID = TWPUserHelper.currentUserId()
 
             // bind Next ViewController's Commands
-            _ = userInfoViewController.backButtonAction.reactive.trigger(
-                for: #selector(UIViewController.dismiss(animated:completion:)))
-
+            userInfoViewController.backButtonAction = Action<Void, Void, Error> {
+                return SignalProducer { observer, _ in
+                    userInfoViewController.dismiss(animated: true, completion: nil)
+                    observer.sendCompleted()
+                }
+            }
         } else if let tweetDetailViewController = segue.destination as? TWPTweetDetailViewController,
             let tweetId = model.selectingTweet?.tweetId,
             segue.identifier == "fromMainToTweetDetail" {
             tweetDetailViewController.tempTweetID = tweetId
 
             // bind Next ViewController's Commands
-            _ = tweetDetailViewController.backButton.reactive.trigger(
-                for: #selector(UIViewController.dismiss(animated:completion:)))
+            tweetDetailViewController.backButtonAction = Action<Void, Void, Error> {
+                return SignalProducer { observer, _ in
+                    tweetDetailViewController.dismiss(animated: true, completion: nil)
+                    observer.sendCompleted()
+                }
+            }
         }
     }
 

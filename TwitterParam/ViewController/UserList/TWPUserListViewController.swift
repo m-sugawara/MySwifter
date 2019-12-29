@@ -18,7 +18,7 @@ class TWPUserListViewController: UIViewController {
 
     // use move from userInfo etc
     var tempUserID: String?
-    var backButtonAction: CocoaAction<UIButton>?
+    var backButtonAction: Action<Void, Void, Error>?
     // use move to userInfo
     var selectedUserID: String?
 
@@ -31,7 +31,7 @@ class TWPUserListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        bindCommands()
+        bindActions()
 
         // first, get follow/follower list
         startLoading()
@@ -57,29 +57,31 @@ class TWPUserListViewController: UIViewController {
             userInfoViewController.tempUserID = self.selectedUserID
 
             // bind Next ViewController's Commands
-            userInfoViewController.backButtonAction = CocoaAction(Action<Void, Void, Error> {
-                return SignalProducer<Void, Error> { [weak self] observer, _ in
-                    self?.dismiss(animated: true, completion: nil)
+            userInfoViewController.backButtonAction = Action<Void, Void, Error> {
+                return SignalProducer<Void, Error> { observer, _ in
+                    userInfoViewController.dismiss(animated: true, completion: nil)
                     observer.sendCompleted()
                 }
-            })
+            }
         }
     }
 
     // MARK: - Private Methods
     func startLoading() {
-        self.loadingView.isHidden = false
-        self.activityIndicatorView.startAnimating()
+        loadingView.isHidden = false
+        activityIndicatorView.startAnimating()
     }
 
     func stopLoading() {
-        self.loadingView.isHidden = true
-        self.activityIndicatorView.stopAnimating()
+        loadingView.isHidden = true
+        activityIndicatorView.stopAnimating()
     }
 
     // MARK: - Binding
-    func bindCommands() {
-        self.backButton.reactive.pressed = backButtonAction
+    private func bindActions() {
+        if let backButtonAction = backButtonAction {
+            backButton.reactive.pressed = CocoaAction(backButtonAction)
+        }
     }
 }
 

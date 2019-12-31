@@ -11,7 +11,7 @@ import ReactiveCocoa
 
 class TWPLoginViewController: UIViewController {
 
-    private lazy var model = TWPLoginViewModel(viewController: self)
+    private let model = TWPLoginViewModel()
 
     @IBOutlet private weak var contentView: UIView!
     @IBOutlet private weak var loginButon: UIButton!
@@ -44,15 +44,23 @@ class TWPLoginViewController: UIViewController {
         )
     }
 
-    func showAlert(withError error: NSError) {
+    func showAlert(withError error: TWPLoginViewModel.LoginViewModelError) {
         showAlert(
             with: "ERROR!",
-            message: "\(error.localizedDescription)"
+            message: "\(error.message)"
         )
     }
 
     // MARK: - Binding
     private func bindSignals() {
+        model.loginSignal.observeValues { [weak self] successToLogin in
+            if successToLogin {
+                self?.showAlert()
+            } else {
+                self?.showAlert(withError: .failedToLogin)
+            }
+        }
+
         loginButon.reactive.pressed = CocoaAction(model.loginAction)
     }
 

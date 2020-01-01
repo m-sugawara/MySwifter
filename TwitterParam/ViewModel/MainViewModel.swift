@@ -1,5 +1,5 @@
 //
-//  TWPMainViewModel.swift
+//  MainViewModel.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/01.
@@ -11,7 +11,7 @@ import Foundation
 import ReactiveCocoa
 import ReactiveSwift
 
-class TWPMainViewModel {
+class MainViewModel {
 
     enum MainViewModelError: Error {
         case interrupted
@@ -25,11 +25,11 @@ class TWPMainViewModel {
     }
 
     dynamic var tapCount: NSInteger = 0
-    dynamic var tweets: [TWPTweet] = [TWPTweet]()
+    dynamic var tweets: [Tweet] = [Tweet]()
 
     var inputtingTweet = MutableProperty<String>("")
     var selectingIndex: Int?
-    var selectingTweet: TWPTweet? {
+    var selectingTweet: Tweet? {
         guard let index = selectingIndex,
             tweets.count > index else { return nil }
         return tweets[index]
@@ -44,14 +44,14 @@ class TWPMainViewModel {
     // MARK: - OAuth
     var oauthButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> { _ -> SignalProducer<Void, Error> in
-            return TWPTwitterAPI.shared.twitterAuthorizeWithOAuth()
+            return TwitterAPI.shared.twitterAuthorizeWithOAuth()
         }
     }
 
     // MARK: - Account
     var accountButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> { _ in
-            return TWPTwitterAPI.shared.twitterAuthorizeWithAccount()
+            return TwitterAPI.shared.twitterAuthorizeWithAccount()
         }
     }
 
@@ -69,7 +69,7 @@ class TWPMainViewModel {
                 observer.sendInterrupted()
                 return
             }
-            TWPTwitterAPI.shared.getStatusesHomeTimeline().startWithResult { result in
+            TwitterAPI.shared.getStatusesHomeTimeline().startWithResult { result in
                 switch result {
                 case .success(let tweets):
                     self.tweets = tweets
@@ -94,7 +94,7 @@ class TWPMainViewModel {
                 if let index = self.selectingIndex, index < self.tweets.count {
                     isReplyToStatusID = self.tweets[index].tweetId
                 }
-                TWPTwitterAPI.shared.postStatusUpdate(
+                TwitterAPI.shared.postStatusUpdate(
                     status: self.inputtingTweet.value,
                     inReplyToStatusID: isReplyToStatusID
                 ).startWithResult { result in
@@ -128,7 +128,7 @@ class TWPMainViewModel {
 
             // if selected tweet hasn't been retweeted yet, try to retweet
             if tweet.retweeted != true {
-                TWPTwitterAPI.shared.postStatusRetweet(
+                TwitterAPI.shared.postStatusRetweet(
                     with: tweet.tweetId, trimUser: false).startWithResult { result in
                     switch result {
                     case .success:
@@ -139,11 +139,11 @@ class TWPMainViewModel {
                     }
                 }
             } else {
-                TWPTwitterAPI.shared.getCurrentUserRetweetId(
+                TwitterAPI.shared.getCurrentUserRetweetId(
                     with: tweet.tweetId).startWithResult { result in
                     switch result {
                     case .success(let retweetId):
-                        TWPTwitterAPI.shared.postStatusesDestroy(
+                        TwitterAPI.shared.postStatusesDestroy(
                             with: retweetId,
                             trimUser: false
                         ).startWithResult { result in
@@ -196,7 +196,7 @@ class TWPMainViewModel {
             let tweet = self.tweets[index]
 
             if tweet.favorited != true {
-                TWPTwitterAPI.shared.postCreateFavorite(
+                TwitterAPI.shared.postCreateFavorite(
                     with: tweet.tweetId,
                     includeEntities: false
                 ).startWithResult { result in
@@ -209,7 +209,7 @@ class TWPMainViewModel {
                     }
                 }
             } else {
-                TWPTwitterAPI.shared.postDestroyFavorite(
+                TwitterAPI.shared.postDestroyFavorite(
                     with: tweet.tweetId,
                     includeEntities: false
                 ).startWithResult { result in

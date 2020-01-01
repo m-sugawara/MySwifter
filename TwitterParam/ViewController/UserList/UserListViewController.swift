@@ -1,5 +1,5 @@
 //
-//  TWPUserListViewController.swift
+//  UserListViewController.swift
 //  TwitterParam
 //
 //  Created by M_Sugawara on 2015/06/28.
@@ -12,9 +12,9 @@ import ReactiveCocoa
 import ReactiveSwift
 import SDWebImage
 
-class TWPUserListViewController: UIViewController {
+class UserListViewController: UIViewController {
 
-    private let model = TWPUserListViewModel()
+    private let model = UserListViewModel()
 
     // use move from userInfo etc
     var tempUserID: String?
@@ -51,7 +51,7 @@ class TWPUserListViewController: UIViewController {
         super.prepare(for: segue, sender: sender)
 
         // UserInfoViewController
-        if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
+        if let userInfoViewController = segue.destination as? UserInfoViewController,
             segue.identifier == "fromUserListToUserInfo" {
 
             userInfoViewController.tempUserID = self.selectedUserID
@@ -85,11 +85,11 @@ class TWPUserListViewController: UIViewController {
     }
 }
 
-extension TWPUserListViewController: UITableViewDataSource {
+extension UserListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: "Cell") as? TWPUserListTableViewCell else {
+            withIdentifier: "Cell") as? UserListTableViewCell else {
             fatalError()
         }
 
@@ -104,10 +104,10 @@ extension TWPUserListViewController: UITableViewDataSource {
     }
 }
 
-extension TWPUserListViewController: UITableViewDelegate {
+extension UserListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return TWPUserListTableViewCell.itemHeight
+        return UserListTableViewCell.itemHeight
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

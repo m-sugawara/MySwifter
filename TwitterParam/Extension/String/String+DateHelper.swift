@@ -1,5 +1,5 @@
 //
-//  String+TWPHelper.swift
+//  String+Helper.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/22.

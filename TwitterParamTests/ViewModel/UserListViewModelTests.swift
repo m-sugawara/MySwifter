@@ -1,5 +1,5 @@
 //
-//  TWPUserListViewModelTests.swift
+//  UserListViewModelTests.swift
 //  TwitterParamTests
 //
 //  Created by M_Sugawara on 2019/12/28.
@@ -10,12 +10,12 @@ import XCTest
 
 @testable import TwitterParam
 
-class TWPUserListViewModelTests: XCTestCase {
+class UserListViewModelTests: XCTestCase {
 
-    private var viewModel: TWPUserListViewModel!
+    private var viewModel: UserListViewModel!
 
     override func setUp() {
-        viewModel = TWPUserListViewModel()
+        viewModel = UserListViewModel()
     }
 
     override func tearDown() {

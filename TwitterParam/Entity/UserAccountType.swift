@@ -1,5 +1,5 @@
 //
-//  TWPUserAccountType.swift
+//  UserAccountType.swift
 //  TwitterParam
 //
 //  Created by M_Sugawara on 2019/12/29.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum TWPUserAccountType {
+enum UserAccountType {
     case oAuth
     case acAccount
 }

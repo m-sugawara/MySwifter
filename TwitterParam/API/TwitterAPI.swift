@@ -12,7 +12,7 @@ import Accounts
 import SwifteriOS
 import ReactiveSwift
 
-final class TWPTwitterAPI: NSObject {
+final class TwitterAPI: NSObject {
 
     enum APIError: Int, Error {
         case noTwitterAccount = -100
@@ -43,7 +43,7 @@ final class TWPTwitterAPI: NSObject {
     private var swifter: Swifter
 
     // MARK: - Singleton
-    static let shared = TWPTwitterAPI()
+    static let shared = TwitterAPI()
 
     // MARK: - Initializer
     private override init() {
@@ -95,7 +95,7 @@ final class TWPTwitterAPI: NSObject {
                 self.swifter = Swifter(account: twitterAccount)
 
                 // Save User's AccessToken
-                _ = TWPUserHelper.saveUserAccount(account: twitterAccount)
+                _ = UserHelper.saveUserAccount(account: twitterAccount)
 
                 observer.sendCompleted()
             }
@@ -109,11 +109,11 @@ final class TWPTwitterAPI: NSObject {
                 observer.sendInterrupted()
                 return
             }
-            guard let userToken = TWPUserHelper.fetchUserToken() else {
+            guard let userToken = UserHelper.fetchUserToken() else {
                 // Nothing AccessToken
                 self.swifter.authorize(withCallback: URL(string: "tekitou://success")!, presentingFrom: nil,
                     success: { accessToken, _ -> Void in
-                        _ = TWPUserHelper.saveUserToken(data: accessToken!)
+                        _ = UserHelper.saveUserToken(data: accessToken!)
                         observer.sendCompleted()
                     },
                     failure: { (error) -> Void in
@@ -129,7 +129,7 @@ final class TWPTwitterAPI: NSObject {
 
     // MARK: - Logout
     func logout() {
-        _ = TWPUserHelper.removeUserToken()
+        _ = UserHelper.removeUserToken()
     }
 
     // MARK: - Wrapper Method(Login)
@@ -165,12 +165,12 @@ final class TWPTwitterAPI: NSObject {
     }
 
     // MARK: - Wrapper Method(User)
-    func getMyUser() -> SignalProducer<TWPUser, Error> {
-        return getUsersShow(with: .id(TWPUserHelper.currentUserId()!))
+    func getMyUser() -> SignalProducer<User, Error> {
+        return getUsersShow(with: .id(UserHelper.currentUserId()!))
     }
 
-    func getUsersShow(with userTag: UserTag, includeEntities: Bool? = nil) -> SignalProducer<TWPUser, Error> {
-        return SignalProducer<TWPUser, Error> { [weak self] observer, lifetime in
+    func getUsersShow(with userTag: UserTag, includeEntities: Bool? = nil) -> SignalProducer<User, Error> {
+        return SignalProducer<User, Error> { [weak self] observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
@@ -178,7 +178,7 @@ final class TWPTwitterAPI: NSObject {
             self?.swifter.showUser(userTag,
                 includeEntities: includeEntities,
                 success: { json in
-                    let user = TWPUser(dictionary: json.object!)
+                    let user = User(dictionary: json.object!)
 
                     observer.send(value: user)
                     observer.sendCompleted()
@@ -194,8 +194,8 @@ final class TWPTwitterAPI: NSObject {
         count: Int? = nil,
         skipStatus: Bool? = nil,
         includeUserEntities: Bool? = nil
-    ) -> SignalProducer<[TWPUser], Error> {
-        return SignalProducer<[TWPUser], Error> { observer, lifetime in
+    ) -> SignalProducer<[User], Error> {
+        return SignalProducer<[User], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
@@ -205,9 +205,9 @@ final class TWPTwitterAPI: NSObject {
                 cursor: cursor,
                 count: count,
                 success: { json, _, _ in
-                    var resultUsers: [TWPUser] = []
+                    var resultUsers: [User] = []
                     for userJSON in json.array! {
-                        let resultUser = TWPUser(dictionary: userJSON.object!)
+                        let resultUser = User(dictionary: userJSON.object!)
                         resultUsers.append(resultUser)
                     }
                     observer.send(value: resultUsers)
@@ -224,8 +224,8 @@ final class TWPTwitterAPI: NSObject {
         count: Int? = nil,
         skipStatus: Bool? = nil,
         includeUserEntities: Bool? = nil
-    ) -> SignalProducer<[TWPUser], Error> {
-        return SignalProducer<[TWPUser], Error> { observer, lifetime in
+    ) -> SignalProducer<[User], Error> {
+        return SignalProducer<[User], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
@@ -235,9 +235,9 @@ final class TWPTwitterAPI: NSObject {
                 cursor: cursor,
                 count: count,
                 success: { json, _, _ in
-                    var resultUsers: [TWPUser] = []
+                    var resultUsers: [User] = []
                     for userJSON in json.array! {
-                        let resultUser = TWPUser(dictionary: userJSON.object!)
+                        let resultUser = User(dictionary: userJSON.object!)
                         resultUsers.append(resultUser)
                     }
                     observer.send(value: resultUsers)
@@ -257,9 +257,9 @@ final class TWPTwitterAPI: NSObject {
         contributorDetails: Bool? = nil,
         includeEntities: Bool? = nil,
         tweetMode: TweetMode = .default
-    ) -> SignalProducer<[TWPTweet], Error> {
+    ) -> SignalProducer<[Tweet], Error> {
 
-        return SignalProducer<[TWPTweet], Error> { observer, lifetime in
+        return SignalProducer<[Tweet], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
@@ -299,9 +299,9 @@ final class TWPTwitterAPI: NSObject {
         contributorDetails: Bool? = nil,
         includeEntities: Bool? = nil,
         tweetMode: TweetMode = .default
-    ) -> SignalProducer<[TWPTweet], Error> {
+    ) -> SignalProducer<[Tweet], Error> {
 
-        return SignalProducer<[TWPTweet], Error> { observer, lifetime in
+        return SignalProducer<[Tweet], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
@@ -333,11 +333,11 @@ final class TWPTwitterAPI: NSObject {
         }
     }
 
-    private func parseTweets(from json: JSON) -> [TWPTweet]? {
+    private func parseTweets(from json: JSON) -> [Tweet]? {
         guard let statuses = json.array else {
             return nil
         }
-        var tweets = [TWPTweet]()
+        var tweets = [Tweet]()
         statuses.forEach {
             guard let tweet = parseTweet(from: $0) else { return }
             tweets.append(tweet)
@@ -345,12 +345,12 @@ final class TWPTwitterAPI: NSObject {
         return tweets
     }
 
-    private func parseTweet(from json: JSON) -> TWPTweet? {
+    private func parseTweet(from json: JSON) -> Tweet? {
         guard let userDictionary = json["user"].object else {
             return nil
         }
-        let user = TWPUser(dictionary: userDictionary)
-        return TWPTweet(status: json, user: user)
+        let user = User(dictionary: userDictionary)
+        return Tweet(status: json, user: user)
     }
 
     // MARK: - Wrapper Method(Tweet)
@@ -400,9 +400,9 @@ final class TWPTwitterAPI: NSObject {
         includeEntities: Bool? = nil,
         includeExtAltText: Bool? = nil,
         tweetMode: TweetMode = .default
-    ) -> SignalProducer<TWPTweet, Error> {
+    ) -> SignalProducer<Tweet, Error> {
 
-        return SignalProducer<TWPTweet, Error> { observer, lifetime in
+        return SignalProducer<Tweet, Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
@@ -507,9 +507,9 @@ final class TWPTwitterAPI: NSObject {
         sinceID: String? = nil,
         maxID: String? = nil,
         tweetMode: TweetMode = .default
-    ) -> SignalProducer<[TWPTweet], Error> {
+    ) -> SignalProducer<[Tweet], Error> {
 
-        return SignalProducer<[TWPTweet], Error> { observer, lifetime in
+        return SignalProducer<[Tweet], Error> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return

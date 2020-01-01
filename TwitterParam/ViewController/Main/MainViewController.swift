@@ -13,21 +13,21 @@ import ReactiveSwift
 import TTTAttributedLabel
 import UITextFieldWithLimit
 
-let kTWPMainTableViewCellIdentifier = "MainTableViewCell"
+let kMainTableViewCellIdentifier = "MainTableViewCell"
 let kTextFieldMaxLength = 140
 let kTextFieldMarginWidth: CGFloat = 20.0
 let kTextFieldMarginHeight: CGFloat = 20.0
 
-enum TWPMainTableViewButtonType: Int {
+enum MainTableViewButtonType: Int {
     case reply = 1
     case retweet
     case favorite
 }
 
-class TWPMainViewController: UIViewController {
+class MainViewController: UIViewController {
 
-    private let model = TWPMainViewModel()
-    private var textFieldView: TWPTextFieldView?
+    private let model = MainViewModel()
+    private var textFieldView: TextFieldView?
 
     private var scrollBeginingPoint: CGPoint!
     private var isShowFooterView = true
@@ -80,10 +80,10 @@ class TWPMainViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
 
-        if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
+        if let userInfoViewController = segue.destination as? UserInfoViewController,
             segue.identifier == "fromMainToUserInfo" {
 
-            userInfoViewController.tempUserID = TWPUserHelper.currentUserId()
+            userInfoViewController.tempUserID = UserHelper.currentUserId()
 
             // bind Next ViewController's Commands
             userInfoViewController.backButtonAction = Action<Void, Void, Error> {
@@ -92,7 +92,7 @@ class TWPMainViewController: UIViewController {
                     observer.sendCompleted()
                 }
             }
-        } else if let tweetDetailViewController = segue.destination as? TWPTweetDetailViewController,
+        } else if let tweetDetailViewController = segue.destination as? TweetDetailViewController,
             let tweetId = model.selectingTweet?.tweetId,
             segue.identifier == "fromMainToTweetDetail" {
             tweetDetailViewController.tempTweetID = tweetId
@@ -142,7 +142,7 @@ class TWPMainViewController: UIViewController {
     }
 
     func configureViews() {
-        textFieldView = TWPTextFieldView.view(
+        textFieldView = TextFieldView.view(
             withMaxLength: kTextFieldMaxLength,
             delegate: self
         )
@@ -152,7 +152,7 @@ class TWPMainViewController: UIViewController {
 
     @objc func showTextFieldView(withScreenName screenName:String?) {
         for view in view.subviews {
-            if view is TWPTextFieldView {
+            if view is TextFieldView {
                 continue
             }
             view.isUserInteractionEnabled = false
@@ -171,7 +171,7 @@ class TWPMainViewController: UIViewController {
 
     func hideTextFieldView() {
         for view in view.subviews {
-            if view is TWPTextFieldView {
+            if view is TextFieldView {
                 continue
             }
             view.isUserInteractionEnabled = true
@@ -241,7 +241,7 @@ class TWPMainViewController: UIViewController {
                 }
                 let yesAction: (UIAlertAction?) -> Void = { [weak self] action in
                     // if selected YES, try to logout and dismissViewController
-                    TWPTwitterAPI.shared.logout()
+                    TwitterAPI.shared.logout()
                     observer.sendCompleted()
                     self?.dismiss(animated: true, completion: nil)
                 }
@@ -256,7 +256,7 @@ class TWPMainViewController: UIViewController {
             }
         })
 
-        // TWPTextFieldView Commands
+        // TextFieldView Commands
         textFieldView?.cancelButton.reactive.pressed = CocoaAction(
             Action(execute: { _ -> SignalProducer<Void, Error> in
             return SignalProducer<Void, Error> { observer, _ in
@@ -280,7 +280,7 @@ class TWPMainViewController: UIViewController {
         // set selecting Index to ViewModel
         model.selectingIndex = indexPath.row
 
-        let type = TWPMainTableViewButtonType(rawValue: sender.tag)!
+        let type = MainTableViewButtonType(rawValue: sender.tag)!
         switch type {
         case .reply:
             showTextFieldView(withScreenName: model.selectingTweet?.user?.screenName)
@@ -309,15 +309,15 @@ class TWPMainViewController: UIViewController {
     }
 }
 
-extension TWPMainViewController: UITableViewDataSource {
+extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return model.tweets.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: kTWPMainTableViewCellIdentifier
-            ) as? TWPMainViewControllerTableViewCell else {
+            withIdentifier: kMainTableViewCellIdentifier
+            ) as? MainViewControllerTableViewCell else {
             fatalError()
         }
 
@@ -325,21 +325,21 @@ extension TWPMainViewController: UITableViewDataSource {
         cell.apply(withTweet: tweet)
 
         // set Cell Actions
-        cell.replyButton.tag = TWPMainTableViewButtonType.reply.rawValue
+        cell.replyButton.tag = MainTableViewButtonType.reply.rawValue
         cell.replyButton.addTarget(
             self,
             action: #selector(tableViewButtonsTouch(sender:event:)),
             for: .touchUpInside
         )
 
-        cell.retweetButton.tag = TWPMainTableViewButtonType.retweet.rawValue
+        cell.retweetButton.tag = MainTableViewButtonType.retweet.rawValue
         cell.retweetButton.addTarget(
             self,
             action: #selector(tableViewButtonsTouch(sender:event:)),
             for: .touchUpInside
         )
 
-        cell.favoriteButton.tag = TWPMainTableViewButtonType.favorite.rawValue
+        cell.favoriteButton.tag = MainTableViewButtonType.favorite.rawValue
         cell.favoriteButton.addTarget(
             self,
             action: #selector(tableViewButtonsTouch(sender:event:)),
@@ -355,7 +355,7 @@ extension TWPMainViewController: UITableViewDataSource {
 
 }
 
-extension TWPMainViewController: UITableViewDelegate {
+extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         model.selectingIndex = indexPath.row
         tableView.deselectRow(at: indexPath, animated: true)
@@ -363,7 +363,7 @@ extension TWPMainViewController: UITableViewDelegate {
     }
 }
 
-extension TWPMainViewController: UIScrollViewDelegate {
+extension MainViewController: UIScrollViewDelegate {
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         scrollBeginingPoint = scrollView.contentOffset
@@ -399,10 +399,10 @@ extension TWPMainViewController: UIScrollViewDelegate {
         }
     }
 }
-extension TWPMainViewController: UITextFieldWithLimitDelegate {
+extension MainViewController: UITextFieldWithLimitDelegate {
 
 }
-extension TWPMainViewController: TTTAttributedLabelDelegate {
+extension MainViewController: TTTAttributedLabelDelegate {
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         UIApplication.shared.open(url)
     }

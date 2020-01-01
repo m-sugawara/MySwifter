@@ -1,5 +1,5 @@
 //
-//  TWPLoginViewController.swift
+//  LoginViewController.swift
 //  TwitterParam
 //
 //  Created by M_Sugawara on 2015/06/21.
@@ -9,9 +9,9 @@
 import UIKit
 import ReactiveCocoa
 
-class TWPLoginViewController: UIViewController {
+class LoginViewController: UIViewController {
 
-    private let model = TWPLoginViewModel()
+    private let model = LoginViewModel()
 
     @IBOutlet private weak var contentView: UIView!
     @IBOutlet private weak var loginButon: UIButton!
@@ -42,7 +42,7 @@ class TWPLoginViewController: UIViewController {
                                 message: "Login Success",
                                 cancelButtonTitle: "OK",
                     cancelTappedAction: { [weak self] _ in
-                        let mainViewController = TWPMainViewController.makeInstance()
+                        let mainViewController = MainViewController.makeInstance()
                         self?.present(mainViewController, animated: true, completion: nil)
                 })
             case .failed(let error):

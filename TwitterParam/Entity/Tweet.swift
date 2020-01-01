@@ -1,5 +1,5 @@
 //
-//  TWPTweet.swift
+//  Tweet.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/02.
@@ -9,10 +9,10 @@
 import UIKit
 import SwifteriOS
 
-struct TWPTweet {
+struct Tweet {
     let tweetId: String
     let text: String?
-    let user: TWPUser?
+    let user: User?
     var retweeted: Bool
     var retweetCount: Int
     var favorited: Bool
@@ -22,7 +22,7 @@ struct TWPTweet {
     init(
         tweetId: String,
         text: String?,
-        user: TWPUser?,
+        user: User?,
         retweeted: Bool = false,
         retweetCount: Int = 0,
         favorited: Bool = false,
@@ -39,7 +39,7 @@ struct TWPTweet {
         self.createdAt = createdAt
     }
 
-    init(status: JSON, user: TWPUser?) {
+    init(status: JSON, user: User?) {
         self.init(
             tweetId: status["id_str"].string ?? "",
             text: status["text"].string,
@@ -52,7 +52,7 @@ struct TWPTweet {
         )
     }
 
-    init(dictionary: [String: JSON], user: TWPUser?) {
+    init(dictionary: [String: JSON], user: User?) {
         self.init(
             tweetId: dictionary["id_str"]!.string ?? "",
             text: dictionary["text"]!.string,

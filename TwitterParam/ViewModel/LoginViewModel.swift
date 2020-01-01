@@ -1,5 +1,5 @@
 //
-//  TWPLoginViewModel.swift
+//  LoginViewModel.swift
 //  TwitterParam
 //
 //  Created by M_Sugawara on 2015/06/21.
@@ -9,7 +9,7 @@
 import UIKit
 import ReactiveSwift
 
-class TWPLoginViewModel {
+class LoginViewModel {
 
     struct LoginError: Error {
         var message: String {
@@ -47,7 +47,7 @@ class TWPLoginViewModel {
     private var tryToLogin: () -> SignalProducer<Void, Error> {
         return {
             return SignalProducer { observer, _ in
-                TWPTwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
+                TwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
                     switch result {
                     case .success:
                         self?.statusObserver.send(value: .logined)

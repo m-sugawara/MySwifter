@@ -1,5 +1,5 @@
 //
-//  TWPUserInfoViewModel.swift
+//  UserInfoViewModel.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/03.
@@ -10,7 +10,7 @@ import UIKit
 
 import ReactiveSwift
 
-class TWPUserInfoViewModel: NSObject {
+class UserInfoViewModel: NSObject {
 
     enum UserInfoViewModelError: Error {
         case interrupted
@@ -24,11 +24,11 @@ class TWPUserInfoViewModel: NSObject {
     }
 
     var userId: String = ""
-    var user: TWPUser?
+    var user: User?
 
-    var favoriteList: [TWPTweet]?
+    var favoriteList: [Tweet]?
 
-    private(set) var tweets: [TWPTweet] = []
+    private(set) var tweets: [Tweet] = []
 
     // MARK: - Initializer
     override init() {
@@ -70,7 +70,7 @@ class TWPUserInfoViewModel: NSObject {
     // MARK: UserInfo
     func getUserInfo() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            TWPTwitterAPI.shared.getUsersShow(with: .id(self.userId)).startWithResult { result in
+            TwitterAPI.shared.getUsersShow(with: .id(self.userId)).startWithResult { result in
                 switch result {
                 case .success(let user):
                     self.user = user
@@ -85,7 +85,7 @@ class TWPUserInfoViewModel: NSObject {
     // MARK: Timeline
     func getUserTimeline() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            TWPTwitterAPI.shared.getStatusesHomeTimeline(count: 20).startWithResult { result in
+            TwitterAPI.shared.getStatusesHomeTimeline(count: 20).startWithResult { result in
                 switch result {
                 case .success(let tweets):
                     self.tweets = tweets
@@ -101,7 +101,7 @@ class TWPUserInfoViewModel: NSObject {
     func getUserImageList() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
             Thread.sleep(forTimeInterval: 0.5)
-            let dummy = TWPTweet(
+            let dummy = Tweet(
                 tweetId: "",
                 text: "not implemented",
                 user: self.user)
@@ -120,7 +120,7 @@ class TWPUserInfoViewModel: NSObject {
                 self.tweets = favoriteList
                 observer.sendCompleted()
             } else {
-                TWPTwitterAPI.shared.getFavoritesList(
+                TwitterAPI.shared.getFavoritesList(
                     with: self.userId,
                     count: 20
                 ).startWithResult { result in
@@ -149,7 +149,7 @@ class TWPUserInfoViewModel: NSObject {
                 observer.sendInterrupted()
                 return
             }
-            TWPTwitterAPI.shared.postCreateFriendship(with: self.userId).startWithResult { result in
+            TwitterAPI.shared.postCreateFriendship(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
                     self.user?.following = true
@@ -169,7 +169,7 @@ class TWPUserInfoViewModel: NSObject {
                 return
             }
 
-            TWPTwitterAPI.shared.postDestroyFriendship(with: self.userId).startWithResult { result in
+            TwitterAPI.shared.postDestroyFriendship(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
                     self.user?.following = false

@@ -1,5 +1,5 @@
 //
-//  TWPUserInfoViewControllerTableViewCell.swift
+//  UserInfoViewControllerTableViewCell.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/19.
@@ -10,7 +10,7 @@ import UIKit
 
 import TTTAttributedLabel
 
-class TWPUserInfoViewControllerTableViewCell: UITableViewCell {
+class UserInfoViewControllerTableViewCell: UITableViewCell {
 
     static let identifier = "UserInfoTableViewCell"
     static let itemHeight: CGFloat = 60.0
@@ -18,7 +18,7 @@ class TWPUserInfoViewControllerTableViewCell: UITableViewCell {
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var tweetTextLabel: TTTAttributedLabel!
 
-    func apply(withTweet tweet: TWPTweet) {
+    func apply(withTweet tweet: Tweet) {
         iconImageView.sd_setImage(
             with: tweet.user?.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),

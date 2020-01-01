@@ -1,5 +1,5 @@
 //
-//  TWPPushAnimationSegue.swift
+//  PushAnimationSegue.swift
 //  TwitterParam
 //
 //  Created by M_Sugawara on 2015/06/29.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TWPPushAnimationSegue: UIStoryboardSegue {
+class PushAnimationSegue: UIStoryboardSegue {
     override func perform() {
         let destinationViewController: UIViewController = self.destination
         let sourceViewController: UIViewController = self.source

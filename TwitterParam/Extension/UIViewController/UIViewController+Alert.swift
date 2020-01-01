@@ -1,5 +1,5 @@
 //
-//  UIViewController+TWPHelper.swift
+//  UIViewController+Helper.swift
 //  TwitterParam
 //
 //  Created by M_Sugawara on 2015/06/21.

@@ -1,5 +1,5 @@
 //
-//  TWPUserListTableViewCell.swift
+//  UserListTableViewCell.swift
 //  TwitterParam
 //
 //  Created by M_Sugawara on 2015/06/28.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TWPUserListTableViewCell: UITableViewCell {
+class UserListTableViewCell: UITableViewCell {
 
     static let itemHeight: CGFloat = 70
 
@@ -23,7 +23,7 @@ class TWPUserListTableViewCell: UITableViewCell {
         userImageView.image = nil
     }
 
-    func apply(with user: TWPUser?) {
+    func apply(with user: User?) {
         guard let user = user else { return }
         nameLabel.text = user.name
         screenNameLabel.text = user.screenNameWithAt

@@ -1,5 +1,5 @@
 //
-//  TWPUserHelper.swift
+//  UserHelper.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/02.
@@ -11,7 +11,7 @@ import Accounts
 
 import SwifteriOS
 
-class TWPUserHelper {
+class UserHelper {
 
     enum Keys: String, CaseIterable {
         case accountType
@@ -27,7 +27,7 @@ class TWPUserHelper {
     }
 
     static func saveUserToken(data: Credential.OAuthAccessToken) {
-        save(TWPUserAccountType.oAuth.hashValue, forKey: .accountType)
+        save(UserAccountType.oAuth.hashValue, forKey: .accountType)
         save(data.key, forKey: .token)
         save(data.secret, forKey: .secret)
         save(data.screenName, forKey: .screenName)
@@ -37,7 +37,7 @@ class TWPUserHelper {
 
     static func saveUserAccount(account: ACAccount) -> Bool {
         guard let userId = account.value(forKeyPath: "properties.user_id") as? String else { return false }
-        save(TWPUserAccountType.acAccount.hashValue, forKey: .accountType)
+        save(UserAccountType.acAccount.hashValue, forKey: .accountType)
         save(nil, forKey: .token)
         save(nil, forKey: .secret)
         save(account.username, forKey: .screenName)

@@ -10,7 +10,7 @@ import UIKit
 import SwifteriOS
 
 @UIApplicationMain
-class TWPAppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 

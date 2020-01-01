@@ -1,5 +1,5 @@
 //
-//  TWPMainViewControllerTableViewCell.swift
+//  MainViewControllerTableViewCell.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/01.
@@ -11,7 +11,7 @@ import UIKit
 import TTTAttributedLabel
 import SDWebImage
 
-class TWPMainViewControllerTableViewCell: UITableViewCell {
+class MainViewControllerTableViewCell: UITableViewCell {
     @IBOutlet private weak var iconImageView: UIImageView!
     @IBOutlet private weak var tweetTextLabel: TTTAttributedLabel!
     @IBOutlet private weak var userNameLabel: UILabel!
@@ -33,7 +33,7 @@ class TWPMainViewControllerTableViewCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
 
-    func apply(withTweet tweet: TWPTweet) {
+    func apply(withTweet tweet: Tweet) {
         iconImageView.sd_setImage(
             with: tweet.user!.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),

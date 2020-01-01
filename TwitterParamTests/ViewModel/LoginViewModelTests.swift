@@ -1,5 +1,5 @@
 //
-//  TWPLoginViewModelTests.swift
+//  LoginViewModelTests.swift
 //  TwitterParamTests
 //
 //  Created by M_Sugawara on 2020/01/01.
@@ -10,12 +10,12 @@ import XCTest
 
 @testable import TwitterParam
 
-class TWPLoginViewModelTests: XCTestCase {
+class LoginViewModelTests: XCTestCase {
 
-    private var viewModel: TWPLoginViewModel!
+    private var viewModel: LoginViewModel!
 
     override func setUp() {
-        viewModel = TWPLoginViewModel()
+        viewModel = LoginViewModel()
     }
 
     override func tearDown() {
@@ -36,7 +36,7 @@ class TWPLoginViewModelTests: XCTestCase {
             case .failed(let error):
                 XCTAssertNotNil(error)
 
-                let expected = TWPLoginViewModel.LoginError().message
+                let expected = LoginViewModel.LoginError().message
                 XCTAssertEqual(expected, error.message)
                 expectation.fulfill()
             }

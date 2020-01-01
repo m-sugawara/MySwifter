@@ -1,5 +1,5 @@
 //
-//  TWPTweetDetailViewController.swift
+//  TweetDetailViewController.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/19.
@@ -13,8 +13,8 @@ import ReactiveCocoa
 import ReactiveSwift
 import SDWebImage
 
-class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate {
-    let model = TWPTweetDetailViewModel()
+class TweetDetailViewController: UIViewController, TTTAttributedLabelDelegate {
+    let model = TweetDetailViewModel()
 
     var tempTweetID:String!
     var backButtonAction: Action<Void, Void, Error>?
@@ -46,7 +46,7 @@ class TWPTweetDetailViewController: UIViewController, TTTAttributedLabelDelegate
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
 
-        if let userInfoViewController = segue.destination as? TWPUserInfoViewController,
+        if let userInfoViewController = segue.destination as? UserInfoViewController,
             segue.identifier == "fromTweetDetailToUserInfo" {
             userInfoViewController.tempUserID = model.tweet?.user?.userId
 

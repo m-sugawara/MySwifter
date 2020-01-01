@@ -1,5 +1,5 @@
 //
-//  TWPLoginViewControllerTests.swift
+//  LoginViewControllerTests.swift
 //  TwitterParamTests
 //
 //  Created by M_Sugawara on 2020/01/01.
@@ -10,12 +10,12 @@ import XCTest
 
 @testable import TwitterParam
 
-class TWPLoginViewControllerTests: XCTestCase {
+class LoginViewControllerTests: XCTestCase {
 
-    private var viewController: TWPLoginViewController!
+    private var viewController: LoginViewController!
 
     override func setUp() {
-        viewController = TWPLoginViewController.makeInstance()
+        viewController = LoginViewController.makeInstance()
     }
 
     override func tearDown() {

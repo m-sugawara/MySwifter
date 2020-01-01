@@ -1,8 +1,8 @@
 //
-//  TWPMainViewModelTests.swift
+//  UserInfoViewModelTests.swift
 //  TwitterParamTests
 //
-//  Created by M_Sugawara on 2019/12/15.
+//  Created by M_Sugawara on 2019/12/22.
 //  Copyright © 2019 sugawar. All rights reserved.
 //
 
@@ -10,22 +10,22 @@ import XCTest
 
 @testable import TwitterParam
 
-class TWPMainViewModelTests: XCTestCase {
+class UserInfoViewModelTests: XCTestCase {
 
-    private var viewModel: TWPMainViewModel!
+    private var viewModel: UserInfoViewModel!
 
     override func setUp() {
-        viewModel = TWPMainViewModel()
+        viewModel = UserInfoViewModel()
     }
 
     override func tearDown() {
         viewModel = nil
     }
 
-    func testOAuthButtonAction() {
+    func testGetUserAction() {
         let expectation = XCTestExpectation()
 
-        viewModel.oauthButtonAction.apply().startWithResult { result in
+        viewModel.getUserAction.apply().startWithResult { result in
             switch result {
             case .success:
                 XCTAssertTrue(false)
@@ -39,10 +39,10 @@ class TWPMainViewModelTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
     }
 
-    func testAccountButtonAction() {
+    func testGetUserTimeListAction() {
         let expectation = XCTestExpectation()
 
-        viewModel.accountButtonAction.apply().startWithResult { result in
+        viewModel.getUserTimeLineAction.apply().startWithResult { result in
             switch result {
             case .success:
                 XCTAssertTrue(false)
@@ -56,10 +56,27 @@ class TWPMainViewModelTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
     }
 
-    func testFeedUpdateButtonAction() {
+    func testGetUserImageListAction() {
         let expectation = XCTestExpectation()
 
-        viewModel.feedUpdateButtonAction.apply().startWithResult { result in
+        viewModel.getUserImageListAction.apply().startWithResult { result in
+            switch result {
+            case .success:
+                XCTAssertEqual(self.viewModel.tweets.count, 1)
+                expectation.fulfill()
+            case .failure:
+                XCTAssertTrue(false)
+                expectation.fulfill()
+            }
+        }
+
+        wait(for: [expectation], timeout: 2.0)
+    }
+
+    func testGetUserFavoritesAction() {
+        let expectation = XCTestExpectation()
+
+        viewModel.getUserFavoritesAction.apply().startWithResult { result in
             switch result {
             case .success:
                 XCTAssertTrue(false)
@@ -73,10 +90,10 @@ class TWPMainViewModelTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
     }
 
-    func testTweetButtonAction() {
+    func testFollowAction() {
         let expectation = XCTestExpectation()
 
-        viewModel.tweetButtonAction.apply().startWithResult { result in
+        viewModel.followAction.apply().startWithResult { result in
             switch result {
             case .success:
                 XCTAssertTrue(false)
@@ -90,10 +107,11 @@ class TWPMainViewModelTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
     }
 
-    func testRetweetButtonAction() {
+    func testUnfollowAction() {
         let expectation = XCTestExpectation()
 
-        viewModel.postRetweetAction(with: 0).apply().startWithResult { result in
+        viewModel.user = User(userId: "", following: true)
+        viewModel.followAction.apply().startWithResult { result in
             switch result {
             case .success:
                 XCTAssertTrue(false)
@@ -107,20 +125,4 @@ class TWPMainViewModelTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
     }
 
-    func testFavoriteButtonAction() {
-        let expectation = XCTestExpectation()
-
-        viewModel.postFavoriteAction(with: 0).apply().startWithResult { result in
-            switch result {
-            case .success:
-                XCTAssertTrue(false)
-                expectation.fulfill()
-            case .failure(let error):
-                XCTAssertNotNil(error)
-                expectation.fulfill()
-            }
-        }
-
-        wait(for: [expectation], timeout: 2.0)
-    }
 }

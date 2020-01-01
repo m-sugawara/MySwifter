@@ -1,5 +1,5 @@
 //
-//  TWPTweetDetailViewModel.swift
+//  TweetDetailViewModel.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/19.
@@ -8,9 +8,9 @@
 
 import ReactiveSwift
 
-class TWPTweetDetailViewModel {
+class TweetDetailViewModel {
 
-    private(set) var tweet: TWPTweet?
+    private(set) var tweet: Tweet?
 
     // MARK: - Deinit
     deinit {
@@ -23,7 +23,7 @@ class TWPTweetDetailViewModel {
                 observer.sendInterrupted()
                 return
             }
-            TWPTwitterAPI.shared.getStatuesShow(with: tweetId).startWithResult { result in
+            TwitterAPI.shared.getStatuesShow(with: tweetId).startWithResult { result in
                 switch result {
                 case .success(let tweet):
                     self.tweet = tweet

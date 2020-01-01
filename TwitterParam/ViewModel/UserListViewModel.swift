@@ -1,5 +1,5 @@
 //
-//  TWPUserListViewModel.swift
+//  UserListViewModel.swift
 //  TwitterParam
 //
 //  Created by M_Sugawara on 2015/06/28.
@@ -9,11 +9,11 @@
 import UIKit
 import ReactiveSwift
 
-class TWPUserListViewModel: NSObject {
+class UserListViewModel: NSObject {
 
-    private(set) var userList: [TWPUser] = []
+    private(set) var userList: [User] = []
 
-    func user(at index: Int) -> TWPUser? {
+    func user(at index: Int) -> User? {
         guard index < userList.count else { return nil }
         return userList[index]
     }
@@ -21,7 +21,7 @@ class TWPUserListViewModel: NSObject {
     // MARK: - Signals
     func getUserList(with userId: String) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            TWPTwitterAPI.shared.getFriendList(
+            TwitterAPI.shared.getFriendList(
                 with: userId,
                 count: 20
             ).startWithResult { result in

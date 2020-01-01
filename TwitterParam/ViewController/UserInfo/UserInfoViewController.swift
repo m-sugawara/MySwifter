@@ -1,5 +1,5 @@
 //
-//  TWPUserInfoViewController.swift
+//  UserInfoViewController.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/03.
@@ -13,14 +13,14 @@ import ReactiveSwift
 import TTTAttributedLabel
 import SDWebImage
 
-class TWPUserInfoViewController: UIViewController {
+class UserInfoViewController: UIViewController {
 
     enum ListType {
         case followList
         case followerList
     }
 
-    private let model = TWPUserInfoViewModel()
+    private let model = UserInfoViewModel()
 
     var selectingUserList: ListType?
     var tempUserID: String!
@@ -74,7 +74,7 @@ class TWPUserInfoViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
 
-        if let tweetDetailViewController = segue.destination as? TWPTweetDetailViewController,
+        if let tweetDetailViewController = segue.destination as? TweetDetailViewController,
             segue.identifier == "fromUserInfoToTweetDetail" {
             tweetDetailViewController.tempTweetID = selectedTweetID
             tweetDetailViewController.backButtonAction = Action<Void, Void, Error> {
@@ -84,7 +84,7 @@ class TWPUserInfoViewController: UIViewController {
                 }
             }
 
-        } else if let userListViewController = segue.destination as? TWPUserListViewController,
+        } else if let userListViewController = segue.destination as? UserListViewController,
             segue.identifier == "fromUserInfoToUserList" {
             userListViewController.tempUserID = tempUserID
             userListViewController.backButtonAction = Action<Void, Void, Error> {
@@ -145,7 +145,7 @@ class TWPUserInfoViewController: UIViewController {
 
     // MARK: - Private Methods
 
-    private func showAlert(with error: TWPUserInfoViewModel.UserInfoViewModelError) {
+    private func showAlert(with error: UserInfoViewModel.UserInfoViewModelError) {
         showAlert(with: "ERROR", message: error.message)
     }
 
@@ -231,14 +231,14 @@ class TWPUserInfoViewController: UIViewController {
 
 }
 
-extension TWPUserInfoViewController: UITableViewDataSource {
+extension UserInfoViewController: UITableViewDataSource {
     // MARK: - UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return model.tweets.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: TWPUserInfoViewControllerTableViewCell.identifier) as! TWPUserInfoViewControllerTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: UserInfoViewControllerTableViewCell.identifier) as! UserInfoViewControllerTableViewCell
         let tweet = model.tweets[indexPath.row]
         cell.apply(withTweet: tweet)
 
@@ -246,11 +246,11 @@ extension TWPUserInfoViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return TWPUserInfoViewControllerTableViewCell.itemHeight
+        return UserInfoViewControllerTableViewCell.itemHeight
     }
 }
 
-extension TWPUserInfoViewController: UITableViewDelegate {
+extension UserInfoViewController: UITableViewDelegate {
     // MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedTweet = model.tweets[indexPath.row]
@@ -262,7 +262,7 @@ extension TWPUserInfoViewController: UITableViewDelegate {
     }
 }
 
-extension TWPUserInfoViewController: TTTAttributedLabelDelegate {
+extension UserInfoViewController: TTTAttributedLabelDelegate {
     // MARK: - TTTAttributedLabelDelegate
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         UIApplication.shared.open(url)

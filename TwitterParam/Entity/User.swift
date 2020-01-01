@@ -1,5 +1,5 @@
 //
-//  TWPUser.swift
+//  User.swift
 //  TwitterParam
 //
 //  Created by M_Sugawara on 2015/06/20.
@@ -9,7 +9,7 @@
 import UIKit
 import SwifteriOS
 
-struct TWPUser {
+struct User {
     let userId: String
     let name: String?
     let screenName: String
@@ -56,9 +56,9 @@ struct TWPUser {
     }
 
     var isSelf: Bool {
-        return userId == TWPUserHelper.currentUserId()
+        return userId == UserHelper.currentUserId()
     }
 
 }
 
-extension TWPUser: Equatable {}
+extension User: Equatable {}

@@ -1,5 +1,5 @@
 //
-//  TWPTextFieldView.swift
+//  TextFieldView.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/22.
@@ -10,7 +10,7 @@ import UIKit
 
 import UITextFieldWithLimit
 
-class TWPTextFieldView: UIView {
+class TextFieldView: UIView {
 
     @IBOutlet weak var textFieldWithLimit: UITextFieldWithLimit!
     @IBOutlet weak var tweetButton: UIButton!
@@ -20,11 +20,11 @@ class TWPTextFieldView: UIView {
     class func view(
         withMaxLength maxLength: Int,
         delegate: UITextFieldWithLimitDelegate
-    ) -> TWPTextFieldView {
+    ) -> TextFieldView {
         guard let view = Bundle.main.loadNibNamed(
-            "TWPTextFieldView",
+            "TextFieldView",
             owner: self,
-            options: nil)?.first as? TWPTextFieldView else {
+            options: nil)?.first as? TextFieldView else {
                 fatalError()
         }
         view.translatesAutoresizingMaskIntoConstraints = true

@@ -1,5 +1,5 @@
 //
-//  TWPUserTests.swift
+//  UserTests.swift
 //  TwitterParamTests
 //
 //  Created by M_Sugawara on 2019/12/22.
@@ -11,7 +11,7 @@ import SwifteriOS
 
 @testable import TwitterParam
 
-class TWPUserTests: XCTestCase {
+class UserTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
@@ -22,28 +22,28 @@ class TWPUserTests: XCTestCase {
     }
 
     func testSameUserIds() {
-        let first = TWPUser(userId: "1")
-        let expected = TWPUser(userId: "1")
+        let first = User(userId: "1")
+        let expected = User(userId: "1")
 
         XCTAssertEqual(first, expected)
     }
 
     func testDifferentUserIds() {
-        let first = TWPUser(userId: "1")
-        let expected = TWPUser(userId: "2")
+        let first = User(userId: "1")
+        let expected = User(userId: "2")
 
         XCTAssertNotEqual(first, expected)
     }
 
     func testScreenNameWithAt() {
-        let user = TWPUser(userId: "1", screenName: "TestUser")
+        let user = User(userId: "1", screenName: "TestUser")
         let expected = "@TestUser"
 
         XCTAssertEqual(user.screenNameWithAt, expected)
     }
 
     func testScreenNameWithAtEmpty() {
-        let user = TWPUser(userId: "1")
+        let user = User(userId: "1")
         let expected = ""
 
         XCTAssertEqual(user.screenNameWithAt, expected)
@@ -51,7 +51,7 @@ class TWPUserTests: XCTestCase {
 
     func testImageURL() {
         let url = "https://abc.com"
-        let user = TWPUser(userId: "1", profileImageUrl: url)
+        let user = User(userId: "1", profileImageUrl: url)
         let expected = url
 
         XCTAssertEqual(user.profileImageUrlString, expected)
@@ -59,7 +59,7 @@ class TWPUserTests: XCTestCase {
 
     func testLoadNoDataJSON() {
         let json: [String: JSON] = [:]
-        let user = TWPUser(dictionary: json)
+        let user = User(dictionary: json)
 
         XCTAssertEqual(user.userId, "")
         XCTAssertEqual(user.name, "")
@@ -80,7 +80,7 @@ class TWPUserTests: XCTestCase {
             "friends_count": JSON(integerLiteral: 99),
             "followers_count": JSON(integerLiteral: 100)
         ]
-        let user = TWPUser(dictionary: json)
+        let user = User(dictionary: json)
 
         XCTAssertEqual(user.userId, "1")
         XCTAssertEqual(user.name, "my name")
@@ -92,7 +92,7 @@ class TWPUserTests: XCTestCase {
     }
 
     func testIsSelfFalse() {
-        let user = TWPUser(userId: "1")
+        let user = User(userId: "1")
         let expected = false
 
         XCTAssertEqual(user.isSelf, expected)

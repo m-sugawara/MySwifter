@@ -42,7 +42,8 @@ class TWPLoginViewController: UIViewController {
                                 message: "Login Success",
                                 cancelButtonTitle: "OK",
                     cancelTappedAction: { [weak self] _ in
-                        self?.performSegue(withIdentifier: "fromLoginToMain", sender: nil)
+                        let mainViewController = TWPMainViewController.makeInstance()
+                        self?.present(mainViewController, animated: true, completion: nil)
                 })
             case .failed(let error):
                 self?.showAlert(

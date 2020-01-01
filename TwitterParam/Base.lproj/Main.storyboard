@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="h9g-me-rft">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="h9g-me-rft">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Login View Controller-->
         <scene sceneID="ZU1-5U-5oh">
             <objects>
-                <viewController id="h9g-me-rft" customClass="TWPLoginViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="h9g-me-rft" customClass="TWPLoginViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="NIY-IB-uzH"/>
                         <viewControllerLayoutGuide type="bottom" id="u9r-Xc-K6e"/>
@@ -29,7 +30,7 @@
                                 <rect key="frame" x="4" y="44" width="406" height="818"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ikw-zd-fCI" userLabel="LoginButton">
-                                        <rect key="frame" x="139" y="345" width="128" height="128"/>
+                                        <rect key="frame" x="171" y="377" width="64" height="64"/>
                                         <state key="normal" image="Login_LoginButton">
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
@@ -66,13 +67,13 @@
         <!--Delegate-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController storyboardIdentifier="mainViewController" id="vXZ-lx-hvc" customClass="TWPMainViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TWPMainViewController" id="vXZ-lx-hvc" customClass="TWPMainViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1PD-f5-7P0" userLabel="TopView">
@@ -86,7 +87,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="93L-gs-Ut7" userLabel="LogoutButton">
-                                        <rect key="frame" x="15" y="-7" width="64" height="64"/>
+                                        <rect key="frame" x="15" y="9" width="32" height="32"/>
                                         <state key="normal" image="Main_LogoutButton">
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
@@ -382,11 +383,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="668" y="92"/>
         </scene>
         <!--Delegate-->
         <scene sceneID="94H-7x-2b5">
             <objects>
-                <viewController id="9dq-oH-1f4" customClass="TWPUserInfoViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="UserInfoViewController" id="9dq-oH-1f4" customClass="TWPUserInfoViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="P3G-Sg-8MH"/>
                         <viewControllerLayoutGuide type="bottom" id="vAI-fx-2Ga"/>
@@ -406,7 +408,7 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="50"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8eB-3B-yrD" userLabel="BackButton">
-                                        <rect key="frame" x="7" y="-7" width="64" height="64"/>
+                                        <rect key="frame" x="7" y="9" width="32" height="32"/>
                                         <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <state key="normal" image="BackButton">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -466,7 +468,7 @@
                                         </variation>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="onx-04-Dld" userLabel="FollowButton">
-                                        <rect key="frame" x="320" y="80" width="64" height="64"/>
+                                        <rect key="frame" x="352" y="80" width="32" height="32"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                         <state key="normal" backgroundImage="FollowButton">
@@ -740,7 +742,7 @@
         <!--User List View Controller-->
         <scene sceneID="OWm-e2-5eP">
             <objects>
-                <viewController id="mgu-y9-P9j" customClass="TWPUserListViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="UserListViewController" id="mgu-y9-P9j" customClass="TWPUserListViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Wk2-9o-fA2"/>
                         <viewControllerLayoutGuide type="bottom" id="teE-uH-d5j"/>
@@ -760,7 +762,7 @@
                                 <rect key="frame" x="4" y="44" width="406" height="50"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cZG-2E-ZkR" userLabel="BackButton">
-                                        <rect key="frame" x="7" y="-7" width="64" height="64"/>
+                                        <rect key="frame" x="7" y="9" width="32" height="32"/>
                                         <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <state key="normal" image="BackButton">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -793,13 +795,13 @@
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hHn-Sn-7ye" userLabel="NameLabel">
-                                                    <rect key="frame" x="100" y="16.5" width="31" height="17"/>
+                                                    <rect key="frame" x="100" y="16.5" width="274" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@user" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Hi-Mt-z1t" userLabel="ScreenNameLabel">
-                                                    <rect key="frame" x="100" y="35.5" width="36" height="15"/>
+                                                    <rect key="frame" x="100" y="35.5" width="274" height="15"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="bg4-QW-IL5"/>
                                                     </constraints>
@@ -814,9 +816,11 @@
                                                 <constraint firstItem="hHn-Sn-7ye" firstAttribute="leading" secondItem="OZc-OL-yA3" secondAttribute="trailing" constant="20" id="R2v-fK-Xtq"/>
                                                 <constraint firstAttribute="centerY" secondItem="OZc-OL-yA3" secondAttribute="centerY" id="Reb-wk-RCw"/>
                                                 <constraint firstAttribute="centerY" secondItem="2Hi-Mt-z1t" secondAttribute="centerY" id="S8S-7E-uGM"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="hHn-Sn-7ye" secondAttribute="trailing" constant="20" id="Voc-vm-tsf"/>
                                                 <constraint firstItem="2Hi-Mt-z1t" firstAttribute="leading" secondItem="hHn-Sn-7ye" secondAttribute="leading" id="ZJg-Ni-NNO"/>
                                                 <constraint firstItem="2Hi-Mt-z1t" firstAttribute="top" secondItem="hHn-Sn-7ye" secondAttribute="bottom" constant="2" id="p92-bR-hKK"/>
                                                 <constraint firstAttribute="centerY" secondItem="hHn-Sn-7ye" secondAttribute="centerY" constant="10" id="rSp-do-hzX"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="2Hi-Mt-z1t" secondAttribute="trailing" constant="20" id="xKY-3D-agC"/>
                                             </constraints>
                                             <variation key="default">
                                                 <mask key="constraints">
@@ -889,7 +893,7 @@
         <!--Delegate-->
         <scene sceneID="Hor-YL-W2f">
             <objects>
-                <viewController id="E1v-bM-Fjn" customClass="TWPTweetDetailViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TweetDetailViewController" id="E1v-bM-Fjn" customClass="TWPTweetDetailViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="D2B-5I-vne"/>
                         <viewControllerLayoutGuide type="bottom" id="kxI-u2-Mu6"/>
@@ -899,7 +903,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sCK-JK-NeV" userLabel="TopView">
-                                <rect key="frame" x="0.0" y="44" width="410" height="20"/>
+                                <rect key="frame" x="4" y="44" width="406" height="20"/>
                                 <color key="backgroundColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="JVx-e4-7XC"/>
@@ -909,7 +913,7 @@
                                 <rect key="frame" x="0.0" y="64" width="414" height="50"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gab-cZ-vRi" userLabel="BackButton">
-                                        <rect key="frame" x="7" y="-7" width="64" height="64"/>
+                                        <rect key="frame" x="7" y="9" width="32" height="32"/>
                                         <state key="normal" image="BackButton">
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="titleShadowColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -947,7 +951,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@UserID" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ocf-pb-b2y" userLabel="screenNameLabel">
-                                        <rect key="frame" x="15" y="61" width="49.5" height="14.5"/>
+                                        <rect key="frame" x="15" y="61" width="288" height="14.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" red="0.66666668653488159" green="0.66666668653488159" blue="0.66666668653488159" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
@@ -975,6 +979,7 @@
                                     <constraint firstAttribute="height" constant="120" id="aCv-3Q-OJs"/>
                                     <constraint firstItem="3HN-KP-uWc" firstAttribute="top" secondItem="Rwv-Jc-QtP" secondAttribute="top" constant="25" id="bDg-ED-cpg"/>
                                     <constraint firstItem="6Za-sh-Jev" firstAttribute="top" secondItem="Rwv-Jc-QtP" secondAttribute="top" constant="20" id="cvd-1v-OaV"/>
+                                    <constraint firstItem="3HN-KP-uWc" firstAttribute="leading" secondItem="Ocf-pb-b2y" secondAttribute="trailing" constant="16" id="fLU-7a-ep8"/>
                                     <constraint firstAttribute="trailing" secondItem="3HN-KP-uWc" secondAttribute="trailing" constant="25" id="wjP-K2-B1y"/>
                                 </constraints>
                             </view>
@@ -986,7 +991,7 @@
                                         <color key="backgroundColor" red="0.3333333432674408" green="0.3333333432674408" blue="0.3333333432674408" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="14" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B89-O5-D3C" userLabel="TweetLabel" customClass="TTTAttributedLabel">
-                                        <rect key="frame" x="30" y="30" width="346" height="81.5"/>
+                                        <rect key="frame" x="30" y="30" width="346" height="82"/>
                                         <string key="text">TweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweetTweet</string>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1015,9 +1020,8 @@
                                     <constraint firstItem="FCU-ND-nWe" firstAttribute="leading" secondItem="518-1N-TWg" secondAttribute="leading" constant="10" id="Q3C-vI-g1S"/>
                                     <constraint firstAttribute="centerY" secondItem="B89-O5-D3C" secondAttribute="centerY" constant="-30" id="STM-Xo-ibt"/>
                                     <constraint firstItem="B89-O5-D3C" firstAttribute="leading" secondItem="518-1N-TWg" secondAttribute="leading" constant="30" id="STz-vq-Q3c"/>
-                                    <constraint firstAttribute="centerX" secondItem="B89-O5-D3C" secondAttribute="centerX" id="aYH-DB-61l"/>
                                     <constraint firstItem="FCU-ND-nWe" firstAttribute="top" secondItem="518-1N-TWg" secondAttribute="top" constant="10" id="paB-ik-Xau"/>
-                                    <constraint firstAttribute="trailing" secondItem="B89-O5-D3C" secondAttribute="trailing" constant="30" id="sGd-IQ-se9"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="B89-O5-D3C" secondAttribute="trailing" constant="30" id="sGd-IQ-se9"/>
                                 </constraints>
                                 <variation key="default">
                                     <mask key="constraints">
@@ -1029,7 +1033,6 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="518-1N-TWg" secondAttribute="trailing" constant="-16" id="1UR-ki-c9q"/>
-                            <constraint firstItem="EwW-es-mUY" firstAttribute="leading" secondItem="sCK-JK-NeV" secondAttribute="leading" id="6qn-0n-e6V"/>
                             <constraint firstItem="sCK-JK-NeV" firstAttribute="leading" secondItem="ooE-df-CW0" secondAttribute="leadingMargin" constant="-16" id="8nT-PF-wQS"/>
                             <constraint firstItem="518-1N-TWg" firstAttribute="top" secondItem="Rwv-Jc-QtP" secondAttribute="bottom" id="BQc-uM-kY5"/>
                             <constraint firstItem="EwW-es-mUY" firstAttribute="top" secondItem="sCK-JK-NeV" secondAttribute="bottom" id="Cua-DO-eIK"/>
@@ -1065,7 +1068,7 @@
         <image name="FollowButton_Selected" width="32" height="32"/>
         <image name="Login_LoginButton" width="64" height="64"/>
         <image name="Main_LogoutButton" width="32" height="32"/>
-        <image name="Main_TableViewCellIcon" width="61" height="60"/>
+        <image name="Main_TableViewCellIcon" width="61" height="60.5"/>
         <image name="Main_TableViewUpdateButton" width="90" height="90"/>
         <image name="Main_TweetButton" width="128" height="128"/>
         <image name="ReplyButton" width="32" height="32"/>
@@ -1073,7 +1076,7 @@
         <image name="RetweetButton_Selected" width="32" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="khr-fq-Jp8"/>
-        <segue reference="7pX-30-Vlb"/>
+        <segue reference="9bH-vG-VwH"/>
+        <segue reference="2T1-9Z-04B"/>
     </inferredMetricsTieBreakers>
 </document>

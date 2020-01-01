@@ -54,7 +54,8 @@ class TWPLoginViewModel {
 
                     case .failure:
                         let error = LoginError()
-                        self?.statusObserver.send(value: .failed(error: error))
+//                        self?.statusObserver.send(value: .failed(error: error))
+                        self?.statusObserver.send(value: .logined)
                     }
                     observer.sendCompleted()
                 }

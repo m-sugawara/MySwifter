@@ -30,7 +30,7 @@ class TWPMainViewController: UIViewController {
     private var textFieldView: TWPTextFieldView?
 
     private var scrollBeginingPoint: CGPoint!
-    private var isShowFooterView: Bool!
+    private var isShowFooterView = true
 
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var tweetButton: UIButton!
@@ -150,7 +150,7 @@ class TWPMainViewController: UIViewController {
         view.addSubview(textFieldView!)
     }
 
-    @objc func showTextFieldView(screenName:String?) {
+    @objc func showTextFieldView(withScreenName screenName:String?) {
         for view in view.subviews {
             if view is TWPTextFieldView {
                 continue
@@ -217,7 +217,16 @@ class TWPMainViewController: UIViewController {
     func bindCommands() {
 
         // bind Button to the RACCommand
-        _ = tweetButton.reactive.trigger(for: #selector(showTextFieldView(screenName:)))
+        tweetButton.reactive.pressed = CocoaAction(Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self, !lifetime.hasEnded else {
+                    observer.sendInterrupted()
+                    return
+                }
+                self.showTextFieldView(withScreenName: self.model.selectingTweet?.user?.screenName)
+                observer.sendCompleted()
+            }
+        })
 
         feedUpdateButton.reactive.pressed = CocoaAction(model.feedUpdateButtonAction)
         logoutButton.reactive.pressed = CocoaAction(Action<Void, Void, Error> {
@@ -274,7 +283,7 @@ class TWPMainViewController: UIViewController {
         let type = TWPMainTableViewButtonType(rawValue: sender.tag)!
         switch type {
         case .reply:
-            showTextFieldView(screenName: model.selectingTweet?.user?.screenName)
+            showTextFieldView(withScreenName: model.selectingTweet?.user?.screenName)
 
         case .retweet:
             model.postRetweet(with: indexPath.row).startWithResult { [weak self] result in

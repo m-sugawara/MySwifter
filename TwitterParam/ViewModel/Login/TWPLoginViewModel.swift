@@ -11,20 +11,21 @@ import ReactiveSwift
 
 class TWPLoginViewModel {
 
-    enum LoginViewModelError: Error {
-        case failedToLogin
-
+    struct LoginError: Error {
         var message: String {
-            switch self {
-            case .failedToLogin:
-                return "Failed to login"
-            }
+            return "Failed to login"
         }
     }
 
-    private let (_loginSignal, loginObserver) = Signal<Bool, Never>.pipe()
-    var loginSignal: Signal<Bool, Never> {
-        return _loginSignal
+    enum LoginStatus {
+        case ready
+        case logined
+        case failed(error: LoginError)
+    }
+
+    private let (_statusSignal, statusObserver) = Signal<LoginStatus, Never>.pipe()
+    var statusSignal: Signal<LoginStatus, Never> {
+        return _statusSignal
     }
 
     // MARK: - Deinit
@@ -49,10 +50,11 @@ class TWPLoginViewModel {
                 TWPTwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
                     switch result {
                     case .success:
-                        self?.loginObserver.send(value: true)
+                        self?.statusObserver.send(value: .logined)
 
                     case .failure:
-                        self?.loginObserver.send(value: false)
+                        let error = LoginError()
+                        self?.statusObserver.send(value: .failed(error: error))
                     }
                     observer.sendCompleted()
                 }

@@ -33,31 +33,24 @@ class TWPLoginViewController: UIViewController {
         contentView.backgroundColor = UIColor(patternImage: UIImage(named: "Background_Pattern")!)
     }
 
-    func showAlert() {
-        showAlert(
-            with: "SUCCESS",
-            message: "LOGIN SUCCESS",
-            cancelButtonTitle: "OK",
-            cancelTappedAction: { [weak self] _ in
-                self?.performSegue(withIdentifier: "fromLoginToMain", sender: nil)
-            }
-        )
-    }
-
-    func showAlert(withError error: TWPLoginViewModel.LoginViewModelError) {
-        showAlert(
-            with: "ERROR!",
-            message: "\(error.message)"
-        )
-    }
-
     // MARK: - Binding
     private func bindSignals() {
-        model.loginSignal.observeValues { [weak self] successToLogin in
-            if successToLogin {
-                self?.showAlert()
-            } else {
-                self?.showAlert(withError: .failedToLogin)
+        model.statusSignal.observeValues { [weak self] status in
+            switch status {
+            case .logined:
+                self?.showAlert(with: "Success",
+                                message: "Login Success",
+                                cancelButtonTitle: "OK",
+                    cancelTappedAction: { [weak self] _ in
+                        self?.performSegue(withIdentifier: "fromLoginToMain", sender: nil)
+                })
+            case .failed(let error):
+                self?.showAlert(
+                    with: "ERROR!",
+                    message: "\(error.message)"
+                )
+            case .ready:
+                break
             }
         }
 

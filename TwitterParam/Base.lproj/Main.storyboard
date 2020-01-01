@@ -10,7 +10,7 @@
         <!--Login View Controller-->
         <scene sceneID="ZU1-5U-5oh">
             <objects>
-                <viewController storyboardIdentifier="LoginViewController" id="h9g-me-rft" customClass="TWPLoginViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TWPLoginViewController" id="h9g-me-rft" customClass="TWPLoginViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="NIY-IB-uzH"/>
                         <viewControllerLayoutGuide type="bottom" id="u9r-Xc-K6e"/>

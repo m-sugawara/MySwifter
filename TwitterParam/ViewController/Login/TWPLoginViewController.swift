@@ -11,7 +11,7 @@ import ReactiveCocoa
 
 class TWPLoginViewController: UIViewController {
 
-    private lazy var model = TWPLoginViewModel(viewController: self)
+    private let model = TWPLoginViewModel()
 
     @IBOutlet private weak var contentView: UIView!
     @IBOutlet private weak var loginButon: UIButton!
@@ -33,26 +33,28 @@ class TWPLoginViewController: UIViewController {
         contentView.backgroundColor = UIColor(patternImage: UIImage(named: "Background_Pattern")!)
     }
 
-    func showAlert() {
-        showAlert(
-            with: "SUCCESS",
-            message: "LOGIN SUCCESS",
-            cancelButtonTitle: "OK",
-            cancelTappedAction: { [weak self] _ in
-                self?.performSegue(withIdentifier: "fromLoginToMain", sender: nil)
-            }
-        )
-    }
-
-    func showAlert(withError error: NSError) {
-        showAlert(
-            with: "ERROR!",
-            message: "\(error.localizedDescription)"
-        )
-    }
-
     // MARK: - Binding
     private func bindSignals() {
+        model.statusSignal.observeValues { [weak self] status in
+            switch status {
+            case .logined:
+                self?.showAlert(with: "Success",
+                                message: "Login Success",
+                                cancelButtonTitle: "OK",
+                    cancelTappedAction: { [weak self] _ in
+                        let mainViewController = TWPMainViewController.makeInstance()
+                        self?.present(mainViewController, animated: true, completion: nil)
+                })
+            case .failed(let error):
+                self?.showAlert(
+                    with: "ERROR!",
+                    message: "\(error.message)"
+                )
+            case .ready:
+                break
+            }
+        }
+
         loginButon.reactive.pressed = CocoaAction(model.loginAction)
     }
 

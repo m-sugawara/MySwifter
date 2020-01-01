@@ -9,9 +9,24 @@
 import UIKit
 import ReactiveSwift
 
-class TWPLoginViewModel: NSObject {
+class TWPLoginViewModel {
 
-    private weak var viewController: TWPLoginViewController!
+    struct LoginError: Error {
+        var message: String {
+            return "Failed to login"
+        }
+    }
+
+    enum LoginStatus {
+        case ready
+        case logined
+        case failed(error: LoginError)
+    }
+
+    private let (_statusSignal, statusObserver) = Signal<LoginStatus, Never>.pipe()
+    var statusSignal: Signal<LoginStatus, Never> {
+        return _statusSignal
+    }
 
     // MARK: - Deinit
 
@@ -21,9 +36,7 @@ class TWPLoginViewModel: NSObject {
 
     // MARK: - Initializer
 
-    init(viewController: TWPLoginViewController) {
-        self.viewController = viewController
-    }
+    init() {}
 
     // MARK: - Action
 
@@ -31,20 +44,17 @@ class TWPLoginViewModel: NSObject {
         return Action<Void, Void, Error>(execute: tryToLogin)
     }
 
-    var tryToLogin: () -> SignalProducer<Void, Error> {
+    private var tryToLogin: () -> SignalProducer<Void, Error> {
         return {
             return SignalProducer { observer, _ in
                 TWPTwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
                     switch result {
                     case .success:
-                        DispatchQueue.main.async {
-                            self?.viewController.showAlert()
-                        }
+                        self?.statusObserver.send(value: .logined)
 
-                    case .failure(let error):
-                        DispatchQueue.main.async {
-                            self?.viewController.showAlert(withError: error as NSError)
-                        }
+                    case .failure:
+                        let error = LoginError()
+                        self?.statusObserver.send(value: .failed(error: error))
                     }
                     observer.sendCompleted()
                 }

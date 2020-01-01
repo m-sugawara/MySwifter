@@ -44,7 +44,7 @@ class TWPLoginViewModel {
         return Action<Void, Void, Error>(execute: tryToLogin)
     }
 
-    var tryToLogin: () -> SignalProducer<Void, Error> {
+    private var tryToLogin: () -> SignalProducer<Void, Error> {
         return {
             return SignalProducer { observer, _ in
                 TWPTwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in

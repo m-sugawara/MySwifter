@@ -19,8 +19,6 @@ class UserListViewController: UIViewController {
     // use move from userInfo etc
     var tempUserID: String?
     var backButtonAction: Action<Void, Void, Error>?
-    // use move to userInfo
-    var selectedUserID: String?
 
     @IBOutlet private weak var userListTableView: UITableView!
     @IBOutlet private weak var backButton: UIButton!
@@ -47,25 +45,6 @@ class UserListViewController: UIViewController {
         }
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-
-        // UserInfoViewController
-        if let userInfoViewController = segue.destination as? UserInfoViewController,
-            segue.identifier == "fromUserListToUserInfo" {
-
-            userInfoViewController.tempUserID = self.selectedUserID
-
-            // bind Next ViewController's Commands
-            userInfoViewController.backButtonAction = Action<Void, Void, Error> {
-                return SignalProducer<Void, Error> { observer, _ in
-                    userInfoViewController.dismiss(animated: true, completion: nil)
-                    observer.sendCompleted()
-                }
-            }
-        }
-    }
-
     // MARK: - Private Methods
     func startLoading() {
         loadingView.isHidden = false
@@ -75,6 +54,20 @@ class UserListViewController: UIViewController {
     func stopLoading() {
         loadingView.isHidden = true
         activityIndicatorView.stopAnimating()
+    }
+
+    private func presentUserInfo(userId: String) {
+        let userInfoViewController = UserInfoViewController.makeInstance()
+        userInfoViewController.tempUserID = userId
+
+        // bind Next ViewController's Commands
+        userInfoViewController.backButtonAction = Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { observer, _ in
+                userInfoViewController.dismiss(animated: true, completion: nil)
+                observer.sendCompleted()
+            }
+        }
+        present(userInfoViewController, animated: true, completion: nil)
     }
 
     // MARK: - Binding
@@ -112,10 +105,9 @@ extension UserListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let selectedUser = model.user(at: indexPath.row) else { return }
-        selectedUserID = selectedUser.userId
 
         tableView.deselectRow(at: indexPath, animated: true)
 
-        performSegue(withIdentifier: "fromUserListToUserInfo", sender: nil)
+        presentUserInfo(userId: selectedUser.userId)
     }
 }

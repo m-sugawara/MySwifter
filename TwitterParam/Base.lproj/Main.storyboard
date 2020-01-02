@@ -57,7 +57,6 @@
                     <connections>
                         <outlet property="contentView" destination="Lni-ll-rbh" id="2Pj-YA-f5q"/>
                         <outlet property="loginButon" destination="Ikw-zd-fCI" id="afs-Js-VMZ"/>
-                        <segue destination="vXZ-lx-hvc" kind="show" identifier="fromLoginToMain" id="kbj-ze-iJO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IMe-eX-kWH" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -73,7 +72,7 @@
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1PD-f5-7P0" userLabel="TopView">
@@ -84,7 +83,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XAe-Gr-6GN" userLabel="HeaderView">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="50"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="93L-gs-Ut7" userLabel="LogoutButton">
                                         <rect key="frame" x="15" y="9" width="32" height="32"/>
@@ -98,9 +97,6 @@
                                         <state key="normal">
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
-                                        <connections>
-                                            <segue destination="9dq-oH-1f4" kind="custom" identifier="fromMainToUserInfo" customClass="PushAnimationSegue" customModule="TwitterParam" customModuleProvider="target" id="2T1-9Z-04B"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ByM-wE-Dio" userLabel="FeedUpdateButton">
                                         <rect key="frame" x="334" y="12.5" width="25" height="25"/>
@@ -124,7 +120,7 @@
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="130" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="5Tb-Tr-2JF" userLabel="TableView">
-                                <rect key="frame" x="0.0" y="50" width="414" height="722"/>
+                                <rect key="frame" x="0.0" y="94" width="414" height="732"/>
                                 <color key="backgroundColor" red="0.3333333432674408" green="0.3333333432674408" blue="0.3333333432674408" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="sectionIndexBackgroundColor" red="0.3333333432674408" green="0.3333333432674408" blue="0.3333333432674408" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
@@ -306,7 +302,7 @@
                                 </connections>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gnz-yn-ivd" userLabel="FooterView">
-                                <rect key="frame" x="4" y="772" width="406" height="70"/>
+                                <rect key="frame" x="4" y="826" width="406" height="70"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vEr-Pu-p8h" userLabel="TweetButton">
                                         <rect key="frame" x="187" y="19" width="32" height="32"/>
@@ -327,10 +323,10 @@
                                 </constraints>
                             </view>
                             <view hidden="YES" opaque="NO" alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="heq-XH-cxR" userLabel="LoadingView">
-                                <rect key="frame" x="4" y="0.0" width="406" height="808"/>
+                                <rect key="frame" x="4" y="44" width="406" height="818"/>
                                 <subviews>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="0nf-68-YHp">
-                                        <rect key="frame" x="184.5" y="385.5" width="37" height="37"/>
+                                        <rect key="frame" x="184.5" y="390.5" width="37" height="37"/>
                                     </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -378,7 +374,6 @@
                         <outlet property="logoutButton" destination="93L-gs-Ut7" id="NWO-4Q-hQc"/>
                         <outlet property="tableView" destination="5Tb-Tr-2JF" id="Hex-So-DsZ"/>
                         <outlet property="tweetButton" destination="vEr-Pu-p8h" id="zer-7k-ADu"/>
-                        <segue destination="E1v-bM-Fjn" kind="custom" identifier="fromMainToTweetDetail" customClass="PushAnimationSegue" customModule="TwitterParam" customModuleProvider="target" id="9bH-vG-VwH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -731,8 +726,6 @@
                         <outlet property="userIconImageView" destination="yrV-vU-WVg" id="jez-OB-qVB"/>
                         <outlet property="userNameLabel" destination="nHg-Io-YJV" id="hef-3D-Vck"/>
                         <outlet property="userTweetsTableView" destination="sUM-SK-DSi" id="g63-nu-njC"/>
-                        <segue destination="E1v-bM-Fjn" kind="custom" identifier="fromUserInfoToTweetDetail" customClass="PushAnimationSegue" customModule="TwitterParam" customModuleProvider="target" id="khr-fq-Jp8"/>
-                        <segue destination="mgu-y9-P9j" kind="custom" identifier="fromUserInfoToUserList" customClass="PushAnimationSegue" customModule="TwitterParam" customModuleProvider="target" id="M5F-xG-YGj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Sks-6R-l56" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -742,6 +735,7 @@
         <!--User List View Controller-->
         <scene sceneID="OWm-e2-5eP">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="w1Z-TA-jBL" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="UserListViewController" id="mgu-y9-P9j" customClass="UserListViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Wk2-9o-fA2"/>
@@ -883,10 +877,8 @@
                         <outlet property="backButton" destination="cZG-2E-ZkR" id="cRg-cv-bdY"/>
                         <outlet property="loadingView" destination="VBV-SF-UNy" id="ZTN-OZ-ZBM"/>
                         <outlet property="userListTableView" destination="th8-Qw-KI3" id="2R7-SM-PHZ"/>
-                        <segue destination="9dq-oH-1f4" kind="custom" identifier="fromUserListToUserInfo" customClass="PushAnimationSegue" customModule="TwitterParam" customModuleProvider="target" id="7pX-30-Vlb"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="w1Z-TA-jBL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1985" y="298"/>
         </scene>
@@ -961,9 +953,6 @@
                                         <state key="normal">
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
-                                        <connections>
-                                            <segue destination="9dq-oH-1f4" kind="custom" identifier="fromTweetDetailToUserInfo" customClass="PushAnimationSegue" customModule="TwitterParam" customModuleProvider="target" id="Ynk-gC-py7"/>
-                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.3333333432674408" green="0.3333333432674408" blue="0.3333333432674408" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1075,8 +1064,4 @@
         <image name="RetweetButton_NonSelected" width="32" height="32"/>
         <image name="RetweetButton_Selected" width="32" height="32"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="9bH-vG-VwH"/>
-        <segue reference="2T1-9Z-04B"/>
-    </inferredMetricsTieBreakers>
 </document>

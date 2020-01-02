@@ -26,8 +26,6 @@ class UserInfoViewController: UIViewController {
     var tempUserID: String!
     var backButtonAction: Action<Void, Void, Error>?
 
-    var selectedTweetID: String!
-
     @IBOutlet private weak var userNameLabel: UILabel!
     @IBOutlet private weak var screenNameLabel: UILabel!
     @IBOutlet private weak var userIconImageView: UIImageView!
@@ -71,31 +69,6 @@ class UserInfoViewController: UIViewController {
         }
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-
-        if let tweetDetailViewController = segue.destination as? TweetDetailViewController,
-            segue.identifier == "fromUserInfoToTweetDetail" {
-            tweetDetailViewController.tempTweetID = selectedTweetID
-            tweetDetailViewController.backButtonAction = Action<Void, Void, Error> {
-                return SignalProducer<Void, Error> { observer, _ in
-                    tweetDetailViewController.dismiss(animated: true, completion: nil)
-                    observer.sendCompleted()
-                }
-            }
-
-        } else if let userListViewController = segue.destination as? UserListViewController,
-            segue.identifier == "fromUserInfoToUserList" {
-            userListViewController.tempUserID = tempUserID
-            userListViewController.backButtonAction = Action<Void, Void, Error> {
-                return SignalProducer<Void, Error> { observer, _ in
-                    userListViewController.dismiss(animated: true, completion: nil)
-                    observer.sendCompleted()
-                }
-            }
-        }
-    }
-
     // MARK: - Binding
 
     private func bindCommands() {
@@ -105,26 +78,26 @@ class UserInfoViewController: UIViewController {
 
         // follow list button
         followListButton.reactive.pressed = CocoaAction<UIButton>(Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { observer, lifetime in
-                guard !lifetime.hasEnded else {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self, !lifetime.hasEnded else {
                     observer.sendInterrupted()
                     return
                 }
                 self.selectingUserList = .followList
-                self.performSegue(withIdentifier: "fromUserInfoToUserList", sender: nil)
+                self.presentUserList()
                 observer.sendCompleted()
             }
         })
 
         // follower list button
         followerListButton.reactive.pressed = CocoaAction<UIButton>(Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { observer, lifetime in
-                guard !lifetime.hasEnded else {
+            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+                guard let self = self, !lifetime.hasEnded else {
                     observer.sendInterrupted()
                     return
                 }
                 self.selectingUserList = .followerList
-                self.performSegue(withIdentifier: "fromUserInfoToUserList", sender: nil)
+                self.presentUserList()
                 observer.sendCompleted()
             }
         })
@@ -144,6 +117,30 @@ class UserInfoViewController: UIViewController {
     }
 
     // MARK: - Private Methods
+
+    private func presentUserList() {
+        let userListViewController = UserListViewController.makeInstance()
+        userListViewController.tempUserID = tempUserID
+        userListViewController.backButtonAction = Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { observer, _ in
+                userListViewController.dismiss(animated: true, completion: nil)
+                observer.sendCompleted()
+            }
+        }
+        present(userListViewController, animated: true, completion: nil)
+    }
+
+    private func presentTweetDetail(tweetId: String) {
+        let tweetDetailViewController = TweetDetailViewController.makeInstance()
+        tweetDetailViewController.tempTweetID = tweetId
+        tweetDetailViewController.backButtonAction = Action<Void, Void, Error> {
+            return SignalProducer<Void, Error> { observer, _ in
+                tweetDetailViewController.dismiss(animated: true, completion: nil)
+                observer.sendCompleted()
+            }
+        }
+        present(tweetDetailViewController, animated: true, completion: nil)
+    }
 
     private func showAlert(with error: UserInfoViewModel.UserInfoViewModelError) {
         showAlert(with: "ERROR", message: error.message)
@@ -254,11 +251,10 @@ extension UserInfoViewController: UITableViewDelegate {
     // MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedTweet = model.tweets[indexPath.row]
-        selectedTweetID = selectedTweet.tweetId
 
         tableView.deselectRow(at: indexPath, animated: true)
 
-        performSegue(withIdentifier: "fromUserInfoToTweetDetail", sender: nil)
+        presentTweetDetail(tweetId: selectedTweet.tweetId)
     }
 }
 

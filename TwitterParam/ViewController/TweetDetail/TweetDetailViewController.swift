@@ -43,23 +43,6 @@ class TweetDetailViewController: UIViewController, TTTAttributedLabelDelegate {
         }
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-
-        if let userInfoViewController = segue.destination as? UserInfoViewController,
-            segue.identifier == "fromTweetDetailToUserInfo" {
-            userInfoViewController.tempUserID = model.tweet?.user?.userId
-
-            // regist backbutton command
-            userInfoViewController.backButtonAction = Action<Void, Void, Error> { _ in
-                return SignalProducer<Void, Error> { observer, _ in
-                    userInfoViewController.dismiss(animated: true, completion: nil)
-                    observer.sendCompleted()
-                }
-            }
-        }
-    }
-
     // MARK: - Binding
     private func bindActions() {
         if let backButtonAction = backButtonAction {

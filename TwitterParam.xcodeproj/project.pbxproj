@@ -15,6 +15,10 @@
 		5917020F1B1BEA5D008ADA01 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917020E1B1BEA5D008ADA01 /* MainViewModel.swift */; };
 		591702131B1C3EB0008ADA01 /* MainViewControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591702121B1C3EB0008ADA01 /* MainViewControllerTableViewCell.swift */; };
 		591ED1261B3645A300BAB592 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591ED1251B3645A300BAB592 /* UIViewController+Alert.swift */; };
+		5924883623BE3064009CF143 /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5924883523BE3064009CF143 /* MainViewControllerTests.swift */; };
+		5924883823BE30C1009CF143 /* TweetDetailViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5924883723BE30C1009CF143 /* TweetDetailViewControllerTests.swift */; };
+		5924883C23BE30DC009CF143 /* UserListViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5924883B23BE30DC009CF143 /* UserListViewControllerTests.swift */; };
+		5924883E23BE30F2009CF143 /* UserInfoViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5924883D23BE30F2009CF143 /* UserInfoViewControllerTests.swift */; };
 		593318971B33E34600110701 /* UserInfoViewControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593318961B33E34600110701 /* UserInfoViewControllerTableViewCell.swift */; };
 		595BC56D23B79D7300DB9AD8 /* UserListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595BC56C23B79D7300DB9AD8 /* UserListViewModelTests.swift */; };
 		595FC10C1B1BE8400088A2EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FC10B1B1BE8400088A2EB /* AppDelegate.swift */; };
@@ -86,6 +90,10 @@
 		591702101B1C0741008ADA01 /* TwitterParam-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TwitterParam-Bridging-Header.h"; sourceTree = "<group>"; };
 		591702121B1C3EB0008ADA01 /* MainViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTableViewCell.swift; sourceTree = "<group>"; };
 		591ED1251B3645A300BAB592 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIViewController+Alert.swift"; path = "Extension/UIViewController/UIViewController+Alert.swift"; sourceTree = "<group>"; };
+		5924883523BE3064009CF143 /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
+		5924883723BE30C1009CF143 /* TweetDetailViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetDetailViewControllerTests.swift; sourceTree = "<group>"; };
+		5924883B23BE30DC009CF143 /* UserListViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListViewControllerTests.swift; sourceTree = "<group>"; };
+		5924883D23BE30F2009CF143 /* UserInfoViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoViewControllerTests.swift; sourceTree = "<group>"; };
 		593318961B33E34600110701 /* UserInfoViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserInfoViewControllerTableViewCell.swift; path = CustomSubviews/UserInfoViewControllerTableViewCell.swift; sourceTree = "<group>"; };
 		595BC56C23B79D7300DB9AD8 /* UserListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewModelTests.swift; sourceTree = "<group>"; };
 		595FC1061B1BE8400088A2EB /* TwitterParam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwitterParam.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -374,6 +382,10 @@
 			isa = PBXGroup;
 			children = (
 				59E061B223BCE04A001779DF /* LoginViewControllerTests.swift */,
+				5924883523BE3064009CF143 /* MainViewControllerTests.swift */,
+				5924883723BE30C1009CF143 /* TweetDetailViewControllerTests.swift */,
+				5924883D23BE30F2009CF143 /* UserInfoViewControllerTests.swift */,
+				5924883B23BE30DC009CF143 /* UserListViewControllerTests.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -652,11 +664,15 @@
 				595FC1221B1BE8400088A2EB /* TwitterParamTests.swift in Sources */,
 				596E039323AE78F700A1CF75 /* UserInfoViewModelTests.swift in Sources */,
 				59E061AC23B90F60001779DF /* UserHelperTests.swift in Sources */,
+				5924883E23BE30F2009CF143 /* UserInfoViewControllerTests.swift in Sources */,
 				595BC56D23B79D7300DB9AD8 /* UserListViewModelTests.swift in Sources */,
 				596E039623AE851000A1CF75 /* UserTests.swift in Sources */,
 				596E037023A674ED00A1CF75 /* MainViewModelTests.swift in Sources */,
+				5924883C23BE30DC009CF143 /* UserListViewControllerTests.swift in Sources */,
 				59E061B323BCE04B001779DF /* LoginViewControllerTests.swift in Sources */,
+				5924883823BE30C1009CF143 /* TweetDetailViewControllerTests.swift in Sources */,
 				59E061AE23BCAF86001779DF /* LoginViewModelTests.swift in Sources */,
+				5924883623BE3064009CF143 /* MainViewControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

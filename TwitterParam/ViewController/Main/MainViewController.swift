@@ -77,42 +77,6 @@ class MainViewController: UIViewController {
         }
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-
-        if let userInfoViewController = segue.destination as? UserInfoViewController,
-            segue.identifier == "fromMainToUserInfo" {
-
-            userInfoViewController.tempUserID = UserHelper.currentUserId()
-
-            // bind Next ViewController's Commands
-            userInfoViewController.backButtonAction = Action<Void, Void, Error> {
-                return SignalProducer { observer, _ in
-                    userInfoViewController.dismiss(animated: true, completion: nil)
-                    observer.sendCompleted()
-                }
-            }
-        } else if let tweetDetailViewController = segue.destination as? TweetDetailViewController,
-            let tweetId = model.selectingTweet?.tweetId,
-            segue.identifier == "fromMainToTweetDetail" {
-            tweetDetailViewController.tempTweetID = tweetId
-
-            // bind Next ViewController's Commands
-            tweetDetailViewController.backButtonAction = Action<Void, Void, Error> {
-                return SignalProducer { observer, _ in
-                    tweetDetailViewController.dismiss(animated: true, completion: nil)
-                    observer.sendCompleted()
-                }
-            }
-        }
-    }
-
-    // MARK: - Memory Management
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     // MARK: - Private Methods
     func startObserving() {
         NotificationCenter.default.addObserver(
@@ -210,7 +174,21 @@ class MainViewController: UIViewController {
         UIView.animate(withDuration: keyboardAnimationDuration, animations: { () -> Void in
             self.textFieldView?.alpha = 1.0
         })
+    }
 
+    private func presentTweetDetail(tweetId: String) {
+        let tweetDetailViewController = TweetDetailViewController.makeInstance()
+        tweetDetailViewController.tempTweetID = tweetId
+
+        // bind Next ViewController's Commands
+        tweetDetailViewController.backButtonAction = Action<Void, Void, Error> {
+            return SignalProducer { observer, _ in
+                tweetDetailViewController.dismiss(animated: true, completion: nil)
+                observer.sendCompleted()
+            }
+        }
+
+        present(tweetDetailViewController, animated: true, completion: nil)
     }
 
     // MARK: - Binding
@@ -357,9 +335,9 @@ extension MainViewController: UITableViewDataSource {
 
 extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        model.selectingIndex = indexPath.row
+        let selectedTweet = model.tweets[indexPath.row]
         tableView.deselectRow(at: indexPath, animated: true)
-        performSegue(withIdentifier: "fromMainToTweetDetail", sender: nil)
+        presentTweetDetail(tweetId: selectedTweet.tweetId)
     }
 }
 

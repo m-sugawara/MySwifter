@@ -9,9 +9,10 @@
 import UIKit
 
 extension UIViewController {
-    static func makeInstance(storyboardName: String = "Main") -> Self {
+    static func makeInstance() -> Self {
         let name = String(describing: self)
-        let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
-        return storyboard.instantiateViewController(withIdentifier: name) as! Self
+        let storyboard = UIStoryboard(name: name, bundle: nil)
+        // swiftlint:disable force_cast
+        return storyboard.instantiateInitialViewController() as! Self
     }
 }

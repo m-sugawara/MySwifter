@@ -18,6 +18,12 @@ class UserInfoViewControllerTableViewCell: UITableViewCell {
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var tweetTextLabel: TTTAttributedLabel!
 
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        tweetTextLabel.delegate = self
+    }
+
     func apply(withTweet tweet: Tweet) {
         iconImageView.sd_setImage(
             with: tweet.user?.profileImageUrl,
@@ -25,5 +31,12 @@ class UserInfoViewControllerTableViewCell: UITableViewCell {
             options: .fromCacheOnly)
         tweetTextLabel.text = tweet.text
         tweetTextLabel.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue
+    }
+}
+
+extension UserInfoViewControllerTableViewCell: TTTAttributedLabelDelegate {
+    // MARK: - TTTAttributedLabelDelegate
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+        UIApplication.shared.open(url)
     }
 }

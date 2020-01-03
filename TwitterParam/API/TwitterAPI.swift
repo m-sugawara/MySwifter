@@ -127,11 +127,6 @@ final class TwitterAPI: NSObject {
         }
     }
 
-    // MARK: - Logout
-    func logout() {
-        _ = UserHelper.removeUserToken()
-    }
-
     // MARK: - Wrapper Method(Login)
     func tryToLogin() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { [weak self] observer, _ in

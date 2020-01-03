@@ -77,8 +77,26 @@ class MainViewController: UIViewController {
         }
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if !model.isLoggedIn {
+            presentLogin()
+        }
+    }
+
     // MARK: - Private Methods
-    func startObserving() {
+    private func presentLogin() {
+        let loginViewController = LoginViewController.makeInstance()
+        loginViewController.modalPresentationStyle = .overFullScreen
+        present(loginViewController, animated: false, completion: nil)
+    }
+
+    private func startObserving() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillShow(notification:)),
@@ -87,7 +105,7 @@ class MainViewController: UIViewController {
         )
     }
 
-    func stopObserving() {
+    private func stopObserving() {
         NotificationCenter.default.removeObserver(
             self,
             name: UIResponder.keyboardWillShowNotification,
@@ -95,21 +113,18 @@ class MainViewController: UIViewController {
         )
     }
 
-    func startLoading() {
+    private func startLoading() {
         loadingView.isHidden = false
         activityIndicatorView.startAnimating()
     }
 
-    func stopLoading() {
+    private func stopLoading() {
         loadingView.isHidden = true
         activityIndicatorView.stopAnimating()
     }
 
-    func configureViews() {
-        textFieldView = TextFieldView.view(
-            withMaxLength: kTextFieldMaxLength,
-            delegate: self
-        )
+    private func configureViews() {
+        textFieldView = TextFieldView.view(withMaxLength: kTextFieldMaxLength)
         textFieldView?.alpha = 0.0
         view.addSubview(textFieldView!)
     }
@@ -133,7 +148,7 @@ class MainViewController: UIViewController {
         textFieldView?.textFieldWithLimit.limitLabel.text = String(kTextFieldMaxLength)
     }
 
-    func hideTextFieldView() {
+    private func hideTextFieldView() {
         for view in view.subviews {
             if view is TextFieldView {
                 continue
@@ -192,7 +207,7 @@ class MainViewController: UIViewController {
     }
 
     // MARK: - Binding
-    func bindCommands() {
+    private func bindCommands() {
 
         // bind Button to the RACCommand
         tweetButton.reactive.pressed = CocoaAction(Action<Void, Void, Error> {
@@ -218,10 +233,10 @@ class MainViewController: UIViewController {
                     observer.sendCompleted()
                 }
                 let yesAction: (UIAlertAction?) -> Void = { [weak self] action in
-                    // if selected YES, try to logout and dismissViewController
-                    TwitterAPI.shared.logout()
+                    guard let self = self else { return }
                     observer.sendCompleted()
-                    self?.dismiss(animated: true, completion: nil)
+                    self.model.logout()
+                    self.presentLogin()
                 }
                 self.showAlert(
                     with: "ALERT",
@@ -342,7 +357,6 @@ extension MainViewController: UITableViewDelegate {
 }
 
 extension MainViewController: UIScrollViewDelegate {
-
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         scrollBeginingPoint = scrollView.contentOffset
     }
@@ -375,13 +389,5 @@ extension MainViewController: UIScrollViewDelegate {
             self.tweetButton.isHidden = false
             self.view.layoutIfNeeded()
         }
-    }
-}
-extension MainViewController: UITextFieldWithLimitDelegate {
-
-}
-extension MainViewController: TTTAttributedLabelDelegate {
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        UIApplication.shared.open(url)
     }
 }

@@ -257,10 +257,3 @@ extension UserInfoViewController: UITableViewDelegate {
         presentTweetDetail(tweetId: selectedTweet.tweetId)
     }
 }
-
-extension UserInfoViewController: TTTAttributedLabelDelegate {
-    // MARK: - TTTAttributedLabelDelegate
-    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
-        UIApplication.shared.open(url)
-    }
-}

@@ -67,6 +67,10 @@ class UserHelper {
         return Keys.userId.storedValue()
     }
 
+    static func isLoggedIn() -> Bool {
+        return (Keys.userId.storedValue() != nil)
+    }
+
     // MARK: - private
 
     private static func save(_ value: Any?, forKey key: Keys) {

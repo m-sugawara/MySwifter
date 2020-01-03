@@ -24,8 +24,10 @@ class MainViewModel {
         }
     }
 
-    dynamic var tapCount: NSInteger = 0
-    dynamic var tweets: [Tweet] = [Tweet]()
+    var isLoggedIn: Bool {
+        return UserHelper.isLoggedIn()
+    }
+    var tweets = [Tweet]()
 
     var inputtingTweet = MutableProperty<String>("")
     var selectingIndex: Int?
@@ -237,5 +239,10 @@ class MainViewModel {
             newTweet.favoriteCount += 1
         }
         tweets[index] = newTweet
+    }
+
+    // MARK: - Logout
+    func logout() {
+        UserHelper.removeUserToken()
     }
 }

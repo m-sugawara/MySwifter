@@ -17,9 +17,8 @@ class TextFieldView: UIView {
     @IBOutlet weak var cancelButton: UIButton!
 
     // MARK: - Convenience Initializer
-    class func view(
-        withMaxLength maxLength: Int,
-        delegate: UITextFieldWithLimitDelegate
+    static func view(
+        withMaxLength maxLength: Int
     ) -> TextFieldView {
         guard let view = Bundle.main.loadNibNamed(
             "TextFieldView",
@@ -31,7 +30,6 @@ class TextFieldView: UIView {
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
         view.textFieldWithLimit.maxLength = maxLength as NSNumber
-        view.textFieldWithLimit.delegate = delegate
 
         return view
     }
@@ -44,5 +42,4 @@ class TextFieldView: UIView {
     @IBAction func cancelButtonTapped(sender: AnyObject) {
 
     }
-
 }

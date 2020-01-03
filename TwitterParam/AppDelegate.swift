@@ -14,10 +14,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    private func application(
-        application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+
+        let mainViewController = MainViewController.makeInstance()
+        window?.rootViewController = mainViewController
+        window?.makeKeyAndVisible()
+
         return true
     }
 
@@ -36,15 +43,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
     }
 
-    private func application(
-        application: UIApplication,
-        openURL url: NSURL,
-        sourceApplication: String?,
-        annotation: AnyObject?
+    // swiftlint:disable identifier_name
+    func application(_ app: UIApplication, open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey : Any] = [:]
     ) -> Bool {
-        Swifter.handleOpenURL(url as URL, callbackURL: url as URL)
+        Swifter.handleOpenURL(url, callbackURL: url)
 
         return true
     }
-
 }

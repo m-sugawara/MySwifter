@@ -42,8 +42,7 @@ class LoginViewController: UIViewController {
                                 message: "Login Success",
                                 cancelButtonTitle: "OK",
                     cancelTappedAction: { [weak self] _ in
-                        let mainViewController = MainViewController.makeInstance()
-                        self?.present(mainViewController, animated: true, completion: nil)
+                        self?.dismiss(animated: true, completion: nil)
                 })
             case .failed(let error):
                 self?.showAlert(

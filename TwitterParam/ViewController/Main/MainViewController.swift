@@ -10,16 +10,8 @@ import UIKit
 
 import ReactiveCocoa
 import ReactiveSwift
-import TTTAttributedLabel
-import UITextFieldWithLimit
 
 class MainViewController: UIViewController {
-
-    private enum TableViewButtonType: Int {
-        case reply = 1
-        case retweet
-        case favorite
-    }
 
     private let model = MainViewModel()
 
@@ -43,11 +35,6 @@ class MainViewController: UIViewController {
         stopObserving()
     }
 
-    // MARK: - Designated Initializer
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,10 +42,6 @@ class MainViewController: UIViewController {
         startObserving()
         configureViews()
         bindCommands()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -129,9 +112,6 @@ class MainViewController: UIViewController {
             }
             view.isUserInteractionEnabled = true
         }
-
-        // reset selecting Index when hide textfield view.
-        model.selectingIndex = nil
 
         textFieldView?.deactivate()
     }
@@ -225,48 +205,11 @@ class MainViewController: UIViewController {
             otherButtonTappedActions: yesAction
         )
     }
-
-    @objc private func tableViewButtonsTouch(sender: UIButton, event: UIEvent) {
-        // get indexpath from touch point
-        let touch = event.allTouches!.first!
-        let point = touch.location(in: tableView)
-        let indexPath = tableView.indexPathForRow(at: point)!
-
-        // set selecting Index to ViewModel
-        model.selectingIndex = indexPath.row
-
-        let type = TableViewButtonType(rawValue: sender.tag)!
-        switch type {
-        case .reply:
-            showTextFieldView(withScreenName: model.selectingTweet?.user?.screenName)
-
-        case .retweet:
-            model.postRetweet(with: indexPath.row).startWithResult { [weak self] result in
-                switch result {
-                case .success:
-                    self?.tableView.reloadData()
-                case .failure(let error):
-                    self?.showAlert(with: "ERROR", message: "\(error)")
-                }
-            }
-
-        case .favorite:
-            model.postFavorite(with: indexPath.row).startWithResult { [weak self] result in
-                switch result {
-                case .success:
-                    self?.tableView.reloadData()
-                case .failure(let error):
-                    self?.showAlert(with: "ERROR", message: "\(error)")
-                }
-            }
-
-        }
-    }
 }
 
 extension MainViewController: TextFieldViewDelegate {
     func textFieldViewDidTapTweetButton() {
-        showTextFieldView(withScreenName: model.selectingTweet?.user?.screenName)
+        hideTextFieldView()
         model.postTweet()
     }
 
@@ -282,43 +225,35 @@ extension MainViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: MainViewControllerTableViewCell.identifier
-            ) as? MainViewControllerTableViewCell else {
+            withIdentifier: FeedTableViewCell.identifier
+            ) as? FeedTableViewCell else {
             fatalError()
         }
 
         let tweet = model.tweets[indexPath.row]
-        cell.apply(withTweet: tweet)
-
-        // set Cell Actions
-        cell.replyButton.tag = TableViewButtonType.reply.rawValue
-        cell.replyButton.addTarget(
-            self,
-            action: #selector(tableViewButtonsTouch(sender:event:)),
-            for: .touchUpInside
-        )
-
-        cell.retweetButton.tag = TableViewButtonType.retweet.rawValue
-        cell.retweetButton.addTarget(
-            self,
-            action: #selector(tableViewButtonsTouch(sender:event:)),
-            for: .touchUpInside
-        )
-
-        cell.favoriteButton.tag = TableViewButtonType.favorite.rawValue
-        cell.favoriteButton.addTarget(
-            self,
-            action: #selector(tableViewButtonsTouch(sender:event:)),
-            for: .touchUpInside
-        )
-
+        cell.apply(withTweet: tweet, index: indexPath.row)
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 130.0
     }
+}
 
+extension MainViewController: FeedTableViewCellDelegate {
+    func feedTableViewCellDidTapReply(withIndex index: Int) {
+        let selectedTweet = model.tweets[index]
+        showTextFieldView(withScreenName: selectedTweet.user?.screenName)
+        model.postTweet(withIndex: index)
+    }
+
+    func feedTableViewCellDidTapRetweet(withIndex index: Int) {
+        model.postRetweet(withIndex: index)
+    }
+
+    func feedTableViewCellDidTapFavorite(withIndex index: Int) {
+        model.postFavorite(withIndex: index)
+    }
 }
 
 extension MainViewController: UITableViewDelegate {

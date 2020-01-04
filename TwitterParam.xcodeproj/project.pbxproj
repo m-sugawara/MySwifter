@@ -11,7 +11,7 @@
 		591299741B37F6BC0011EA85 /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591299731B37F6BC0011EA85 /* TextFieldView.swift */; };
 		591299761B37F6FB0011EA85 /* TextFieldView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 591299751B37F6FB0011EA85 /* TextFieldView.xib */; };
 		5917020F1B1BEA5D008ADA01 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917020E1B1BEA5D008ADA01 /* MainViewModel.swift */; };
-		591702131B1C3EB0008ADA01 /* MainViewControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591702121B1C3EB0008ADA01 /* MainViewControllerTableViewCell.swift */; };
+		591702131B1C3EB0008ADA01 /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591702121B1C3EB0008ADA01 /* FeedTableViewCell.swift */; };
 		5924883623BE3064009CF143 /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5924883523BE3064009CF143 /* MainViewControllerTests.swift */; };
 		5924883823BE30C1009CF143 /* TweetDetailViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5924883723BE30C1009CF143 /* TweetDetailViewControllerTests.swift */; };
 		5924883C23BE30DC009CF143 /* UserListViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5924883B23BE30DC009CF143 /* UserListViewControllerTests.swift */; };
@@ -91,7 +91,7 @@
 		591299751B37F6FB0011EA85 /* TextFieldView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TextFieldView.xib; path = CustomView/TextFieldView.xib; sourceTree = "<group>"; };
 		5917020E1B1BEA5D008ADA01 /* MainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		591702101B1C0741008ADA01 /* TwitterParam-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TwitterParam-Bridging-Header.h"; sourceTree = "<group>"; };
-		591702121B1C3EB0008ADA01 /* MainViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTableViewCell.swift; sourceTree = "<group>"; };
+		591702121B1C3EB0008ADA01 /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
 		5924883523BE3064009CF143 /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
 		5924883723BE30C1009CF143 /* TweetDetailViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetDetailViewControllerTests.swift; sourceTree = "<group>"; };
 		5924883B23BE30DC009CF143 /* UserListViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListViewControllerTests.swift; sourceTree = "<group>"; };
@@ -176,7 +176,7 @@
 		591702111B1C3E82008ADA01 /* CustomSubviews */ = {
 			isa = PBXGroup;
 			children = (
-				591702121B1C3EB0008ADA01 /* MainViewControllerTableViewCell.swift */,
+				591702121B1C3EB0008ADA01 /* FeedTableViewCell.swift */,
 			);
 			path = CustomSubviews;
 			sourceTree = "<group>";
@@ -656,7 +656,7 @@
 				59898DB91B33FFB200273760 /* TweetDetailViewController.swift in Sources */,
 				595FC10C1B1BE8400088A2EB /* AppDelegate.swift in Sources */,
 				59B578AD1B1EFA6E00E3D801 /* Tweet.swift in Sources */,
-				591702131B1C3EB0008ADA01 /* MainViewControllerTableViewCell.swift in Sources */,
+				591702131B1C3EB0008ADA01 /* FeedTableViewCell.swift in Sources */,
 				59B578AB1B1ED1FD00E3D801 /* UserInfoViewModel.swift in Sources */,
 				59B578A81B1ED17700E3D801 /* UserInfoViewController.swift in Sources */,
 				59CD8BBA1B3FBAC9000B2E93 /* UserListViewController.swift in Sources */,

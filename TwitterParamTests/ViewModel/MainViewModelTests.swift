@@ -99,16 +99,19 @@ class MainViewModelTests: XCTestCase {
     func testRetweetButtonAction() {
         let expectation = XCTestExpectation()
 
-        viewModel.postRetweetAction(with: 0).apply().startWithResult { result in
-            switch result {
-            case .success:
-                XCTAssertTrue(false)
-                expectation.fulfill()
-            case .failure(let error):
+        viewModel.eventsSignal.observeValues { event in
+            switch event {
+            case .failedToRequest(let error):
                 XCTAssertNotNil(error)
+                XCTAssertEqual(MainViewModel.MainViewModelError.indexOutOfRange, error)
+                expectation.fulfill()
+            default:
+                XCTAssertTrue(false)
                 expectation.fulfill()
             }
         }
+
+        viewModel.postRetweet(withIndex: 0)
 
         wait(for: [expectation], timeout: 2.0)
     }
@@ -116,16 +119,19 @@ class MainViewModelTests: XCTestCase {
     func testFavoriteButtonAction() {
         let expectation = XCTestExpectation()
 
-        viewModel.postFavoriteAction(with: 0).apply().startWithResult { result in
-            switch result {
-            case .success:
-                XCTAssertTrue(false)
-                expectation.fulfill()
-            case .failure(let error):
+        viewModel.eventsSignal.observeValues { event in
+            switch event {
+            case .failedToRequest(let error):
                 XCTAssertNotNil(error)
+                XCTAssertEqual(MainViewModel.MainViewModelError.indexOutOfRange, error)
+                expectation.fulfill()
+            default:
+                XCTAssertTrue(false)
                 expectation.fulfill()
             }
         }
+
+        viewModel.postFavorite(withIndex: 0)
 
         wait(for: [expectation], timeout: 2.0)
     }

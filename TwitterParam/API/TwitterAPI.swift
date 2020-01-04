@@ -12,31 +12,7 @@ import Accounts
 import SwifteriOS
 import ReactiveSwift
 
-final class TwitterAPI: NSObject {
-
-    enum APIError: Int, Error {
-        case noTwitterAccount = -100
-        case notGrantedACAccount = -101
-        case failedToParseJSON = -102
-        case failedToGetUserId = -103
-
-        var errorCode: Int {
-            return rawValue
-        }
-
-        var message: String {
-            switch self {
-            case .noTwitterAccount:
-                return "There is no configured Twitter account"
-            case .notGrantedACAccount:
-                return "granted account not found"
-            case .failedToParseJSON:
-                return "failed to parse JSON Data"
-            case .failedToGetUserId:
-                return "failed to get userId"
-            }
-        }
-    }
+final class TwitterAPI {
 
     typealias FailureHandler = (_ error: Error) -> Void
 
@@ -46,12 +22,11 @@ final class TwitterAPI: NSObject {
     static let shared = TwitterAPI()
 
     // MARK: - Initializer
-    private override init() {
+    private init() {
         self.swifter = Swifter(
             consumerKey: "5UwojnG3QBtSA3StY4JOvjVAK",
             consumerSecret: "XAKBmM3I4Mgt1lQtICLLKkuCWZzN0nXGe4sJ5qwDhqKK4PtCYd"
         )
-        super.init()
     }
 
     // MARK: - ErrorHelper
@@ -82,13 +57,13 @@ final class TwitterAPI: NSObject {
                     return
                 }
                 guard granted else {
-                    let error = self.error(with: .notGrantedACAccount)
+                    let error = APIError.nsError(from: .notGrantedACAccount)
                     observer.send(error: error)
                     return
                 }
                 guard let twitterAccount = accountStore.accounts(
                     with: accountType)?.first as? ACAccount else {
-                        let error = self.error(with: .noTwitterAccount)
+                        let error = APIError.nsError(from: .noTwitterAccount)
                     observer.send(error: error)
                     return
                 }
@@ -117,7 +92,7 @@ final class TwitterAPI: NSObject {
                         observer.sendCompleted()
                     },
                     failure: { (error) -> Void in
-                        let error = self.error(with: .noTwitterAccount)
+                        let error = APIError.nsError(from: .noTwitterAccount)
                         observer.send(error: error)
                 })
                 return
@@ -164,7 +139,7 @@ final class TwitterAPI: NSObject {
         return getUsersShow(with: .id(UserHelper.currentUserId()!))
     }
 
-    func getUsersShow(with userTag: UserTag, includeEntities: Bool? = nil) -> SignalProducer<User, Error> {
+    func getUsersShow(with userTag: UserTag, includeEntities: Bool = false) -> SignalProducer<User, Error> {
         return SignalProducer<User, Error> { [weak self] observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
@@ -269,7 +244,7 @@ final class TwitterAPI: NSObject {
                 tweetMode: tweetMode,
                 success: { json in
                     guard let tweets = self.parseTweets(from: json) else {
-                        let error = self.error(with: .failedToParseJSON)
+                        let error = APIError.nsError(from: .failedToParseJSON)
                         observer.send(error: error)
                         return
                     }
@@ -315,7 +290,7 @@ final class TwitterAPI: NSObject {
                 tweetMode: tweetMode,
                 success: { json in
                     guard let tweets = self.parseTweets(from: json) else {
-                        let error = self.error(with: .failedToParseJSON)
+                        let error = APIError.nsError(from: .failedToParseJSON)
                         observer.send(error: error)
                         return
                     }
@@ -411,7 +386,7 @@ final class TwitterAPI: NSObject {
                 tweetMode: tweetMode,
                 success: { json in
                     guard let tweet = self.parseTweet(from: json) else {
-                        let error = self.error(with: .failedToParseJSON)
+                        let error = APIError.nsError(from: .failedToParseJSON)
                         observer.send(error: error)
                         return
                     }
@@ -436,7 +411,7 @@ final class TwitterAPI: NSObject {
                 success: { json in
                     let currentUserRetweet = json["current_user_retweet"].object
                     guard let currentUserRetweetId = currentUserRetweet?["id_str"]?.string else {
-                        let error = self.error(with: .failedToParseJSON)
+                        let error = APIError.nsError(from: .failedToParseJSON)
                         observer.send(error: error)
                         return
                     }
@@ -517,7 +492,7 @@ final class TwitterAPI: NSObject {
                 tweetMode: tweetMode,
                 success: { json in
                     guard let tweets = self.parseTweets(from: json) else {
-                        let error = self.error(with: .failedToParseJSON)
+                        let error = APIError.nsError(from: .failedToParseJSON)
                         observer.send(error: error)
                         return
                     }

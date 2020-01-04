@@ -17,7 +17,6 @@ class MainViewModel {
         case failedToPostTweet
         case failedToPostRetweet
         case failedToPostFavorite
-        case interrupted
         case indexOutOfRange
 
         var message: String {
@@ -30,8 +29,6 @@ class MainViewModel {
                 return "Failed to post retweet"
             case .failedToPostFavorite:
                 return "Failed to post favorite"
-            case .interrupted:
-                return "Action has interupted"
             case .indexOutOfRange:
                 return "Action has interupted because index out of range"
             }
@@ -241,5 +238,10 @@ class MainViewModel {
             return ""
         }
         return "@" + screenName + ": "
+    }
+
+    // MARK: - For Test(remove later)
+    func appendTweet(_ tweet: Tweet) {
+        tweets.append(tweet)
     }
 }

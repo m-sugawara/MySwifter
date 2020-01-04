@@ -245,4 +245,12 @@ class MainViewModel {
     func logout() {
         UserHelper.removeUserToken()
     }
+
+    // MARK: - Text decoration
+    func defaultText(withScreenName screenName: String?) -> String {
+        guard let screenName = screenName, !screenName.isEmpty else {
+            return ""
+        }
+        return "@" + screenName + ": "
+    }
 }

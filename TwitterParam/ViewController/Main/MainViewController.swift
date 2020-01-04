@@ -13,21 +13,20 @@ import ReactiveSwift
 import TTTAttributedLabel
 import UITextFieldWithLimit
 
-let kMainTableViewCellIdentifier = "MainTableViewCell"
-
-enum MainTableViewButtonType: Int {
-    case reply = 1
-    case retweet
-    case favorite
-}
-
 class MainViewController: UIViewController {
 
+    private enum TableViewButtonType: Int {
+        case reply = 1
+        case retweet
+        case favorite
+    }
+
     private let model = MainViewModel()
-    private var textFieldView: TextFieldView?
 
     private var scrollBeginingPoint: CGPoint!
-    private var isShowFooterView = true
+    private var isShowingFooterView = true
+
+    private var textFieldView: TextFieldView?
 
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var tweetButton: UIButton!
@@ -65,18 +64,15 @@ class MainViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if !model.isLoggedIn {
+        guard model.isLoggedIn else {
             presentLogin()
+            return
         }
+
+        model.updateFeed()
     }
 
     // MARK: - Private Methods
-    private func presentLogin() {
-        let loginViewController = LoginViewController.makeInstance()
-        loginViewController.modalPresentationStyle = .overFullScreen
-        present(loginViewController, animated: false, completion: nil)
-    }
-
     private func startObserving() {
         NotificationCenter.default.addObserver(
             self,
@@ -106,7 +102,6 @@ class MainViewController: UIViewController {
 
     private func configureViews() {
         textFieldView = TextFieldView.view()
-        textFieldView?.alpha = 0.0
         view.addSubview(textFieldView!)
         textFieldView?.delegate = self
 
@@ -115,7 +110,7 @@ class MainViewController: UIViewController {
         tableView.delegate = self
     }
 
-    @objc func showTextFieldView(withScreenName screenName:String?) {
+    private func showTextFieldView(withScreenName screenName: String?) {
         for view in view.subviews {
             if view is TextFieldView {
                 continue
@@ -123,14 +118,8 @@ class MainViewController: UIViewController {
             view.isUserInteractionEnabled = false
         }
 
-        var defaultScreenName = ""
-        if screenName != "" {
-            defaultScreenName = "@" + screenName! + ": "
-        }
-
-        textFieldView?.alpha = 0.01
-        textFieldView?.textFieldWithLimit.becomeFirstResponder()
-        textFieldView?.textFieldWithLimit.text = defaultScreenName
+        let text = model.defaultText(withScreenName: screenName)
+        textFieldView?.activate(withText: text)
     }
 
     private func hideTextFieldView() {
@@ -141,11 +130,10 @@ class MainViewController: UIViewController {
             view.isUserInteractionEnabled = true
         }
 
-        // reset selecting Index, when hide textfield view.
+        // reset selecting Index when hide textfield view.
         model.selectingIndex = nil
 
-        textFieldView?.alpha = 0.0
-        textFieldView?.textFieldWithLimit.resignFirstResponder()
+        textFieldView?.deactivate()
     }
 
     @objc func keyboardWillShow(notification: Notification) {
@@ -174,6 +162,12 @@ class MainViewController: UIViewController {
         UIView.animate(withDuration: keyboardAnimationDuration) {
             self.textFieldView?.alpha = 1.0
         }
+    }
+
+    private func presentLogin() {
+        let loginViewController = LoginViewController.makeInstance()
+        loginViewController.modalPresentationStyle = .overFullScreen
+        present(loginViewController, animated: false, completion: nil)
     }
 
     private func presentTweetDetail(tweetId: String) {
@@ -206,33 +200,6 @@ class MainViewController: UIViewController {
                 self.stopLoading()
             }
         }
-
-        logoutButton.reactive.pressed = CocoaAction(Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-                guard let self = self, !lifetime.hasEnded else {
-                    observer.sendInterrupted()
-                    return
-                }
-
-                let cancelAction: (UIAlertAction?) -> Void = { _ in
-                    observer.sendCompleted()
-                }
-                let yesAction: (UIAlertAction?) -> Void = { [weak self] action in
-                    guard let self = self else { return }
-                    observer.sendCompleted()
-                    self.model.logout()
-                    self.presentLogin()
-                }
-                self.showAlert(
-                    with: "ALERT",
-                    message: "LOGOUT?",
-                    cancelButtonTitle: "NO",
-                    cancelTappedAction: cancelAction,
-                    otherButtonTitles: ["YES"],
-                    otherButtonTappedActions: yesAction
-                )
-            }
-        })
     }
 
     // MARK: - Actions
@@ -244,6 +211,21 @@ class MainViewController: UIViewController {
         model.postTweet()
     }
 
+    @IBAction func didTapLogoutButton(_ sender: Any) {
+        let yesAction: (UIAlertAction?) -> Void = { [weak self] action in
+            guard let self = self else { return }
+            self.model.logout()
+            self.presentLogin()
+        }
+        showAlert(
+            with: "ALERT",
+            message: "LOGOUT?",
+            cancelButtonTitle: "NO",
+            otherButtonTitles: ["YES"],
+            otherButtonTappedActions: yesAction
+        )
+    }
+
     @objc private func tableViewButtonsTouch(sender: UIButton, event: UIEvent) {
         // get indexpath from touch point
         let touch = event.allTouches!.first!
@@ -253,7 +235,7 @@ class MainViewController: UIViewController {
         // set selecting Index to ViewModel
         model.selectingIndex = indexPath.row
 
-        let type = MainTableViewButtonType(rawValue: sender.tag)!
+        let type = TableViewButtonType(rawValue: sender.tag)!
         switch type {
         case .reply:
             showTextFieldView(withScreenName: model.selectingTweet?.user?.screenName)
@@ -300,7 +282,7 @@ extension MainViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: kMainTableViewCellIdentifier
+            withIdentifier: MainViewControllerTableViewCell.identifier
             ) as? MainViewControllerTableViewCell else {
             fatalError()
         }
@@ -309,21 +291,21 @@ extension MainViewController: UITableViewDataSource {
         cell.apply(withTweet: tweet)
 
         // set Cell Actions
-        cell.replyButton.tag = MainTableViewButtonType.reply.rawValue
+        cell.replyButton.tag = TableViewButtonType.reply.rawValue
         cell.replyButton.addTarget(
             self,
             action: #selector(tableViewButtonsTouch(sender:event:)),
             for: .touchUpInside
         )
 
-        cell.retweetButton.tag = MainTableViewButtonType.retweet.rawValue
+        cell.retweetButton.tag = TableViewButtonType.retweet.rawValue
         cell.retweetButton.addTarget(
             self,
             action: #selector(tableViewButtonsTouch(sender:event:)),
             for: .touchUpInside
         )
 
-        cell.favoriteButton.tag = MainTableViewButtonType.favorite.rawValue
+        cell.favoriteButton.tag = TableViewButtonType.favorite.rawValue
         cell.favoriteButton.addTarget(
             self,
             action: #selector(tableViewButtonsTouch(sender:event:)),
@@ -355,16 +337,16 @@ extension MainViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let currentPoint = scrollView.contentOffset
         if (scrollBeginingPoint.y < currentPoint.y) {
-            scrollDown()
+            hideFooterView()
         } else {
-            scrollUp()
+            showFooterView()
         }
     }
 
-    private func scrollDown() {
-        guard !isShowFooterView else { return }
+    private func hideFooterView() {
+        guard isShowingFooterView else { return }
 
-        isShowFooterView = true
+        isShowingFooterView = false
         UIView.animate(withDuration: 0.5) {
             self.tweetButton.isHidden = true
             self.footerViewHeightConstraint.constant = 0.0
@@ -372,9 +354,10 @@ extension MainViewController: UIScrollViewDelegate {
         }
     }
 
-    private func scrollUp() {
-        guard isShowFooterView else { return }
-        isShowFooterView = false
+    private func showFooterView() {
+        guard !isShowingFooterView else { return }
+
+        isShowingFooterView = true
         UIView.animate(withDuration: 0.5) {
             self.footerViewHeightConstraint.constant = 70.0
             self.tweetButton.isHidden = false

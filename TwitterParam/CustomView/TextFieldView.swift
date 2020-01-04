@@ -44,9 +44,22 @@ class TextFieldView: UIView {
         view.translatesAutoresizingMaskIntoConstraints = true
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
+        view.alpha = 0.0
         view.maxLength = 140
 
         return view
+    }
+
+    // MARK: - Public functions
+    func activate(withText text: String) {
+        alpha = 0.01
+        textFieldWithLimit.becomeFirstResponder()
+        textFieldWithLimit.text = text
+    }
+
+    func deactivate() {
+        alpha = 0.0
+        textFieldWithLimit.resignFirstResponder()
     }
 
     // MARK: - Actions

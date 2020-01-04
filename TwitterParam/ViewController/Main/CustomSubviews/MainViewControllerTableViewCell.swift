@@ -12,6 +12,9 @@ import TTTAttributedLabel
 import SDWebImage
 
 class MainViewControllerTableViewCell: UITableViewCell {
+
+    static let identifier = "MainTableViewCell"
+
     @IBOutlet private weak var iconImageView: UIImageView!
     @IBOutlet private weak var tweetTextLabel: TTTAttributedLabel!
     @IBOutlet private weak var userNameLabel: UILabel!

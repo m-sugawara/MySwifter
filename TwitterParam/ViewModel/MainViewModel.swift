@@ -8,34 +8,53 @@
 
 import Foundation
 
-import ReactiveCocoa
 import ReactiveSwift
 
 class MainViewModel {
 
     enum MainViewModelError: Error {
-        case interrupted
+        case failedToLoadFeed
+        case failedToPostTweet
+        case failedToPostRetweet
+        case failedToPostFavorite
+        case indexOutOfRange
 
         var message: String {
             switch self {
-            case .interrupted:
-                return "Action has interupted"
+            case .failedToLoadFeed:
+                return "Failed to load feed"
+            case .failedToPostTweet:
+                return "Failed to post tweet"
+            case .failedToPostRetweet:
+                return "Failed to post retweet"
+            case .failedToPostFavorite:
+                return "Failed to post favorite"
+            case .indexOutOfRange:
+                return "Action has interupted because index out of range"
             }
         }
+    }
+
+    enum Event {
+        case startToRequest
+        case loadedFeed
+        case postedTweet
+        case postedRetweet
+        case postedFavorite
+        case failedToRequest(error: MainViewModelError)
+    }
+
+    private let (_eventsSignal, eventsObserver) = Signal<Event, Never>.pipe()
+    var eventsSignal: Signal<Event, Never> {
+        return _eventsSignal
     }
 
     var isLoggedIn: Bool {
         return UserHelper.isLoggedIn()
     }
-    var tweets = [Tweet]()
+    private(set) var tweets = [Tweet]()
 
     var inputtingTweet = MutableProperty<String>("")
-    var selectingIndex: Int?
-    var selectingTweet: Tweet? {
-        guard let index = selectingIndex,
-            tweets.count > index else { return nil }
-        return tweets[index]
-    }
 
     // MARK: - Deinit
     deinit {
@@ -58,110 +77,86 @@ class MainViewModel {
     }
 
     // MARK: - Feed update
-    var feedUpdateButtonAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> {
-            return self.feedUpdate
-        }
-    }
-
-    var feedUpdate: SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-            guard let self = self, !lifetime.hasEnded else {
-                observer.send(error: MainViewModelError.interrupted)
-                observer.sendInterrupted()
-                return
-            }
-            TwitterAPI.shared.getStatusesHomeTimeline().startWithResult { result in
-                switch result {
-                case .success(let tweets):
-                    self.tweets = tweets
-                case .failure(let error):
-                    observer.send(error: error)
-                }
+    func updateFeed() {
+        TwitterAPI.shared.getStatusesHomeTimeline().startWithResult { [weak self] result in
+            switch result {
+            case .success(let tweets):
+                self?.tweets = tweets
+                self?.eventsObserver.send(value: .loadedFeed)
+            case .failure(let error):
+                print(error)
+                self?.eventsObserver.send(value: .failedToRequest(error: .failedToLoadFeed))
             }
         }
     }
 
     // MARK: - Tweet
-    var tweetButtonAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-                guard let self = self, !lifetime.hasEnded,
-                    !self.inputtingTweet.value.isEmpty else {
-                        observer.send(error: MainViewModelError.interrupted)
-                        observer.sendInterrupted()
-                        return
-                }
-                var isReplyToStatusID: String?
-                if let index = self.selectingIndex, index < self.tweets.count {
-                    isReplyToStatusID = self.tweets[index].tweetId
-                }
-                TwitterAPI.shared.postStatusUpdate(
-                    status: self.inputtingTweet.value,
-                    inReplyToStatusID: isReplyToStatusID
-                ).startWithResult { result in
-                    switch result {
-                    case .success:
-                        observer.sendCompleted()
-                    case .failure(let error):
-                        observer.send(error: error)
-                    }
-                }
+    func postTweet(withIndex index: Int? = nil) {
+        var isReplyToStatusID: String?
+        if let index = index, index < tweets.count {
+            isReplyToStatusID = tweets[index].tweetId
+        }
+        TwitterAPI.shared.postStatusUpdate(
+            status: inputtingTweet.value,
+            inReplyToStatusID: isReplyToStatusID
+        ).startWithResult { [weak self] result in
+            switch result {
+            case .success:
+                self?.eventsObserver.send(value: .postedTweet)
+            case .failure(let error):
+                print("failed to post tweet. \(error)")
+                self?.eventsObserver.send(value: .failedToRequest(error: .failedToPostTweet))
             }
         }
     }
 
     // MARK: - Retweet
-    func postRetweetAction(with index: Int) -> Action<Void, Void, Error> {
-        return Action<Void, Void, Error> {
-            return self.postRetweet(with: index)
+    func postRetweet(withIndex index: Int) {
+        guard index < tweets.count else {
+            eventsObserver.send(value: .failedToRequest(error: .indexOutOfRange))
+            return
         }
-    }
+        let tweet = tweets[index]
 
-    func postRetweet(with index: Int) -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-            guard let self = self, !lifetime.hasEnded,
-                self.tweets.count > index else {
-                    observer.send(error: MainViewModelError.interrupted)
-                    observer.sendInterrupted()
-                    return
-            }
-            let tweet = self.tweets[index]
-
-            // if selected tweet hasn't been retweeted yet, try to retweet
-            if tweet.retweeted != true {
-                TwitterAPI.shared.postStatusRetweet(
-                    with: tweet.tweetId, trimUser: false).startWithResult { result in
+        // if selected tweet hasn't been retweeted yet, try to retweet
+        if tweet.retweeted != true {
+            TwitterAPI.shared.postStatusRetweet(
+                with: tweet.tweetId,
+                trimUser: false
+            ).startWithResult { [weak self] result in
                     switch result {
                     case .success:
-                        self.markAsRetweeted(true, at: index)
-                        observer.sendCompleted()
+                        self?.markAsRetweeted(true, at: index)
+                        self?.eventsObserver.send(value: .postedRetweet)
                     case .failure(let error):
-                        observer.send(error: error)
+                        print("failed to post retweet: \(error)")
+                        self?.eventsObserver.send(value: .failedToRequest(error: .failedToPostRetweet))
                     }
-                }
-            } else {
-                TwitterAPI.shared.getCurrentUserRetweetId(
-                    with: tweet.tweetId).startWithResult { result in
+            }
+        } else {
+            TwitterAPI.shared.getCurrentUserRetweetId(
+                with: tweet.tweetId
+            ).startWithResult { [weak self] result in
                     switch result {
                     case .success(let retweetId):
                         TwitterAPI.shared.postStatusesDestroy(
                             with: retweetId,
                             trimUser: false
-                        ).startWithResult { result in
+                        ).startWithResult { [weak self]  result in
                             switch result {
                             case .success:
-                                self.markAsRetweeted(false, at: index)
-                                observer.sendCompleted()
+                                self?.markAsRetweeted(false, at: index)
+                                self?.eventsObserver.send(value: .postedRetweet)
                             case .failure(let error):
-                                observer.send(error: error)
+                                print("failed to destroy current user's retweet: \(error)")
+                                self?.eventsObserver.send(
+                                    value:.failedToRequest(error: .failedToPostRetweet))
                             }
                         }
                     case .failure(let error):
-                        observer.send(error: error)
+                        print("failed to get current user's retweet: \(error)")
+                        self?.eventsObserver.send(value: .failedToRequest(error: .failedToPostRetweet))
                     }
-                }
-
             }
 
         }
@@ -181,48 +176,39 @@ class MainViewModel {
     }
 
     // MARK: - Favorite
-    func postFavoriteAction(with index: Int) -> Action<Void, Void, Error> {
-        return Action<Void, Void, Error> {
-            return self.postFavorite(with: index)
+    func postFavorite(withIndex index: Int) {
+        guard index < tweets.count else {
+            eventsObserver.send(value: .failedToRequest(error: .indexOutOfRange))
+            return
         }
-    }
+        let tweet = tweets[index]
 
-    func postFavorite(with index: Int) -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-            guard let self = self, !lifetime.hasEnded,
-                self.tweets.count > index else {
-                    observer.send(error: MainViewModelError.interrupted)
-                    observer.sendInterrupted()
-                    return
-            }
-            let tweet = self.tweets[index]
-
-            if tweet.favorited != true {
-                TwitterAPI.shared.postCreateFavorite(
-                    with: tweet.tweetId,
-                    includeEntities: false
-                ).startWithResult { result in
-                    switch result {
-                    case .success:
-                        self.markAsFavorited(true, at: index)
-                        observer.sendCompleted()
-                    case .failure(let error):
-                        observer.send(error: error)
-                    }
+        if tweet.favorited != true {
+            TwitterAPI.shared.postCreateFavorite(
+                with: tweet.tweetId,
+                includeEntities: false
+            ).startWithResult { [weak self] result in
+                switch result {
+                case .success:
+                    self?.markAsFavorited(true, at: index)
+                    self?.eventsObserver.send(value: .postedFavorite)
+                case .failure(let error):
+                    print("failed to post favorite: \(error)")
+                    self?.eventsObserver.send(value: .failedToRequest(error: .failedToPostFavorite))
                 }
-            } else {
-                TwitterAPI.shared.postDestroyFavorite(
-                    with: tweet.tweetId,
-                    includeEntities: false
-                ).startWithResult { result in
-                    switch result {
-                    case .success:
-                        self.markAsFavorited(false, at: index)
-                        observer.sendCompleted()
-                    case .failure(let error):
-                        self.selectingIndex = nil
-                        observer.send(error: error)
-                    }
+            }
+        } else {
+            TwitterAPI.shared.postDestroyFavorite(
+                with: tweet.tweetId,
+                includeEntities: false
+            ).startWithResult { [weak self] result in
+                switch result {
+                case .success:
+                    self?.markAsFavorited(false, at: index)
+                    self?.eventsObserver.send(value: .postedFavorite)
+                case .failure(let error):
+                    print("failed to destory favorite: \(error)")
+                    self?.eventsObserver.send(value: .failedToRequest(error: .failedToPostFavorite))
                 }
             }
         }
@@ -244,5 +230,18 @@ class MainViewModel {
     // MARK: - Logout
     func logout() {
         UserHelper.removeUserToken()
+    }
+
+    // MARK: - Text decoration
+    func defaultText(withScreenName screenName: String?) -> String {
+        guard let screenName = screenName, !screenName.isEmpty else {
+            return ""
+        }
+        return "@" + screenName + ": "
+    }
+
+    // MARK: - For Test(remove later)
+    func appendTweet(_ tweet: Tweet) {
+        tweets.append(tweet)
     }
 }

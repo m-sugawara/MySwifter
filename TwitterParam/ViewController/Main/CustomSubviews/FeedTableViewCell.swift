@@ -11,7 +11,18 @@ import UIKit
 import TTTAttributedLabel
 import SDWebImage
 
-class MainViewControllerTableViewCell: UITableViewCell {
+protocol FeedTableViewCellDelegate: class {
+    func feedTableViewCellDidTapReply(withIndex index: Int)
+    func feedTableViewCellDidTapRetweet(withIndex index: Int)
+    func feedTableViewCellDidTapFavorite(withIndex index: Int)
+}
+
+class FeedTableViewCell: UITableViewCell {
+
+    static let identifier = "FeedTableViewCell"
+
+    weak var delegate: FeedTableViewCellDelegate?
+
     @IBOutlet private weak var iconImageView: UIImageView!
     @IBOutlet private weak var tweetTextLabel: TTTAttributedLabel!
     @IBOutlet private weak var userNameLabel: UILabel!
@@ -24,6 +35,8 @@ class MainViewControllerTableViewCell: UITableViewCell {
     @IBOutlet weak var retweetButton: UIButton!
     @IBOutlet weak var favoriteButton: UIButton!
 
+    private var index: Int = -1
+
     // MARK: Designated Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -33,7 +46,25 @@ class MainViewControllerTableViewCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
 
-    func apply(withTweet tweet: Tweet) {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        iconImageView.image = nil
+
+        tweetTextLabel.text = nil
+        userNameLabel.text = nil
+        screenNameLabel.text = nil
+        retweetCountLabel.text = nil
+        favoriteCountLabel.text = nil
+        timeLabel.text = nil
+
+        retweetButton.isSelected = false
+        favoriteButton.isSelected = false
+    }
+
+    func apply(withTweet tweet: Tweet, index: Int) {
+        self.index = index
+
         iconImageView.sd_setImage(
             with: tweet.user!.profileImageUrl,
             placeholderImage: UIImage(named: "Main_TableViewCellIcon"),
@@ -52,4 +83,15 @@ class MainViewControllerTableViewCell: UITableViewCell {
         timeLabel.text = tweet.createdAt?.stringForTimeIntervalSinceCreated()
     }
 
+    @IBAction func didTapReplyButton(_ sender: Any) {
+        delegate?.feedTableViewCellDidTapReply(withIndex: index)
+    }
+
+    @IBAction func didTapRetweetButton(_ sender: Any) {
+        delegate?.feedTableViewCellDidTapRetweet(withIndex: index)
+    }
+
+    @IBAction func didTapFavoriteButton(_ sender: Any) {
+        delegate?.feedTableViewCellDidTapFavorite(withIndex: index)
+    }
 }

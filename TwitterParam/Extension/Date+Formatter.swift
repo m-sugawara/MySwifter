@@ -1,5 +1,5 @@
 //
-//  NSDate+Helper.swift
+//  Date+Formatter.swift
 //  TwitterParam
 //
 //  Created by m_sugawara on 2015/06/22.
@@ -9,7 +9,7 @@
 import Foundation
 
 extension Date {
-    func stringWithFormat(format: String?, localeIdentifier: String = "ja") -> String {
+    func string(WithFormat format: String?, localeIdentifier: String = "ja") -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: localeIdentifier)
         formatter.dateFormat = format

@@ -14,9 +14,6 @@ import TTTAttributedLabel
 import UITextFieldWithLimit
 
 let kMainTableViewCellIdentifier = "MainTableViewCell"
-let kTextFieldMaxLength = 140
-let kTextFieldMarginWidth: CGFloat = 20.0
-let kTextFieldMarginHeight: CGFloat = 20.0
 
 enum MainTableViewButtonType: Int {
     case reply = 1
@@ -47,7 +44,7 @@ class MainViewController: UIViewController {
         stopObserving()
     }
 
-    // MARK: - Disignated Initializer
+    // MARK: - Designated Initializer
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -59,22 +56,6 @@ class MainViewController: UIViewController {
         startObserving()
         configureViews()
         bindCommands()
-
-        // bind tableView Delegate
-        tableView.dataSource = self
-        tableView.delegate = self
-
-        // first, load current user's home timeline
-        startLoading()
-        model.feedUpdate.startWithResult { [weak self] result in
-            switch result {
-            case .success:
-                self?.stopLoading()
-            case .failure(let error):
-                self?.stopLoading()
-                self?.showAlert(with: "ERROR", message: error.localizedDescription)
-            }
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -124,9 +105,14 @@ class MainViewController: UIViewController {
     }
 
     private func configureViews() {
-        textFieldView = TextFieldView.view(withMaxLength: kTextFieldMaxLength)
+        textFieldView = TextFieldView.view()
         textFieldView?.alpha = 0.0
         view.addSubview(textFieldView!)
+        textFieldView?.delegate = self
+
+        // bind tableView Delegate
+        tableView.dataSource = self
+        tableView.delegate = self
     }
 
     @objc func showTextFieldView(withScreenName screenName:String?) {
@@ -145,7 +131,6 @@ class MainViewController: UIViewController {
         textFieldView?.alpha = 0.01
         textFieldView?.textFieldWithLimit.becomeFirstResponder()
         textFieldView?.textFieldWithLimit.text = defaultScreenName
-        textFieldView?.textFieldWithLimit.limitLabel.text = String(kTextFieldMaxLength)
     }
 
     private func hideTextFieldView() {
@@ -173,22 +158,22 @@ class MainViewController: UIViewController {
                 return
         }
 
-        let textFieldViewOriginX = kTextFieldMarginWidth
-        let textFieldViewOriginY = keyboardFrame.origin.y
-            - textFieldView!.frame.size.height - kTextFieldMarginHeight
-        let textFieldViewSizeWidth = view.frame.size.width - (kTextFieldMarginWidth * 2)
-        let textFieldViewSizeHeight = textFieldView!.frame.size.height
+        let margin: CGFloat = 20.0
+
+        let originX = margin
+        let originY = keyboardFrame.origin.y
+            - textFieldView!.frame.size.height - margin
+        let width = view.frame.size.width - (margin * 2)
+        let height = textFieldView!.frame.size.height
 
         textFieldView!.frame = CGRect(
-            x: textFieldViewOriginX,
-            y: textFieldViewOriginY,
-            width: textFieldViewSizeWidth,
-            height: textFieldViewSizeHeight)
+            x: originX, y: originY,
+            width: width, height: height)
 
         // show textfield view with animation.
-        UIView.animate(withDuration: keyboardAnimationDuration, animations: { () -> Void in
+        UIView.animate(withDuration: keyboardAnimationDuration) {
             self.textFieldView?.alpha = 1.0
-        })
+        }
     }
 
     private func presentTweetDetail(tweetId: String) {
@@ -209,19 +194,19 @@ class MainViewController: UIViewController {
     // MARK: - Binding
     private func bindCommands() {
 
-        // bind Button to the RACCommand
-        tweetButton.reactive.pressed = CocoaAction(Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-                guard let self = self, !lifetime.hasEnded else {
-                    observer.sendInterrupted()
-                    return
-                }
-                self.showTextFieldView(withScreenName: self.model.selectingTweet?.user?.screenName)
-                observer.sendCompleted()
+        model.eventsSignal.observeValues { [weak self] event in
+            guard let self = self else { return }
+            switch event {
+            case .startToRequest:
+                self.startLoading()
+            case .failedToRequest(let error):
+                self.stopLoading()
+                self.showAlert(with: "Error", message: error.message)
+            case .loadedFeed, .postedTweet, .postedRetweet, .postedFavorite:
+                self.stopLoading()
             }
-        })
+        }
 
-        feedUpdateButton.reactive.pressed = CocoaAction(model.feedUpdateButtonAction)
         logoutButton.reactive.pressed = CocoaAction(Action<Void, Void, Error> {
             return SignalProducer<Void, Error> { [weak self] observer, lifetime in
                 guard let self = self, !lifetime.hasEnded else {
@@ -248,22 +233,17 @@ class MainViewController: UIViewController {
                 )
             }
         })
-
-        // TextFieldView Commands
-        textFieldView?.cancelButton.reactive.pressed = CocoaAction(
-            Action(execute: { _ -> SignalProducer<Void, Error> in
-            return SignalProducer<Void, Error> { observer, _ in
-                self.hideTextFieldView()
-                observer.sendCompleted()
-            }
-        }))
-
-        textFieldView?.tweetButton.reactive.pressed = CocoaAction(model.tweetButtonAction)
-        feedUpdateButton.reactive.pressed = CocoaAction(model.feedUpdateButtonAction)
-        tweetButton.reactive.pressed = CocoaAction(model.tweetButtonAction)
     }
 
     // MARK: - Actions
+
+    @IBAction func didTapFeedUpdateButton(_ sender: Any) {
+        model.updateFeed()
+    }
+    @IBAction func didTapTweetButton(_ sender: Any) {
+        model.postTweet()
+    }
+
     @objc private func tableViewButtonsTouch(sender: UIButton, event: UIEvent) {
         // get indexpath from touch point
         let touch = event.allTouches!.first!
@@ -299,6 +279,17 @@ class MainViewController: UIViewController {
             }
 
         }
+    }
+}
+
+extension MainViewController: TextFieldViewDelegate {
+    func textFieldViewDidTapTweetButton() {
+        showTextFieldView(withScreenName: model.selectingTweet?.user?.screenName)
+        model.postTweet()
+    }
+
+    func textFieldViewDidTapCancelButton() {
+        hideTextFieldView()
     }
 }
 

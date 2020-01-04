@@ -59,16 +59,19 @@ class MainViewModelTests: XCTestCase {
     func testFeedUpdateButtonAction() {
         let expectation = XCTestExpectation()
 
-        viewModel.feedUpdateButtonAction.apply().startWithResult { result in
-            switch result {
-            case .success:
-                XCTAssertTrue(false)
-                expectation.fulfill()
-            case .failure(let error):
+        viewModel.eventsSignal.observeValues { event in
+            switch event {
+            case .failedToRequest(let error):
                 XCTAssertNotNil(error)
+                XCTAssertEqual(MainViewModel.MainViewModelError.failedToLoadFeed, error)
+                expectation.fulfill()
+            default:
+                XCTAssertTrue(false)
                 expectation.fulfill()
             }
         }
+
+        viewModel.updateFeed()
 
         wait(for: [expectation], timeout: 2.0)
     }
@@ -76,16 +79,19 @@ class MainViewModelTests: XCTestCase {
     func testTweetButtonAction() {
         let expectation = XCTestExpectation()
 
-        viewModel.tweetButtonAction.apply().startWithResult { result in
-            switch result {
-            case .success:
-                XCTAssertTrue(false)
-                expectation.fulfill()
-            case .failure(let error):
+        viewModel.eventsSignal.observeValues { event in
+            switch event {
+            case .failedToRequest(let error):
                 XCTAssertNotNil(error)
+                XCTAssertEqual(MainViewModel.MainViewModelError.failedToPostTweet, error)
+                expectation.fulfill()
+            default:
+                XCTAssertTrue(false)
                 expectation.fulfill()
             }
         }
+
+        viewModel.postTweet()
 
         wait(for: [expectation], timeout: 2.0)
     }

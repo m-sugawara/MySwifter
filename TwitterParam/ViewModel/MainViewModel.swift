@@ -8,20 +8,39 @@
 
 import Foundation
 
-import ReactiveCocoa
 import ReactiveSwift
 
 class MainViewModel {
 
     enum MainViewModelError: Error {
+        case failedToLoadFeed
+        case failedToPostTweet
         case interrupted
 
         var message: String {
             switch self {
+            case .failedToLoadFeed:
+                return "Failed to load feed"
+            case .failedToPostTweet:
+                return "Failed to post tweet"
             case .interrupted:
                 return "Action has interupted"
             }
         }
+    }
+
+    enum Event {
+        case startToRequest
+        case loadedFeed
+        case postedTweet
+        case postedRetweet
+        case postedFavorite
+        case failedToRequest(error: MainViewModelError)
+    }
+
+    private let (_eventsSignal, eventsObserver) = Signal<Event, Never>.pipe()
+    var eventsSignal: Signal<Event, Never> {
+        return _eventsSignal
     }
 
     var isLoggedIn: Bool {
@@ -58,55 +77,36 @@ class MainViewModel {
     }
 
     // MARK: - Feed update
-    var feedUpdateButtonAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> {
-            return self.feedUpdate
-        }
-    }
-
-    var feedUpdate: SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-            guard let self = self, !lifetime.hasEnded else {
-                observer.send(error: MainViewModelError.interrupted)
-                observer.sendInterrupted()
-                return
-            }
-            TwitterAPI.shared.getStatusesHomeTimeline().startWithResult { result in
-                switch result {
-                case .success(let tweets):
-                    self.tweets = tweets
-                case .failure(let error):
-                    observer.send(error: error)
-                }
+    func updateFeed() {
+        TwitterAPI.shared.getStatusesHomeTimeline().startWithResult { [weak self] result in
+            switch result {
+            case .success(let tweets):
+                self?.tweets = tweets
+                self?.eventsObserver.send(value: .loadedFeed)
+            case .failure(let error):
+                print(error)
+                self?.tweets.removeAll()
+                self?.eventsObserver.send(value: .failedToRequest(error: .failedToLoadFeed))
             }
         }
     }
 
     // MARK: - Tweet
-    var tweetButtonAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> {
-            return SignalProducer<Void, Error> { [weak self] observer, lifetime in
-                guard let self = self, !lifetime.hasEnded,
-                    !self.inputtingTweet.value.isEmpty else {
-                        observer.send(error: MainViewModelError.interrupted)
-                        observer.sendInterrupted()
-                        return
-                }
-                var isReplyToStatusID: String?
-                if let index = self.selectingIndex, index < self.tweets.count {
-                    isReplyToStatusID = self.tweets[index].tweetId
-                }
-                TwitterAPI.shared.postStatusUpdate(
-                    status: self.inputtingTweet.value,
-                    inReplyToStatusID: isReplyToStatusID
-                ).startWithResult { result in
-                    switch result {
-                    case .success:
-                        observer.sendCompleted()
-                    case .failure(let error):
-                        observer.send(error: error)
-                    }
-                }
+    func postTweet() {
+        var isReplyToStatusID: String?
+        if let index = selectingIndex, index < tweets.count {
+            isReplyToStatusID = tweets[index].tweetId
+        }
+        TwitterAPI.shared.postStatusUpdate(
+            status: inputtingTweet.value,
+            inReplyToStatusID: isReplyToStatusID
+        ).startWithResult { [weak self] result in
+            switch result {
+            case .success:
+                self?.eventsObserver.send(value: .postedTweet)
+            case .failure(let error):
+                print("failed to post tweet. \(error)")
+                self?.eventsObserver.send(value: .failedToRequest(error: .failedToPostTweet))
             }
         }
     }

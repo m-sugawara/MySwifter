@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="SLk-dW-joi">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Login View Controller-->
+        <scene sceneID="1wt-0j-RZj">
+            <objects>
+                <viewController storyboardIdentifier="LoginViewController" id="SLk-dW-joi" customClass="LoginViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Vd2-s1-60J">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pkU-Hz-t05" userLabel="TopView">
+                                <rect key="frame" x="4" y="44" width="406" height="20"/>
+                                <color key="backgroundColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="mC4-zP-lrb"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sds-KS-ltM" userLabel="ContentsView">
+                                <rect key="frame" x="4" y="44" width="406" height="818"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QNz-VT-7TJ" userLabel="LoginButton">
+                                        <rect key="frame" x="171" y="377" width="64" height="64"/>
+                                        <state key="normal" image="Login_LoginButton">
+                                            <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="0.33333334329999997" green="0.33333334329999997" blue="0.33333334329999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerX" secondItem="QNz-VT-7TJ" secondAttribute="centerX" id="34B-Rj-EsG"/>
+                                    <constraint firstAttribute="centerY" secondItem="QNz-VT-7TJ" secondAttribute="centerY" id="CKi-4Z-4K3"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="2zH-mO-Kxx" firstAttribute="bottom" secondItem="Sds-KS-ltM" secondAttribute="bottom" id="RJm-FP-Pdr"/>
+                            <constraint firstItem="Sds-KS-ltM" firstAttribute="top" secondItem="2zH-mO-Kxx" secondAttribute="top" id="W6W-U1-Hkd"/>
+                            <constraint firstItem="pkU-Hz-t05" firstAttribute="leading" secondItem="Vd2-s1-60J" secondAttribute="leadingMargin" constant="-16" id="Y9K-Nn-f7R"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="pkU-Hz-t05" secondAttribute="trailing" constant="-16" id="h2r-wp-s3w"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Sds-KS-ltM" secondAttribute="trailing" constant="-16" id="qGK-5Q-QhI"/>
+                            <constraint firstItem="pkU-Hz-t05" firstAttribute="top" secondItem="Vd2-s1-60J" secondAttribute="topMargin" id="qxU-z7-zvp"/>
+                            <constraint firstItem="Sds-KS-ltM" firstAttribute="leading" secondItem="Vd2-s1-60J" secondAttribute="leadingMargin" constant="-16" id="xXC-MX-4U1"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="2zH-mO-Kxx"/>
+                    </view>
+                    <connections>
+                        <outlet property="contentView" destination="Sds-KS-ltM" id="qXI-Oz-Izg"/>
+                        <outlet property="loginButon" destination="QNz-VT-7TJ" id="vhz-0t-Q7s"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pTo-q6-Z9T" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="299" y="-650"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Login_LoginButton" width="64" height="64"/>
+    </resources>
+</document>

@@ -25,33 +25,30 @@
 
 import UIKit
 import SwifteriOS
+import SafariServices
 
 class TweetsViewController: UITableViewController {
+    var tweets : [JSON] = []
 
-    var tweets : [JSONValue] = []
-
-    override func viewWillLayoutSubviews()
-    {
-        super.viewWillLayoutSubviews()
-        self.tableView.contentInset = UIEdgeInsetsMake(self.topLayoutGuide.length, 0, 0, 0)
-        self.tableView.scrollIndicatorInsets = UIEdgeInsetsMake(self.topLayoutGuide.length, 0, 0, 0)
-    }
-
-    override func didReceiveMemoryWarning()
-    {
-        super.didReceiveMemoryWarning()
-    }
-
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tweets.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .Subtitle, reuseIdentifier: nil)
-
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell", for: indexPath)
         cell.textLabel?.text = tweets[indexPath.row]["text"].string
-        
+        cell.detailTextLabel?.text = "By \(tweets[indexPath.row]["user"]["name"].string!), @\(tweets[indexPath.row]["user"]["screen_name"].string!)"
         return cell
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let screenName = tweets[indexPath.row]["user"]["screen_name"].string!
+        let id = tweets[indexPath.row]["id_str"].string!
+        let url = URL(string: "https://twitter.com/\(screenName)/status/\(id)")!
+        let safariView = SFSafariViewController(url: url)
+        self.present(safariView, animated: true, completion: nil)
+    }
+    
 }
+

@@ -12,10 +12,6 @@
         <scene sceneID="mdV-4i-K4S">
             <objects>
                 <viewController storyboardIdentifier="TweetDetailViewController" id="Akq-8v-CjS" customClass="TweetDetailViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="R7q-Gq-Mn3"/>
-                        <viewControllerLayoutGuide type="bottom" id="CWc-fe-tI2"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="3Mw-2N-03b">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -145,20 +141,20 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="uhL-Uj-ipA" secondAttribute="trailing" constant="-16" id="0xn-vb-7LX"/>
-                            <constraint firstAttribute="trailing" secondItem="jGe-HA-GnA" secondAttribute="trailing" id="296-Fq-40N"/>
+                            <constraint firstItem="gbN-fd-PDm" firstAttribute="trailing" secondItem="jGe-HA-GnA" secondAttribute="trailing" id="296-Fq-40N"/>
                             <constraint firstItem="uhL-Uj-ipA" firstAttribute="top" secondItem="jGe-HA-GnA" secondAttribute="bottom" id="2Mf-E4-8Dd"/>
-                            <constraint firstItem="jGe-HA-GnA" firstAttribute="leading" secondItem="3Mw-2N-03b" secondAttribute="leading" id="2zD-Bx-5BX"/>
+                            <constraint firstItem="jGe-HA-GnA" firstAttribute="leading" secondItem="gbN-fd-PDm" secondAttribute="leading" id="2zD-Bx-5BX"/>
                             <constraint firstItem="jGe-HA-GnA" firstAttribute="top" secondItem="Uia-UO-HK2" secondAttribute="bottom" id="F5R-uv-kQy"/>
-                            <constraint firstItem="CWc-fe-tI2" firstAttribute="top" secondItem="uhL-Uj-ipA" secondAttribute="bottom" id="I0l-hi-bz6"/>
-                            <constraint firstAttribute="trailing" secondItem="Uia-UO-HK2" secondAttribute="trailing" id="RjC-1g-vu4"/>
+                            <constraint firstItem="gbN-fd-PDm" firstAttribute="bottom" secondItem="uhL-Uj-ipA" secondAttribute="bottom" id="I0l-hi-bz6"/>
+                            <constraint firstItem="gbN-fd-PDm" firstAttribute="trailing" secondItem="Uia-UO-HK2" secondAttribute="trailing" id="RjC-1g-vu4"/>
                             <constraint firstItem="uhL-Uj-ipA" firstAttribute="leading" secondItem="3Mw-2N-03b" secondAttribute="leadingMargin" constant="-16" id="TMc-84-1U4"/>
-                            <constraint firstItem="Uia-UO-HK2" firstAttribute="leading" secondItem="3Mw-2N-03b" secondAttribute="leading" id="esa-B5-9uI"/>
+                            <constraint firstItem="Uia-UO-HK2" firstAttribute="leading" secondItem="gbN-fd-PDm" secondAttribute="leading" id="esa-B5-9uI"/>
                             <constraint firstItem="Uia-UO-HK2" firstAttribute="top" secondItem="R5c-RE-lu2" secondAttribute="bottom" id="fTf-16-PfK"/>
-                            <constraint firstItem="R5c-RE-lu2" firstAttribute="top" secondItem="3Mw-2N-03b" secondAttribute="topMargin" id="glV-yn-sdm"/>
+                            <constraint firstItem="R5c-RE-lu2" firstAttribute="top" secondItem="gbN-fd-PDm" secondAttribute="top" id="glV-yn-sdm"/>
                             <constraint firstAttribute="trailingMargin" secondItem="R5c-RE-lu2" secondAttribute="trailing" constant="-16" id="nAd-bF-Fip"/>
                             <constraint firstItem="R5c-RE-lu2" firstAttribute="leading" secondItem="3Mw-2N-03b" secondAttribute="leadingMargin" constant="-16" id="wK0-rz-0kJ"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="p00-WD-0OR"/>
+                        <viewLayoutGuide key="safeArea" id="gbN-fd-PDm"/>
                     </view>
                     <connections>
                         <outlet property="backButton" destination="aSg-CV-3gQ" id="Ui7-j0-Uyb"/>

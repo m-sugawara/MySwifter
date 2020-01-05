@@ -235,6 +235,8 @@ extension UserInfoViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // swiftlint:disable force_cast
+        // swiftlint:disable line_length
         let cell = tableView.dequeueReusableCell(withIdentifier: UserInfoViewControllerTableViewCell.identifier) as! UserInfoViewControllerTableViewCell
         let tweet = model.tweets[indexPath.row]
         cell.apply(withTweet: tweet)

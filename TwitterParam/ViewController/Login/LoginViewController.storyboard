@@ -12,10 +12,6 @@
         <scene sceneID="1wt-0j-RZj">
             <objects>
                 <viewController storyboardIdentifier="LoginViewController" id="SLk-dW-joi" customClass="LoginViewController" customModule="TwitterParam" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Hc1-1C-CuX"/>
-                        <viewControllerLayoutGuide type="bottom" id="2qS-av-lNy"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Vd2-s1-60J">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -46,15 +42,15 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="2qS-av-lNy" firstAttribute="top" secondItem="Sds-KS-ltM" secondAttribute="bottom" id="RJm-FP-Pdr"/>
-                            <constraint firstItem="Sds-KS-ltM" firstAttribute="top" secondItem="Hc1-1C-CuX" secondAttribute="bottom" id="W6W-U1-Hkd"/>
+                            <constraint firstItem="2zH-mO-Kxx" firstAttribute="bottom" secondItem="Sds-KS-ltM" secondAttribute="bottom" id="RJm-FP-Pdr"/>
+                            <constraint firstItem="Sds-KS-ltM" firstAttribute="top" secondItem="2zH-mO-Kxx" secondAttribute="top" id="W6W-U1-Hkd"/>
                             <constraint firstItem="pkU-Hz-t05" firstAttribute="leading" secondItem="Vd2-s1-60J" secondAttribute="leadingMargin" constant="-16" id="Y9K-Nn-f7R"/>
                             <constraint firstAttribute="trailingMargin" secondItem="pkU-Hz-t05" secondAttribute="trailing" constant="-16" id="h2r-wp-s3w"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Sds-KS-ltM" secondAttribute="trailing" constant="-16" id="qGK-5Q-QhI"/>
                             <constraint firstItem="pkU-Hz-t05" firstAttribute="top" secondItem="Vd2-s1-60J" secondAttribute="topMargin" id="qxU-z7-zvp"/>
                             <constraint firstItem="Sds-KS-ltM" firstAttribute="leading" secondItem="Vd2-s1-60J" secondAttribute="leadingMargin" constant="-16" id="xXC-MX-4U1"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="EXR-Pz-0a2"/>
+                        <viewLayoutGuide key="safeArea" id="2zH-mO-Kxx"/>
                     </view>
                     <connections>
                         <outlet property="contentView" destination="Sds-KS-ltM" id="qXI-Oz-Izg"/>

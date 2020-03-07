@@ -21,6 +21,7 @@
 		5924884223BEF6A7009CF143 /* MainViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5924884123BEF6A7009CF143 /* MainViewController.storyboard */; };
 		5924884423BEF755009CF143 /* UserInfoViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5924884323BEF755009CF143 /* UserInfoViewController.storyboard */; };
 		593318971B33E34600110701 /* UserInfoViewControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593318961B33E34600110701 /* UserInfoViewControllerTableViewCell.swift */; };
+		5936F7DB2413D46A0071E1AF /* DateHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5936F7DA2413D46A0071E1AF /* DateHelperTests.swift */; };
 		5946CF0923C04DC6006EFFC7 /* UIView+Initializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946CF0823C04DC6006EFFC7 /* UIView+Initializer.swift */; };
 		5946CF0E23C04E0F006EFFC7 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946CF0A23C04E0F006EFFC7 /* UIViewController+Alert.swift */; };
 		5946CF1023C04E0F006EFFC7 /* UIViewController+Initializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5946CF0C23C04E0F006EFFC7 /* UIViewController+Initializer.swift */; };
@@ -102,6 +103,7 @@
 		5924884123BEF6A7009CF143 /* MainViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainViewController.storyboard; sourceTree = "<group>"; };
 		5924884323BEF755009CF143 /* UserInfoViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = UserInfoViewController.storyboard; sourceTree = "<group>"; };
 		593318961B33E34600110701 /* UserInfoViewControllerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserInfoViewControllerTableViewCell.swift; path = CustomSubviews/UserInfoViewControllerTableViewCell.swift; sourceTree = "<group>"; };
+		5936F7DA2413D46A0071E1AF /* DateHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelperTests.swift; sourceTree = "<group>"; };
 		5946CF0823C04DC6006EFFC7 /* UIView+Initializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIView+Initializer.swift"; path = "Extension/UIView+Initializer.swift"; sourceTree = "<group>"; };
 		5946CF0A23C04E0F006EFFC7 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIViewController+Alert.swift"; path = "Extension/UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		5946CF0C23C04E0F006EFFC7 /* UIViewController+Initializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIViewController+Initializer.swift"; path = "Extension/UIViewController+Initializer.swift"; sourceTree = "<group>"; };
@@ -390,6 +392,7 @@
 		59E061AA23B90F1D001779DF /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				5936F7DA2413D46A0071E1AF /* DateHelperTests.swift */,
 				59E061AB23B90F60001779DF /* UserHelperTests.swift */,
 			);
 			path = Helper;
@@ -696,6 +699,7 @@
 				59E061B323BCE04B001779DF /* LoginViewControllerTests.swift in Sources */,
 				5924883823BE30C1009CF143 /* TweetDetailViewControllerTests.swift in Sources */,
 				59E061AE23BCAF86001779DF /* LoginViewModelTests.swift in Sources */,
+				5936F7DB2413D46A0071E1AF /* DateHelperTests.swift in Sources */,
 				5924883623BE3064009CF143 /* MainViewControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

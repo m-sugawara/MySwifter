@@ -36,6 +36,7 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet weak var favoriteButton: UIButton!
 
     private var index: Int = -1
+    private let dateHelper = DateHelper()
 
     // MARK: Designated Initializer
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -80,7 +81,9 @@ class FeedTableViewCell: UITableViewCell {
         retweetButton.isSelected = tweet.retweeted
         favoriteButton.isSelected = tweet.favorited
 
-        timeLabel.text = tweet.createdAt?.stringForTimeIntervalSinceCreated()
+        if let createdAt = tweet.createdAt {
+            timeLabel.text = dateHelper.formattedDiffText(date: createdAt)
+        }
     }
 
     @IBAction func didTapReplyButton(_ sender: Any) {

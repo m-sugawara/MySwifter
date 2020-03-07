@@ -16,8 +16,8 @@ class DateHelper {
         formatter = DateFormatter()
     }
 
-    func dateToString(date: Date, format: String?, localeIdentifier: String = "ja") -> String {
-        formatter.locale = Locale(identifier: localeIdentifier)
+    func dateToString(date: Date, format: String?, timeZone: TimeZone? = TimeZone.current) -> String {
+        formatter.timeZone = timeZone
         formatter.dateFormat = format
 
         return formatter.string(from: date)

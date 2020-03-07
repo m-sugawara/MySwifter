@@ -1,32 +1,34 @@
 //
-//  Date+Formatter.swift
+//  DateHelper.swift
 //  TwitterParam
 //
-//  Created by m_sugawara on 2015/06/22.
-//  Copyright (c) 2015年 sugawar. All rights reserved.
+//  Created by M_Sugawara on 2020/02/29.
+//  Copyright © 2020 sugawar. All rights reserved.
 //
 
 import Foundation
 
-extension Date {
-    func string(WithFormat format: String?, localeIdentifier: String = "ja") -> String {
-        let formatter = DateFormatter()
+class DateHelper {
+
+    private let formatter: DateFormatter
+
+    init() {
+        formatter = DateFormatter()
+    }
+
+    func dateTostring(date: Date, format: String?, localeIdentifier: String = "ja") -> String {
         formatter.locale = Locale(identifier: localeIdentifier)
         formatter.dateFormat = format
 
-        return formatter.string(from: self)
+        return formatter.string(from: date)
     }
 
-    func stringForTimeIntervalSinceCreated() -> String {
-        return stringForTimeIntervalSinceCreated(nowDate: Date())
-    }
-
-    func stringForTimeIntervalSinceCreated(nowDate: Date) -> String {
+    func formattedDiffText(date: Date, since otherDate: Date = Date()) -> String {
         var minInterval = 0
         var hourInterval = 0
         var dayInterval = 0
         var dayModules = 0
-        let interval = abs(Int(timeIntervalSince(nowDate)))
+        let interval = abs(Int(date.timeIntervalSince(otherDate)))
         if (interval >= 86400) {
             dayInterval = interval / 86400
             dayModules = interval % 86400

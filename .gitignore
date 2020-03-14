@@ -16,6 +16,10 @@ DerivedData
 *.ipa
 *.xcuserstate
 
+# bundler
+/.bundle
+/vendor/bundle
+
 # CocoaPod
 Pods/
 

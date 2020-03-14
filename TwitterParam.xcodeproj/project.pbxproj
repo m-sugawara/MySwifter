@@ -59,6 +59,7 @@
 		59F3D27F1B1D3F6000B5235C /* TwitterAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D27E1B1D3F6000B5235C /* TwitterAPI.swift */; };
 		59F3D2871B1D7F4E00B5235C /* UserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F3D2861B1D7F4E00B5235C /* UserHelper.swift */; };
 		ADE9567B114BF144825370AD /* Pods_TwitterParamTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5266D82DB7424FDA0CFE9983 /* Pods_TwitterParamTests.framework */; };
+		B912D11C241CF003001A5695 /* FileLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B912D11B241CF003001A5695 /* FileLoader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -145,6 +146,7 @@
 		59F3D2861B1D7F4E00B5235C /* UserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserHelper.swift; sourceTree = "<group>"; };
 		8CAB7C668A34CA5E3C6B9429 /* Pods-TwitterParamTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TwitterParamTests.debug.xcconfig"; path = "Target Support Files/Pods-TwitterParamTests/Pods-TwitterParamTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B092A60602B20B4C013B1616 /* Pods-TwitterParam.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TwitterParam.debug.xcconfig"; path = "Target Support Files/Pods-TwitterParam/Pods-TwitterParam.debug.xcconfig"; sourceTree = "<group>"; };
+		B912D11B241CF003001A5695 /* FileLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLoader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -383,8 +385,9 @@
 		59E061A723B8E532001779DF /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				59F3D2861B1D7F4E00B5235C /* UserHelper.swift */,
 				59E341E5240A4D8A00E3B1F4 /* DateHelper.swift */,
+				B912D11B241CF003001A5695 /* FileLoader.swift */,
+				59F3D2861B1D7F4E00B5235C /* UserHelper.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -656,6 +659,7 @@
 			files = (
 				59CD8BBD1B3FEB8E000B2E93 /* UserListViewModel.swift in Sources */,
 				59898DBC1B34014600273760 /* TweetDetailViewModel.swift in Sources */,
+				B912D11C241CF003001A5695 /* FileLoader.swift in Sources */,
 				59F3D2871B1D7F4E00B5235C /* UserHelper.swift in Sources */,
 				59AE82741B3537250083F5FF /* User.swift in Sources */,
 				595FC10E1B1BE8400088A2EB /* MainViewController.swift in Sources */,

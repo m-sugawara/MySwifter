@@ -84,7 +84,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  cocoapods
+  cocoapods (>= 1.9.1)
 
 BUNDLED WITH
    1.17.2

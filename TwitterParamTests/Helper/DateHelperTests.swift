@@ -27,7 +27,10 @@ class DateHelperTests: XCTestCase {
 
     func testDateToString() {
         let sampleDate = Date(timeIntervalSince1970: 1267619326) // 2010/3/3 21:28:46
-        let string = dateHelper.dateToString(date: sampleDate, format: "yyyy/MM/dd HH:mm:ss", timeZone: TimeZone(identifier: "Asia/Tokyo"))
+        let string = dateHelper.dateToString(
+            date: sampleDate,
+            format: "yyyy/MM/dd HH:mm:ss",
+            timeZone: TimeZone(identifier: "Asia/Tokyo"))
 
         let expected = "2010/03/03 21:28:46"
         XCTAssertEqual(expected, string)

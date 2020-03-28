@@ -41,7 +41,7 @@ class FileTests: XCTestCase {
 
     func testLoadJson() {
         // swiftlint:disable force_try
-        let json: SampleJSON = try! fileLoader.loadJSON(fileName: "Test")
+        let json: SampleData = try! fileLoader.loadJSON(fileName: "Test")
 
         let expectedID = "1234"
         let expectedName = "sample"
@@ -50,9 +50,20 @@ class FileTests: XCTestCase {
         XCTAssertEqual(expectedName, json.name)
     }
 
+    func testLoadPlist() {
+        // swiftlint:disable force_try
+        let json: SampleData = try! fileLoader.loadPlist(fileName: "Test")
+
+        let expectedID = "123"
+        let expectedName = "plist"
+
+        XCTAssertEqual(expectedID, json.id)
+        XCTAssertEqual(expectedName, json.name)
+    }
+
 }
 
-struct SampleJSON: Codable {
+struct SampleData: Codable {
     let id: String
     let name: String
 }

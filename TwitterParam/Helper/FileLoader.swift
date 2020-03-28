@@ -14,12 +14,15 @@ enum FileLoaderError: Error {
 
 protocol FileLoaderProtocol {
     func loadFile(for resource: String, ofType type: String) throws -> Data
-    func loadJSON<T: Decodable>(fileName: String, decoder: JSONDecoder) throws -> T
+    func loadJSON<T: Decodable>(fileName: String) throws -> T
+    func loadPlist<T: Decodable>(fileName: String) throws -> T
 }
 
 class FileLoader: FileLoaderProtocol {
 
     private let bundle: Bundle
+    private lazy var jsonDecorder = JSONDecoder()
+    private lazy var plistDecorder = PropertyListDecoder()
 
     convenience init() {
         self.init(bundle: .main)
@@ -43,9 +46,15 @@ class FileLoader: FileLoaderProtocol {
         }
     }
 
-    func loadJSON<T: Decodable>(fileName: String, decoder: JSONDecoder = JSONDecoder()) throws -> T {
+    func loadJSON<T: Decodable>(fileName: String) throws -> T {
         let data = try loadFile(for: fileName, ofType: "json")
-        let jsonData = try decoder.decode(T.self, from: data)
+        let jsonData = try jsonDecorder.decode(T.self, from: data)
+        return jsonData
+    }
+
+    func loadPlist<T: Decodable>(fileName: String) throws -> T {
+        let data = try loadFile(for: fileName, ofType: "plist")
+        let jsonData = try plistDecorder.decode(T.self, from: data)
         return jsonData
     }
 }

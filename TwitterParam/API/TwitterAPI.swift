@@ -23,9 +23,11 @@ final class TwitterAPI {
 
     // MARK: - Initializer
     private init() {
+        // FIXME: temp
+        let secrets: TwitterSecrets = try! FileLoader().loadPlist(fileName: "TwitterSecrets")
         self.swifter = Swifter(
-            consumerKey: "5UwojnG3QBtSA3StY4JOvjVAK",
-            consumerSecret: "XAKBmM3I4Mgt1lQtICLLKkuCWZzN0nXGe4sJ5qwDhqKK4PtCYd"
+            consumerKey: secrets.consumerKey,
+            consumerSecret: secrets.consumerSecret
         )
     }
 

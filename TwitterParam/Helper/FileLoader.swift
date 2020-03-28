@@ -19,8 +19,19 @@ protocol FileLoaderProtocol {
 
 class FileLoader: FileLoaderProtocol {
 
+    private let bundle: Bundle
+
+    convenience init() {
+        self.init(bundle: .main)
+    }
+
+    init(bundle: Bundle) {
+        self.bundle = bundle
+    }
+
     func loadFile(for resource: String, ofType type: String) throws -> Data {
-        guard let path = Bundle.main.path(forResource: resource, ofType: type) else {
+
+        guard let path = bundle.path(forResource: resource, ofType: type) else {
             throw FileLoaderError.invalidPath
         }
         do {

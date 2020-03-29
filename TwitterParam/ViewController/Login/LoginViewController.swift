@@ -11,7 +11,7 @@ import ReactiveCocoa
 
 class LoginViewController: UIViewController {
 
-    private let model = LoginViewModel()
+    var model: LoginViewModel!
 
     @IBOutlet private weak var contentView: UIView!
     @IBOutlet private weak var loginButon: UIButton!

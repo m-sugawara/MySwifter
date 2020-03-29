@@ -18,13 +18,10 @@ final class TwitterAPI {
 
     private var swifter: Swifter
 
-    // MARK: - Singleton
-    static let shared = TwitterAPI()
+    var userHelper: UserHelper!
 
     // MARK: - Initializer
-    private init() {
-        // FIXME: temp
-        let secrets: TwitterSecrets = try! FileLoader().loadPlist(fileName: "TwitterSecrets")
+    init(secrets: TwitterSecrets) {
         self.swifter = Swifter(
             consumerKey: secrets.consumerKey,
             consumerSecret: secrets.consumerSecret
@@ -72,7 +69,7 @@ final class TwitterAPI {
                 self.swifter = Swifter(account: twitterAccount)
 
                 // Save User's AccessToken
-                _ = UserHelper.saveUserAccount(account: twitterAccount)
+                _ = self.userHelper.saveUserAccount(account: twitterAccount)
 
                 observer.sendCompleted()
             }
@@ -86,11 +83,11 @@ final class TwitterAPI {
                 observer.sendInterrupted()
                 return
             }
-            guard let userToken = UserHelper.fetchUserToken() else {
+            guard let userToken = self.userHelper.fetchUserToken() else {
                 // Nothing AccessToken
                 self.swifter.authorize(withCallback: URL(string: "tekitou://success")!, presentingFrom: nil,
-                    success: { accessToken, _ -> Void in
-                        _ = UserHelper.saveUserToken(data: accessToken!)
+                    success: { [weak self] accessToken, _ -> Void in
+                        _ = self?.userHelper.saveUserToken(data: accessToken!)
                         observer.sendCompleted()
                     },
                     failure: { (error) -> Void in
@@ -138,7 +135,7 @@ final class TwitterAPI {
 
     // MARK: - Wrapper Method(User)
     func getMyUser() -> SignalProducer<User, Error> {
-        return getUsersShow(with: .id(UserHelper.currentUserId()!))
+        return getUsersShow(with: .id(userHelper.currentUserId()!))
     }
 
     func getUsersShow(with userTag: UserTag, includeEntities: Bool = false) -> SignalProducer<User, Error> {

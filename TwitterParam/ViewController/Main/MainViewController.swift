@@ -10,10 +10,12 @@ import UIKit
 
 import ReactiveCocoa
 import ReactiveSwift
+import Swinject
 
 class MainViewController: UIViewController {
 
-    private let model = MainViewModel()
+    var container: Container!
+    var model: MainViewModel!
 
     private var scrollBeginingPoint: CGPoint!
     private var isShowingFooterView = true
@@ -145,13 +147,13 @@ class MainViewController: UIViewController {
     }
 
     private func presentLogin() {
-        let loginViewController = LoginViewController.makeInstance()
+        let loginViewController = container.resolve(LoginViewController.self)!
         loginViewController.modalPresentationStyle = .overFullScreen
         present(loginViewController, animated: false, completion: nil)
     }
 
     private func presentTweetDetail(tweetId: String) {
-        let tweetDetailViewController = TweetDetailViewController.makeInstance()
+        let tweetDetailViewController = container.resolve(TweetDetailViewController.self)!
         tweetDetailViewController.tempTweetID = tweetId
 
         // bind Next ViewController's Commands

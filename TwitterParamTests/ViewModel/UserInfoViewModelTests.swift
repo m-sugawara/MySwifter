@@ -16,6 +16,12 @@ class UserInfoViewModelTests: XCTestCase {
 
     override func setUp() {
         viewModel = UserInfoViewModel()
+        // FIXME
+        let userHelper = UserHelper()
+        let twitterAPI = TwitterAPI(secrets: TwitterSecrets(consumerKey: "", consumerSecret: ""))
+        twitterAPI.userHelper = userHelper
+        viewModel.twitterAPI = twitterAPI
+        viewModel.userHelper = userHelper
     }
 
     override func tearDown() {

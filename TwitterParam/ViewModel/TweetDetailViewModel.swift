@@ -10,6 +10,8 @@ import ReactiveSwift
 
 class TweetDetailViewModel {
 
+    var twitterAPI: TwitterAPI!
+
     private(set) var tweet: Tweet?
 
     // MARK: - Deinit
@@ -23,7 +25,7 @@ class TweetDetailViewModel {
                 observer.sendInterrupted()
                 return
             }
-            TwitterAPI.shared.getStatuesShow(with: tweetId).startWithResult { result in
+            self.twitterAPI.getStatuesShow(with: tweetId).startWithResult { result in
                 switch result {
                 case .success(let tweet):
                     self.tweet = tweet

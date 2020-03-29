@@ -11,6 +11,8 @@ import ReactiveSwift
 
 class LoginViewModel {
 
+    var twitterAPI: TwitterAPI!
+
     struct LoginError: Error {
         var message: String {
             return "Failed to login"
@@ -47,7 +49,7 @@ class LoginViewModel {
     private var tryToLogin: () -> SignalProducer<Void, Error> {
         return {
             return SignalProducer { observer, _ in
-                TwitterAPI.shared.tryToLogin().startWithResult { [weak self] result in
+                self.twitterAPI.tryToLogin().startWithResult { [weak self] result in
                     switch result {
                     case .success:
                         self?.statusObserver.send(value: .logined)

@@ -11,6 +11,8 @@ import ReactiveSwift
 
 class UserListViewModel: NSObject {
 
+    var twitterAPI: TwitterAPI!
+
     private(set) var userList: [User] = []
 
     func user(at index: Int) -> User? {
@@ -21,7 +23,7 @@ class UserListViewModel: NSObject {
     // MARK: - Signals
     func getUserList(with userId: String) -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            TwitterAPI.shared.getFriendList(
+            self.twitterAPI.getFriendList(
                 with: userId,
                 count: 20
             ).startWithResult { result in

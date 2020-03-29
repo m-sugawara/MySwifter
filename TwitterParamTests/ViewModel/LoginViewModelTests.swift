@@ -16,6 +16,10 @@ class LoginViewModelTests: XCTestCase {
 
     override func setUp() {
         viewModel = LoginViewModel()
+        // FIXME
+        let twitterAPI = TwitterAPI(secrets: TwitterSecrets(consumerKey: "", consumerSecret: ""))
+        twitterAPI.userHelper = UserHelper()
+        viewModel.twitterAPI = twitterAPI
     }
 
     override func tearDown() {

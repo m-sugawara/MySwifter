@@ -13,22 +13,23 @@ import SwifteriOS
 
 class UserHelperTests: XCTestCase {
 
+    var userHelper: UserHelper!
+
     override func setUp() {
-        super.setUp()
+        userHelper = UserHelper()
     }
 
     override func tearDown() {
-        super.tearDown()
-        UserHelper.removeUserToken()
+        userHelper.removeUserToken()
     }
 
     func testSaveUserToken() {
         let key = "testKey"
         let secret = "testSecret"
         let sampleData = Credential.OAuthAccessToken(key: key, secret: secret)
-        UserHelper.saveUserToken(data: sampleData)
+        userHelper.saveUserToken(data: sampleData)
 
-        let credential = UserHelper.fetchUserToken()
+        let credential = userHelper.fetchUserToken()
         let expectedCredential = Credential.OAuthAccessToken(key: key, secret: secret)
 
         XCTAssertEqual(expectedCredential.key, credential?.accessToken?.key)
@@ -39,11 +40,11 @@ class UserHelperTests: XCTestCase {
         let key = "testKey"
         let secret = "testSecret"
         let sampleData = Credential.OAuthAccessToken(key: key, secret: secret)
-        UserHelper.saveUserToken(data: sampleData)
+        userHelper.saveUserToken(data: sampleData)
 
-        UserHelper.removeUserToken()
+        userHelper.removeUserToken()
 
-        let credential = UserHelper.fetchUserToken()
+        let credential = userHelper.fetchUserToken()
 
         XCTAssertNil(credential)
     }

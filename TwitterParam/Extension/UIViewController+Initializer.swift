@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Swinject
 
 extension UIViewController {
     static func makeInstance() -> Self {

@@ -55,10 +55,6 @@ struct User {
         return profileImageUrl?.absoluteString
     }
 
-    var isSelf: Bool {
-        return userId == UserHelper.currentUserId()
-    }
-
 }
 
 extension User: Equatable {}

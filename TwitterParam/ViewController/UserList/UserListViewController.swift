@@ -11,10 +11,12 @@ import UIKit
 import ReactiveCocoa
 import ReactiveSwift
 import SDWebImage
+import Swinject
 
 class UserListViewController: UIViewController {
 
-    private let model = UserListViewModel()
+    var model: UserListViewModel!
+    var container: Container!
 
     // use move from userInfo etc
     var tempUserID: String?
@@ -57,7 +59,7 @@ class UserListViewController: UIViewController {
     }
 
     private func presentUserInfo(userId: String) {
-        let userInfoViewController = UserInfoViewController.makeInstance()
+        let userInfoViewController = container.resolve(UserInfoViewController.self)!
         userInfoViewController.tempUserID = userId
 
         // bind Next ViewController's Commands

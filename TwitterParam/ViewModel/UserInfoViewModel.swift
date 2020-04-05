@@ -23,6 +23,9 @@ class UserInfoViewModel: NSObject {
         }
     }
 
+    var twitterAPI: TwitterAPI!
+    var userHelper: UserHelper!
+
     var userId: String = ""
     var user: User?
 
@@ -66,11 +69,15 @@ class UserInfoViewModel: NSObject {
         }
     }
 
+    var userIsMe: Bool {
+        return user?.userId == userHelper.currentUserId()
+    }
+
     // MARK: - Signals
     // MARK: UserInfo
     func getUserInfo() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            TwitterAPI.shared.getUsersShow(with: .id(self.userId)).startWithResult { result in
+            self.twitterAPI.getUsersShow(with: .id(self.userId)).startWithResult { result in
                 switch result {
                 case .success(let user):
                     self.user = user
@@ -85,7 +92,7 @@ class UserInfoViewModel: NSObject {
     // MARK: Timeline
     func getUserTimeline() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, _ in
-            TwitterAPI.shared.getStatusesHomeTimeline(count: 20).startWithResult { result in
+            self.twitterAPI.getStatusesHomeTimeline(count: 20).startWithResult { result in
                 switch result {
                 case .success(let tweets):
                     self.tweets = tweets
@@ -120,7 +127,7 @@ class UserInfoViewModel: NSObject {
                 self.tweets = favoriteList
                 observer.sendCompleted()
             } else {
-                TwitterAPI.shared.getFavoritesList(
+                self.twitterAPI.getFavoritesList(
                     with: self.userId,
                     count: 20
                 ).startWithResult { result in
@@ -149,7 +156,7 @@ class UserInfoViewModel: NSObject {
                 observer.sendInterrupted()
                 return
             }
-            TwitterAPI.shared.postCreateFriendship(with: self.userId).startWithResult { result in
+            self.twitterAPI.postCreateFriendship(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
                     self.user?.following = true
@@ -169,7 +176,7 @@ class UserInfoViewModel: NSObject {
                 return
             }
 
-            TwitterAPI.shared.postDestroyFriendship(with: self.userId).startWithResult { result in
+            self.twitterAPI.postDestroyFriendship(with: self.userId).startWithResult { result in
                 switch result {
                 case .success:
                     self.user?.following = false

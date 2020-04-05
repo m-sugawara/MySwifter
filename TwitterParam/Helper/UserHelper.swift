@@ -26,7 +26,7 @@ class UserHelper {
         }
     }
 
-    static func saveUserToken(data: Credential.OAuthAccessToken) {
+    func saveUserToken(data: Credential.OAuthAccessToken) {
         save(UserAccountType.oAuth.hashValue, forKey: .accountType)
         save(data.key, forKey: .token)
         save(data.secret, forKey: .secret)
@@ -35,7 +35,7 @@ class UserHelper {
         save(data.verifier, forKey: .verifier)
     }
 
-    static func saveUserAccount(account: ACAccount) -> Bool {
+    func saveUserAccount(account: ACAccount) -> Bool {
         guard let userId = account.value(forKeyPath: "properties.user_id") as? String else { return false }
         save(UserAccountType.acAccount.hashValue, forKey: .accountType)
         save(nil, forKey: .token)
@@ -47,13 +47,13 @@ class UserHelper {
         return true
     }
 
-    static func removeUserToken() {
+    func removeUserToken() {
         Keys.allCases.forEach { key in
             remove(forKey: key)
         }
     }
 
-    static func fetchUserToken() -> Credential? {
+    func fetchUserToken() -> Credential? {
         guard let key = Keys.token.storedValue(),
             let secret = Keys.secret.storedValue() else {
                 return nil
@@ -63,21 +63,21 @@ class UserHelper {
         return Credential(accessToken: accessToken)
     }
 
-    static func currentUserId() -> String? {
+    func currentUserId() -> String? {
         return Keys.userId.storedValue()
     }
 
-    static func isLoggedIn() -> Bool {
+    func isLoggedIn() -> Bool {
         return (Keys.userId.storedValue() != nil)
     }
 
     // MARK: - private
 
-    private static func save(_ value: Any?, forKey key: Keys) {
+    private func save(_ value: Any?, forKey key: Keys) {
         UserDefaults.standard.set(value, forKey: key.rawValue)
     }
 
-    private static func remove(forKey key: Keys) {
+    private func remove(forKey key: Keys) {
         UserDefaults.standard.removeObject(forKey: key.rawValue)
     }
 }

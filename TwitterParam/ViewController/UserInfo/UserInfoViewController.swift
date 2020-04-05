@@ -12,6 +12,7 @@ import ReactiveCocoa
 import ReactiveSwift
 import TTTAttributedLabel
 import SDWebImage
+import Swinject
 
 class UserInfoViewController: UIViewController {
 
@@ -20,7 +21,8 @@ class UserInfoViewController: UIViewController {
         case followerList
     }
 
-    private let model = UserInfoViewModel()
+    var model: UserInfoViewModel!
+    var container: Container!
 
     var selectingUserList: ListType?
     var tempUserID: String!
@@ -119,7 +121,7 @@ class UserInfoViewController: UIViewController {
     // MARK: - Private Methods
 
     private func presentUserList() {
-        let userListViewController = UserListViewController.makeInstance()
+        let userListViewController = container.resolve(UserListViewController.self)!
         userListViewController.tempUserID = tempUserID
         userListViewController.backButtonAction = Action<Void, Void, Error> {
             return SignalProducer<Void, Error> { observer, _ in
@@ -131,7 +133,7 @@ class UserInfoViewController: UIViewController {
     }
 
     private func presentTweetDetail(tweetId: String) {
-        let tweetDetailViewController = TweetDetailViewController.makeInstance()
+        let tweetDetailViewController = container.resolve(TweetDetailViewController.self)!
         tweetDetailViewController.tempTweetID = tweetId
         tweetDetailViewController.backButtonAction = Action<Void, Void, Error> {
             return SignalProducer<Void, Error> { observer, _ in
@@ -182,7 +184,7 @@ class UserInfoViewController: UIViewController {
 
     private func applyUserProfile() {
         // set default status
-        followButton.isHidden = (model.user?.isSelf == true)
+        followButton.isHidden = model.userIsMe
 
         userNameLabel.text = model.user?.name
 

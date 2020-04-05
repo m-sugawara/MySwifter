@@ -65,6 +65,10 @@
 		B912D11C241CF003001A5695 /* FileLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B912D11B241CF003001A5695 /* FileLoader.swift */; };
 		B936F2E5242E5107001BD0B3 /* FileLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B936F2E4242E5107001BD0B3 /* FileLoaderTests.swift */; };
 		B94C3C5B242F15E000FE0623 /* Test.json in Resources */ = {isa = PBXBuildFile; fileRef = B94C3C57242F06E500FE0623 /* Test.json */; };
+		B9BD86202439E1920049ED28 /* HelperAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BD861F2439E1920049ED28 /* HelperAssembly.swift */; };
+		B9BD86222439E3160049ED28 /* APIAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BD86212439E3160049ED28 /* APIAssembly.swift */; };
+		B9BD86242439E7DF0049ED28 /* ViewControllerAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BD86232439E7DF0049ED28 /* ViewControllerAssembly.swift */; };
+		B9BD86262439E8AB0049ED28 /* ViewModelAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BD86252439E8AB0049ED28 /* ViewModelAssembly.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +161,10 @@
 		B912D11B241CF003001A5695 /* FileLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLoader.swift; sourceTree = "<group>"; };
 		B936F2E4242E5107001BD0B3 /* FileLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLoaderTests.swift; sourceTree = "<group>"; };
 		B94C3C57242F06E500FE0623 /* Test.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; lineEnding = 0; path = Test.json; sourceTree = "<group>"; };
+		B9BD861F2439E1920049ED28 /* HelperAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperAssembly.swift; sourceTree = "<group>"; };
+		B9BD86212439E3160049ED28 /* APIAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIAssembly.swift; sourceTree = "<group>"; };
+		B9BD86232439E7DF0049ED28 /* ViewControllerAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerAssembly.swift; sourceTree = "<group>"; };
+		B9BD86252439E8AB0049ED28 /* ViewModelAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelAssembly.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -295,6 +303,7 @@
 				59B578AA1B1ED1FD00E3D801 /* UserInfoViewModel.swift */,
 				59CD8BBC1B3FEB8E000B2E93 /* UserListViewModel.swift */,
 				59898DBB1B34014600273760 /* TweetDetailViewModel.swift */,
+				B9BD86252439E8AB0049ED28 /* ViewModelAssembly.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -302,6 +311,7 @@
 		595FC12C1B1BE8A60088A2EB /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				B9BD86232439E7DF0049ED28 /* ViewControllerAssembly.swift */,
 				59DDB8DB1B36668E00C89F46 /* Login */,
 				595FC12D1B1BE8B10088A2EB /* Main */,
 				59B578A61B1ED14900E3D801 /* UserInfo */,
@@ -399,6 +409,7 @@
 			children = (
 				59E341E5240A4D8A00E3B1F4 /* DateHelper.swift */,
 				B912D11B241CF003001A5695 /* FileLoader.swift */,
+				B9BD861F2439E1920049ED28 /* HelperAssembly.swift */,
 				59F3D2861B1D7F4E00B5235C /* UserHelper.swift */,
 			);
 			path = Helper;
@@ -429,8 +440,9 @@
 		59F3D27D1B1D3F4B00B5235C /* API */ = {
 			isa = PBXGroup;
 			children = (
-				59F3D27E1B1D3F6000B5235C /* TwitterAPI.swift */,
+				B9BD86212439E3160049ED28 /* APIAssembly.swift */,
 				59039BA023C0A66500B803C0 /* APIError.swift */,
+				59F3D27E1B1D3F6000B5235C /* TwitterAPI.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -599,6 +611,7 @@
 				"${BUILT_PRODUCTS_DIR}/ReactiveCocoa/ReactiveCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/ReactiveSwift/ReactiveSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/Swinject/Swinject.framework",
 				"${BUILT_PRODUCTS_DIR}/TTTAttributedLabel/TTTAttributedLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/UITextFieldWithLimit/UITextFieldWithLimit.framework",
 			);
@@ -607,6 +620,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Swinject.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TTTAttributedLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UITextFieldWithLimit.framework",
 			);
@@ -689,6 +703,7 @@
 				B912D11C241CF003001A5695 /* FileLoader.swift in Sources */,
 				59F3D2871B1D7F4E00B5235C /* UserHelper.swift in Sources */,
 				59AE82741B3537250083F5FF /* User.swift in Sources */,
+				B9BD86222439E3160049ED28 /* APIAssembly.swift in Sources */,
 				595FC10E1B1BE8400088A2EB /* MainViewController.swift in Sources */,
 				59E341E6240A4D8A00E3B1F4 /* DateHelper.swift in Sources */,
 				59898DB91B33FFB200273760 /* TweetDetailViewController.swift in Sources */,
@@ -704,14 +719,17 @@
 				59E061A923B8E557001779DF /* UserAccountType.swift in Sources */,
 				59F3D27F1B1D3F6000B5235C /* TwitterAPI.swift in Sources */,
 				5946CF1023C04E0F006EFFC7 /* UIViewController+Initializer.swift in Sources */,
+				B9BD86242439E7DF0049ED28 /* ViewControllerAssembly.swift in Sources */,
 				59DDB8E01B367A0E00C89F46 /* LoginViewModel.swift in Sources */,
 				598911091B4180600039E3A2 /* PushAnimationSegue.swift in Sources */,
 				59CD8BC11B401A32000B2E93 /* UserListTableViewCell.swift in Sources */,
 				5946CF0923C04DC6006EFFC7 /* UIView+Initializer.swift in Sources */,
+				B9BD86262439E8AB0049ED28 /* ViewModelAssembly.swift in Sources */,
 				5917020F1B1BEA5D008ADA01 /* MainViewModel.swift in Sources */,
 				593318971B33E34600110701 /* UserInfoViewControllerTableViewCell.swift in Sources */,
 				5946CF1123C04E0F006EFFC7 /* String+DateHelper.swift in Sources */,
 				59DDB8DE1B3666B400C89F46 /* LoginViewController.swift in Sources */,
+				B9BD86202439E1920049ED28 /* HelperAssembly.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -881,6 +899,7 @@
 				INFOPLIST_FILE = "TwitterParam/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/../Frameworks/";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sugawar.MySwifter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

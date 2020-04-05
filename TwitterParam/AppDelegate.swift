@@ -8,11 +8,18 @@
 
 import UIKit
 import SwifteriOS
+import Swinject
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    let assembler = Assembler([
+        APIAssembly(),
+        HelperAssembly(),
+        ViewModelAssembly(),
+        ViewControllerAssembly()
+    ])
 
     func application(
         _ application: UIApplication,
@@ -21,8 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let mainViewController = MainViewController.makeInstance()
-        window?.rootViewController = mainViewController
+        window?.rootViewController = assembler.resolver.resolve(MainViewController.self)!
         window?.makeKeyAndVisible()
 
         return true

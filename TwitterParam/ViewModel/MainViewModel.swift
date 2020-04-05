@@ -44,13 +44,16 @@ class MainViewModel {
         case failedToRequest(error: MainViewModelError)
     }
 
+    var twitterAPI: TwitterAPI!
+    var userHelper: UserHelper!
+
     private let (_eventsSignal, eventsObserver) = Signal<Event, Never>.pipe()
     var eventsSignal: Signal<Event, Never> {
         return _eventsSignal
     }
 
     var isLoggedIn: Bool {
-        return UserHelper.isLoggedIn()
+        return userHelper.isLoggedIn()
     }
     private(set) var tweets = [Tweet]()
 
@@ -65,20 +68,20 @@ class MainViewModel {
     // MARK: - OAuth
     var oauthButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> { _ -> SignalProducer<Void, Error> in
-            return TwitterAPI.shared.twitterAuthorizeWithOAuth()
+            return self.twitterAPI.twitterAuthorizeWithOAuth()
         }
     }
 
     // MARK: - Account
     var accountButtonAction: Action<Void, Void, Error> {
         return Action<Void, Void, Error> { _ in
-            return TwitterAPI.shared.twitterAuthorizeWithAccount()
+            return self.twitterAPI.twitterAuthorizeWithAccount()
         }
     }
 
     // MARK: - Feed update
     func updateFeed() {
-        TwitterAPI.shared.getStatusesHomeTimeline().startWithResult { [weak self] result in
+        twitterAPI.getStatusesHomeTimeline().startWithResult { [weak self] result in
             switch result {
             case .success(let tweets):
                 self?.tweets = tweets
@@ -96,7 +99,7 @@ class MainViewModel {
         if let index = index, index < tweets.count {
             isReplyToStatusID = tweets[index].tweetId
         }
-        TwitterAPI.shared.postStatusUpdate(
+        twitterAPI.postStatusUpdate(
             status: inputtingTweet.value,
             inReplyToStatusID: isReplyToStatusID
         ).startWithResult { [weak self] result in
@@ -120,7 +123,7 @@ class MainViewModel {
 
         // if selected tweet hasn't been retweeted yet, try to retweet
         if tweet.retweeted != true {
-            TwitterAPI.shared.postStatusRetweet(
+            twitterAPI.postStatusRetweet(
                 with: tweet.tweetId,
                 trimUser: false
             ).startWithResult { [weak self] result in
@@ -134,12 +137,12 @@ class MainViewModel {
                     }
             }
         } else {
-            TwitterAPI.shared.getCurrentUserRetweetId(
+            twitterAPI.getCurrentUserRetweetId(
                 with: tweet.tweetId
             ).startWithResult { [weak self] result in
                     switch result {
                     case .success(let retweetId):
-                        TwitterAPI.shared.postStatusesDestroy(
+                        self?.twitterAPI.postStatusesDestroy(
                             with: retweetId,
                             trimUser: false
                         ).startWithResult { [weak self]  result in
@@ -184,7 +187,7 @@ class MainViewModel {
         let tweet = tweets[index]
 
         if tweet.favorited != true {
-            TwitterAPI.shared.postCreateFavorite(
+            twitterAPI.postCreateFavorite(
                 with: tweet.tweetId,
                 includeEntities: false
             ).startWithResult { [weak self] result in
@@ -198,7 +201,7 @@ class MainViewModel {
                 }
             }
         } else {
-            TwitterAPI.shared.postDestroyFavorite(
+            twitterAPI.postDestroyFavorite(
                 with: tweet.tweetId,
                 includeEntities: false
             ).startWithResult { [weak self] result in
@@ -229,7 +232,7 @@ class MainViewModel {
 
     // MARK: - Logout
     func logout() {
-        UserHelper.removeUserToken()
+        userHelper.removeUserToken()
     }
 
     // MARK: - Text decoration

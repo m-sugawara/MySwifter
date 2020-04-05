@@ -91,11 +91,4 @@ class UserTests: XCTestCase {
         XCTAssertEqual(user.followersCount, 100)
     }
 
-    func testIsSelfFalse() {
-        let user = User(userId: "1")
-        let expected = false
-
-        XCTAssertEqual(user.isSelf, expected)
-    }
-
 }

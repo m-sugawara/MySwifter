@@ -6,6 +6,7 @@ PODS:
     - SDWebImage/Core (= 5.1.1)
   - SDWebImage/Core (5.1.1)
   - SwiftLint (0.35.0)
+  - Swinject (2.7.1)
   - TTTAttributedLabel (2.0.0)
   - UITextFieldWithLimit (0.1.1)
 
@@ -13,6 +14,7 @@ DEPENDENCIES:
   - ReactiveCocoa
   - SDWebImage
   - SwiftLint
+  - Swinject
   - TTTAttributedLabel
   - UITextFieldWithLimit
 
@@ -24,15 +26,18 @@ SPEC REPOS:
     - SwiftLint
     - TTTAttributedLabel
     - UITextFieldWithLimit
+  trunk:
+    - Swinject
 
 SPEC CHECKSUMS:
   ReactiveCocoa: 2f1d942d79072eded6d8c3bc7c2a641d40855a56
   ReactiveSwift: b78c7259f8ca46368238c895ae33a6a3bf9f811c
   SDWebImage: 96d7f03415ccb28d299d765f93557ff8a617abd8
   SwiftLint: 5553187048b900c91aa03552807681bb6b027846
+  Swinject: ddf78b8486dd9b71a667b852cad919ab4484478e
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UITextFieldWithLimit: 7b292ab1fe30fb03fa2f9b595be2c414f93cdb6d
 
-PODFILE CHECKSUM: 88d74827520e878701e978ec84a4e77c9ebc8378
+PODFILE CHECKSUM: b272ca29621b5e2483a98b8a0b191ebbe8cc9809
 
 COCOAPODS: 1.9.1

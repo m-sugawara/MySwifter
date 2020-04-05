@@ -14,7 +14,8 @@ import ReactiveSwift
 import SDWebImage
 
 class TweetDetailViewController: UIViewController, TTTAttributedLabelDelegate {
-    let model = TweetDetailViewModel()
+
+    var model: TweetDetailViewModel!
 
     var tempTweetID:String!
     var backButtonAction: Action<Void, Void, Error>?

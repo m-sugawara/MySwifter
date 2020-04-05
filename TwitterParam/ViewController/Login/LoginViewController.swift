@@ -11,7 +11,7 @@ import ReactiveCocoa
 
 class LoginViewController: UIViewController {
 
-    var model: LoginViewModel!
+    var model: LoginViewModelProtocol!
 
     @IBOutlet private weak var contentView: UIView!
     @IBOutlet private weak var loginButon: UIButton!
@@ -47,7 +47,7 @@ class LoginViewController: UIViewController {
             case .failed(let error):
                 self?.showAlert(
                     with: "ERROR!",
-                    message: "\(error.message)"
+                    message: "\(error.localizedDescription)"
                 )
             case .ready:
                 break

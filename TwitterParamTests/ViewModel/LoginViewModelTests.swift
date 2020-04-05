@@ -19,7 +19,7 @@ class LoginViewModelTests: XCTestCase {
         // FIXME
         let twitterAPI = TwitterAPI(secrets: TwitterSecrets(consumerKey: "", consumerSecret: ""))
         twitterAPI.userHelper = UserHelper()
-        viewModel.twitterAPI = twitterAPI
+        viewModel.setTwitterAPI(twitterAPI)
     }
 
     override func tearDown() {
@@ -40,8 +40,8 @@ class LoginViewModelTests: XCTestCase {
             case .failed(let error):
                 XCTAssertNotNil(error)
 
-                let expected = LoginViewModel.LoginError().message
-                XCTAssertEqual(expected, error.message)
+                let expected = LoginError.failedToLogin.localizedDescription
+                XCTAssertEqual(expected, error.localizedDescription)
                 expectation.fulfill()
             }
         }

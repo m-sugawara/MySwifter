@@ -9,21 +9,32 @@
 import UIKit
 import ReactiveSwift
 
-class LoginViewModel {
+enum LoginError: Error {
+    case failedToLogin
 
-    var twitterAPI: TwitterAPI!
-
-    struct LoginError: Error {
-        var message: String {
+    var localizedDescription: String {
+        switch self {
+        case .failedToLogin:
             return "Failed to login"
         }
     }
+}
 
-    enum LoginStatus {
-        case ready
-        case logined
-        case failed(error: LoginError)
-    }
+enum LoginStatus {
+    case ready
+    case logined
+    case failed(error: LoginError)
+}
+
+protocol LoginViewModelProtocol {
+    var statusSignal: Signal<LoginStatus, Never> { get }
+    var loginAction: Action<Void, Void, Error> { get }
+    func setTwitterAPI(_ twitterAPI: TwitterAPI)
+}
+
+class LoginViewModel: LoginViewModelProtocol {
+
+    private var twitterAPI: TwitterAPI!
 
     private let (_statusSignal, statusObserver) = Signal<LoginStatus, Never>.pipe()
     var statusSignal: Signal<LoginStatus, Never> {
@@ -36,9 +47,9 @@ class LoginViewModel {
         print("LoginViewModel deinit")
     }
 
-    // MARK: - Initializer
-
-    init() {}
+    func setTwitterAPI(_ twitterAPI: TwitterAPI) {
+        self.twitterAPI = twitterAPI
+    }
 
     // MARK: - Action
 
@@ -55,7 +66,7 @@ class LoginViewModel {
                         self?.statusObserver.send(value: .logined)
 
                     case .failure:
-                        let error = LoginError()
+                        let error = LoginError.failedToLogin
                         self?.statusObserver.send(value: .failed(error: error))
                     }
                     observer.sendCompleted()
@@ -63,5 +74,25 @@ class LoginViewModel {
             }
         }
     }
+}
+
+#if DEBUG
+class DummyLoginViewModel: LoginViewModelProtocol {
+    func setTwitterAPI(_ twitterAPI: TwitterAPI) {}
+
+    private let (_statusSignal, statusObserver) = Signal<LoginStatus, Never>.pipe()
+    var statusSignal: Signal<LoginStatus, Never> {
+        return _statusSignal
+    }
+
+    var loginAction: Action<Void, Void, Error> {
+        return Action<Void, Void, Error> {
+            return SignalProducer { observer, _ in
+                self.statusObserver.send(value: .logined)
+                observer.sendCompleted()
+            }
+        }
+    }
 
 }
+#endif

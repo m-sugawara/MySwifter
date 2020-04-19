@@ -13,6 +13,7 @@ enum APIError: Int, Error {
     case notGrantedACAccount = -101
     case failedToParseJSON = -102
     case failedToGetUserId = -103
+    case generalError = -999
 
     var errorCode: Int {
         return rawValue
@@ -28,6 +29,8 @@ enum APIError: Int, Error {
             return "failed to parse JSON Data"
         case .failedToGetUserId:
             return "failed to get userId"
+        case .generalError:
+            return "sorry, something went wrong"
         }
     }
 }

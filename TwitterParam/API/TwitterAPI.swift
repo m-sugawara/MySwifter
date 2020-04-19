@@ -28,44 +28,6 @@ final class TwitterAPI {
         )
     }
 
-    // MARK: - ACAccount
-    func twitterAuthorizeWithAccount() -> SignalProducer<Void, APIError> {
-        return SignalProducer<Void, APIError> { observer, lifetime in
-            guard !lifetime.hasEnded else {
-                observer.sendInterrupted()
-                return
-            }
-
-            let accountStore = ACAccountStore()
-            let accountType = accountStore.accountType(
-                withAccountTypeIdentifier: ACAccountTypeIdentifierTwitter)
-            accountStore.requestAccessToAccounts(
-                with: accountType,
-                options: nil
-            ) { [weak self] granted, error in
-                guard let self = self else {
-                    observer.sendInterrupted()
-                    return
-                }
-                guard granted else {
-                    observer.send(error: .notGrantedACAccount)
-                    return
-                }
-                guard let twitterAccount = accountStore.accounts(
-                    with: accountType)?.first as? ACAccount else {
-                    observer.send(error: .noTwitterAccount)
-                    return
-                }
-                self.swifter = Swifter(account: twitterAccount)
-
-                // Save User's AccessToken
-                _ = self.userHelper.saveUserAccount(account: twitterAccount)
-
-                observer.sendCompleted()
-            }
-        }
-    }
-
     // MARK: - OAuth
     func twitterAuthorizeWithOAuth() -> SignalProducer<Void, APIError> {
         return SignalProducer<Void, APIError> { [weak self] observer, lifetime in
@@ -81,7 +43,7 @@ final class TwitterAPI {
                         observer.sendCompleted()
                     },
                     failure: { (error) -> Void in
-                        observer.send(error: .noTwitterAccount)
+                        observer.send(error: .generalError)
                 })
                 return
             }
@@ -93,27 +55,10 @@ final class TwitterAPI {
     // MARK: - Wrapper Method(Login)
     func tryToLogin() -> SignalProducer<Void, APIError> {
         return SignalProducer<Void, APIError> { [weak self] observer, _ in
-            self?.twitterAuthorizeWithAccount().start { event in
+            self?.twitterAuthorizeWithOAuth().start { event in
                 switch event {
                 case .failed(let error):
-                    switch error {
-                    case .notGrantedACAccount, .noTwitterAccount:
-                        // if try to login for using ACAccount failed, try to login with OAuth.
-                        self?.twitterAuthorizeWithOAuth().start { event in
-                            switch event {
-                            case .failed(let error):
-                                observer.send(error: error)
-                            case .completed:
-                                observer.sendCompleted()
-                            default:
-                                break
-                            }
-                        }
-                    case .failedToGetUserId:
-                        observer.send(error: error)
-                    case .failedToParseJSON:
-                        observer.send(error: error)
-                    }
+                    observer.send(error: error)
                 case .completed:
                     observer.sendCompleted()
                 default:

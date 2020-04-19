@@ -75,7 +75,7 @@ class MainViewModel {
     // MARK: - Account
     var accountButtonAction: Action<Void, Void, APIError> {
         return Action<Void, Void, APIError> { _ in
-            return self.twitterAPI.twitterAuthorizeWithAccount()
+            return self.twitterAPI.twitterAuthorizeWithOAuth()
         }
     }
 

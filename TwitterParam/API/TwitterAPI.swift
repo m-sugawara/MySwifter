@@ -28,14 +28,6 @@ final class TwitterAPI {
         )
     }
 
-    // MARK: - ErrorHelper
-    func error(with error: APIError) -> NSError {
-        return NSError(
-            domain: NSURLErrorDomain,
-            code: error.rawValue,
-            userInfo: [NSLocalizedDescriptionKey: error.message])
-    }
-
     // MARK: - ACAccount
     func twitterAuthorizeWithAccount() -> SignalProducer<Void, Error> {
         return SignalProducer<Void, Error> { observer, lifetime in
@@ -56,14 +48,12 @@ final class TwitterAPI {
                     return
                 }
                 guard granted else {
-                    let error = APIError.nsError(from: .notGrantedACAccount)
-                    observer.send(error: error)
+                    observer.send(error: APIError.notGrantedACAccount)
                     return
                 }
                 guard let twitterAccount = accountStore.accounts(
                     with: accountType)?.first as? ACAccount else {
-                        let error = APIError.nsError(from: .noTwitterAccount)
-                    observer.send(error: error)
+                    observer.send(error: APIError.noTwitterAccount)
                     return
                 }
                 self.swifter = Swifter(account: twitterAccount)
@@ -91,8 +81,7 @@ final class TwitterAPI {
                         observer.sendCompleted()
                     },
                     failure: { (error) -> Void in
-                        let error = APIError.nsError(from: .noTwitterAccount)
-                        observer.send(error: error)
+                        observer.send(error: APIError.noTwitterAccount)
                 })
                 return
             }
@@ -107,22 +96,22 @@ final class TwitterAPI {
             self?.twitterAuthorizeWithAccount().start { event in
                 switch event {
                 case .failed(let error):
-                    let errorCode = (error as NSError).code
-                    if errorCode == APIError.noTwitterAccount.errorCode ||
-                        errorCode == APIError.notGrantedACAccount.errorCode {
-                        // if try to login for using ACAccount failed, try to login with OAuth.
-                        self?.twitterAuthorizeWithOAuth().start { event in
-                            switch event {
-                            case .failed(let error):
-                                observer.send(error: error)
-                            case .completed:
-                                observer.sendCompleted()
-                            default:
-                                break
-                            }
+                    guard let apiError = error as? APIError,
+                        apiError == .noTwitterAccount,
+                        apiError == .notGrantedACAccount else {
+                            observer.send(error: error)
+                            return
+                    }
+                    // if try to login for using ACAccount failed, try to login with OAuth.
+                    self?.twitterAuthorizeWithOAuth().start { event in
+                        switch event {
+                        case .failed(let error):
+                            observer.send(error: error)
+                        case .completed:
+                            observer.sendCompleted()
+                        default:
+                            break
                         }
-                    } else {
-                        observer.send(error: error)
                     }
                 case .completed:
                     observer.sendCompleted()
@@ -243,8 +232,7 @@ final class TwitterAPI {
                 tweetMode: tweetMode,
                 success: { json in
                     guard let tweets = self.parseTweets(from: json) else {
-                        let error = APIError.nsError(from: .failedToParseJSON)
-                        observer.send(error: error)
+                        observer.send(error: APIError.failedToParseJSON)
                         return
                     }
 
@@ -289,8 +277,7 @@ final class TwitterAPI {
                 tweetMode: tweetMode,
                 success: { json in
                     guard let tweets = self.parseTweets(from: json) else {
-                        let error = APIError.nsError(from: .failedToParseJSON)
-                        observer.send(error: error)
+                        observer.send(error: APIError.failedToParseJSON)
                         return
                     }
 
@@ -385,8 +372,7 @@ final class TwitterAPI {
                 tweetMode: tweetMode,
                 success: { json in
                     guard let tweet = self.parseTweet(from: json) else {
-                        let error = APIError.nsError(from: .failedToParseJSON)
-                        observer.send(error: error)
+                        observer.send(error: APIError.failedToParseJSON)
                         return
                     }
                     observer.send(value: tweet)
@@ -410,8 +396,7 @@ final class TwitterAPI {
                 success: { json in
                     let currentUserRetweet = json["current_user_retweet"].object
                     guard let currentUserRetweetId = currentUserRetweet?["id_str"]?.string else {
-                        let error = APIError.nsError(from: .failedToParseJSON)
-                        observer.send(error: error)
+                        observer.send(error: APIError.failedToParseJSON)
                         return
                     }
                     observer.send(value: currentUserRetweetId)
@@ -491,8 +476,7 @@ final class TwitterAPI {
                 tweetMode: tweetMode,
                 success: { json in
                     guard let tweets = self.parseTweets(from: json) else {
-                        let error = APIError.nsError(from: .failedToParseJSON)
-                        observer.send(error: error)
+                        observer.send(error: APIError.failedToParseJSON)
                         return
                     }
                     observer.send(value: tweets)

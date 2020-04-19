@@ -11,7 +11,7 @@ import Swinject
 class ViewModelAssembly: Assembly {
     func assemble(container: Container) {
         container.register(LoginViewModelProtocol.self) { resolver in
-            let model = DummyLoginViewModel()
+            let model = LoginViewModel()
             model.setTwitterAPI(resolver.resolve(TwitterAPI.self)!)
             return model
         }

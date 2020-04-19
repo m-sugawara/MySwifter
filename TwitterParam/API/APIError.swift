@@ -18,7 +18,7 @@ enum APIError: Int, Error {
         return rawValue
     }
 
-    var message: String {
+    var localizedDescription: String {
         switch self {
         case .noTwitterAccount:
             return "There is no configured Twitter account"
@@ -30,14 +30,4 @@ enum APIError: Int, Error {
             return "failed to get userId"
         }
     }
-}
-
-extension APIError {
-    static func nsError(from error: APIError) -> NSError {
-        return NSError(
-            domain: NSURLErrorDomain,
-            code: error.rawValue,
-            userInfo: [NSLocalizedDescriptionKey: error.message])
-    }
-
 }

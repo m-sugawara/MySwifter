@@ -29,8 +29,8 @@ final class TwitterAPI {
     }
 
     // MARK: - ACAccount
-    func twitterAuthorizeWithAccount() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { observer, lifetime in
+    func twitterAuthorizeWithAccount() -> SignalProducer<Void, APIError> {
+        return SignalProducer<Void, APIError> { observer, lifetime in
             guard !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
@@ -48,12 +48,12 @@ final class TwitterAPI {
                     return
                 }
                 guard granted else {
-                    observer.send(error: APIError.notGrantedACAccount)
+                    observer.send(error: .notGrantedACAccount)
                     return
                 }
                 guard let twitterAccount = accountStore.accounts(
                     with: accountType)?.first as? ACAccount else {
-                    observer.send(error: APIError.noTwitterAccount)
+                    observer.send(error: .noTwitterAccount)
                     return
                 }
                 self.swifter = Swifter(account: twitterAccount)
@@ -67,8 +67,8 @@ final class TwitterAPI {
     }
 
     // MARK: - OAuth
-    func twitterAuthorizeWithOAuth() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { [weak self] observer, lifetime in
+    func twitterAuthorizeWithOAuth() -> SignalProducer<Void, APIError> {
+        return SignalProducer<Void, APIError> { [weak self] observer, lifetime in
             guard let self = self, !lifetime.hasEnded else {
                 observer.sendInterrupted()
                 return
@@ -81,7 +81,7 @@ final class TwitterAPI {
                         observer.sendCompleted()
                     },
                     failure: { (error) -> Void in
-                        observer.send(error: APIError.noTwitterAccount)
+                        observer.send(error: .noTwitterAccount)
                 })
                 return
             }
@@ -91,27 +91,28 @@ final class TwitterAPI {
     }
 
     // MARK: - Wrapper Method(Login)
-    func tryToLogin() -> SignalProducer<Void, Error> {
-        return SignalProducer<Void, Error> { [weak self] observer, _ in
+    func tryToLogin() -> SignalProducer<Void, APIError> {
+        return SignalProducer<Void, APIError> { [weak self] observer, _ in
             self?.twitterAuthorizeWithAccount().start { event in
                 switch event {
                 case .failed(let error):
-                    guard let apiError = error as? APIError,
-                        apiError == .noTwitterAccount,
-                        apiError == .notGrantedACAccount else {
-                            observer.send(error: error)
-                            return
-                    }
-                    // if try to login for using ACAccount failed, try to login with OAuth.
-                    self?.twitterAuthorizeWithOAuth().start { event in
-                        switch event {
-                        case .failed(let error):
-                            observer.send(error: error)
-                        case .completed:
-                            observer.sendCompleted()
-                        default:
-                            break
+                    switch error {
+                    case .notGrantedACAccount, .noTwitterAccount:
+                        // if try to login for using ACAccount failed, try to login with OAuth.
+                        self?.twitterAuthorizeWithOAuth().start { event in
+                            switch event {
+                            case .failed(let error):
+                                observer.send(error: error)
+                            case .completed:
+                                observer.sendCompleted()
+                            default:
+                                break
+                            }
                         }
+                    case .failedToGetUserId:
+                        observer.send(error: error)
+                    case .failedToParseJSON:
+                        observer.send(error: error)
                     }
                 case .completed:
                     observer.sendCompleted()

@@ -66,15 +66,15 @@ class MainViewModel {
 
     // MARK: - RACCommands
     // MARK: - OAuth
-    var oauthButtonAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> { _ -> SignalProducer<Void, Error> in
+    var oauthButtonAction: Action<Void, Void, APIError> {
+        return Action<Void, Void, APIError> { _ -> SignalProducer<Void, APIError> in
             return self.twitterAPI.twitterAuthorizeWithOAuth()
         }
     }
 
     // MARK: - Account
-    var accountButtonAction: Action<Void, Void, Error> {
-        return Action<Void, Void, Error> { _ in
+    var accountButtonAction: Action<Void, Void, APIError> {
+        return Action<Void, Void, APIError> { _ in
             return self.twitterAPI.twitterAuthorizeWithAccount()
         }
     }

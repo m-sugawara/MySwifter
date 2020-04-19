@@ -37,11 +37,11 @@ class LoginViewModelTests: XCTestCase {
             case .logined:
                 XCTAssertTrue(false)
                 expectation.fulfill()
-            case .failed(let error):
-                XCTAssertNotNil(error)
+            case .failed(let errorMessage):
+                XCTAssertNotNil(errorMessage)
 
-                let expected = LoginError.failedToLogin.localizedDescription
-                XCTAssertEqual(expected, error.localizedDescription)
+                let expected = APIError.noTwitterAccount.localizedDescription
+                XCTAssertEqual(expected, errorMessage)
                 expectation.fulfill()
             }
         }

@@ -37,7 +37,8 @@ final class TwitterAPI {
             }
             guard let userToken = self.userHelper.fetchUserToken() else {
                 // Nothing AccessToken
-                self.swifter.authorize(withCallback: URL(string: "tekitou://success")!, presentingFrom: nil,
+                let callBackURL = URL(string: Consts.twitterCallbackAuthorize)!
+                self.swifter.authorize(withCallback: callBackURL, presentingFrom: nil,
                     success: { [weak self] accessToken, _ -> Void in
                         _ = self?.userHelper.saveUserToken(data: accessToken!)
                         observer.sendCompleted()
@@ -60,6 +61,7 @@ final class TwitterAPI {
                 case .failed(let error):
                     observer.send(error: error)
                 case .completed:
+                    observer.send(value: ())
                     observer.sendCompleted()
                 default:
                     break

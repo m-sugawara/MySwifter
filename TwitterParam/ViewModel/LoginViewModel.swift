@@ -9,21 +9,10 @@
 import UIKit
 import ReactiveSwift
 
-enum LoginError: Error {
-    case failedToLogin
-
-    var localizedDescription: String {
-        switch self {
-        case .failedToLogin:
-            return "Failed to login"
-        }
-    }
-}
-
 enum LoginStatus {
     case ready
     case logined
-    case failed(error: LoginError)
+    case failed(errorMessage: String)
 }
 
 protocol LoginViewModelProtocol {
@@ -65,9 +54,8 @@ class LoginViewModel: LoginViewModelProtocol {
                     case .success:
                         self?.statusObserver.send(value: .logined)
 
-                    case .failure:
-                        let error = LoginError.failedToLogin
-                        self?.statusObserver.send(value: .failed(error: error))
+                    case .failure(let error):
+                        self?.statusObserver.send(value: .failed(errorMessage: error.localizedDescription))
                     }
                     observer.sendCompleted()
                 }

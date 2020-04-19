@@ -13,12 +13,13 @@ enum APIError: Int, Error {
     case notGrantedACAccount = -101
     case failedToParseJSON = -102
     case failedToGetUserId = -103
+    case generalError = -999
 
     var errorCode: Int {
         return rawValue
     }
 
-    var message: String {
+    var localizedDescription: String {
         switch self {
         case .noTwitterAccount:
             return "There is no configured Twitter account"
@@ -28,16 +29,8 @@ enum APIError: Int, Error {
             return "failed to parse JSON Data"
         case .failedToGetUserId:
             return "failed to get userId"
+        case .generalError:
+            return "sorry, something went wrong"
         }
     }
-}
-
-extension APIError {
-    static func nsError(from error: APIError) -> NSError {
-        return NSError(
-            domain: NSURLErrorDomain,
-            code: error.rawValue,
-            userInfo: [NSLocalizedDescriptionKey: error.message])
-    }
-
 }

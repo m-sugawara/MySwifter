@@ -69,6 +69,7 @@
 		B9BD86222439E3160049ED28 /* APIAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BD86212439E3160049ED28 /* APIAssembly.swift */; };
 		B9BD86242439E7DF0049ED28 /* ViewControllerAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BD86232439E7DF0049ED28 /* ViewControllerAssembly.swift */; };
 		B9BD86262439E8AB0049ED28 /* ViewModelAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BD86252439E8AB0049ED28 /* ViewModelAssembly.swift */; };
+		B9FAAD2F244C46230008FCF6 /* Consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FAAD2E244C46230008FCF6 /* Consts.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -165,6 +166,7 @@
 		B9BD86212439E3160049ED28 /* APIAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIAssembly.swift; sourceTree = "<group>"; };
 		B9BD86232439E7DF0049ED28 /* ViewControllerAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerAssembly.swift; sourceTree = "<group>"; };
 		B9BD86252439E8AB0049ED28 /* ViewModelAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelAssembly.swift; sourceTree = "<group>"; };
+		B9FAAD2E244C46230008FCF6 /* Consts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -249,6 +251,7 @@
 			children = (
 				595FC10B1B1BE8400088A2EB /* AppDelegate.swift */,
 				59F3D27D1B1D3F4B00B5235C /* API */,
+				B9FAAD30244C46360008FCF6 /* Consts */,
 				591299721B37F6840011EA85 /* CustomView */,
 				59F3D2801B1D53D900B5235C /* Entity */,
 				591ED1231B3640A200BAB592 /* Extension */,
@@ -478,6 +481,14 @@
 			path = Resourse;
 			sourceTree = "<group>";
 		};
+		B9FAAD30244C46360008FCF6 /* Consts */ = {
+			isa = PBXGroup;
+			children = (
+				B9FAAD2E244C46230008FCF6 /* Consts.swift */,
+			);
+			path = Consts;
+			sourceTree = "<group>";
+		};
 		E271F7FE9339B364CFDA305A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -543,7 +554,6 @@
 				TargetAttributes = {
 					595FC1051B1BE8400088A2EB = {
 						CreatedOnToolsVersion = 6.3;
-						DevelopmentTeam = 6L3W727976;
 						ProvisioningStyle = Automatic;
 					};
 					595FC11A1B1BE8400088A2EB = {
@@ -702,6 +712,7 @@
 				59898DBC1B34014600273760 /* TweetDetailViewModel.swift in Sources */,
 				B912D11C241CF003001A5695 /* FileLoader.swift in Sources */,
 				59F3D2871B1D7F4E00B5235C /* UserHelper.swift in Sources */,
+				B9FAAD2F244C46230008FCF6 /* Consts.swift in Sources */,
 				59AE82741B3537250083F5FF /* User.swift in Sources */,
 				B9BD86222439E3160049ED28 /* APIAssembly.swift in Sources */,
 				595FC10E1B1BE8400088A2EB /* MainViewController.swift in Sources */,
@@ -891,7 +902,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 6L3W727976;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Swifter/build/Debug-iphoneos",
@@ -915,7 +926,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 6L3W727976;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Swifter/build/Debug-iphoneos",

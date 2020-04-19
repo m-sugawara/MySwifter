@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import ReactiveSwift
 
 class LoginViewController: UIViewController {
 
@@ -35,7 +36,7 @@ class LoginViewController: UIViewController {
 
     // MARK: - Binding
     private func bindSignals() {
-        model.statusSignal.observeValues { [weak self] status in
+        model.statusSignal.observe(on: UIScheduler()).observeValues { [weak self] status in
             switch status {
             case .logined:
                 self?.showAlert(with: "Success",
@@ -44,10 +45,10 @@ class LoginViewController: UIViewController {
                     cancelTappedAction: { [weak self] _ in
                         self?.dismiss(animated: true, completion: nil)
                 })
-            case .failed(let error):
+            case .failed(let errorMessage):
                 self?.showAlert(
                     with: "ERROR!",
-                    message: "\(error.localizedDescription)"
+                    message: errorMessage
                 )
             case .ready:
                 break

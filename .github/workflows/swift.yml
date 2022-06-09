@@ -16,7 +16,7 @@ jobs:
     - name: Install Pods
       run: bundle exec pod install
     - name: Run tests
-      run: xcodebuild clean test -workspace TwitterParam.xcworkspace -scheme TwitterParam -destination "platform=iOS Simulator,OS=13.3,name=iPhone 11" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
+      run: xcodebuild clean test -workspace TwitterParam.xcworkspace -scheme TwitterParam -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
     - name: Send results to codecov
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
